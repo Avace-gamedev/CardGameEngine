@@ -2,11 +2,13 @@
 using CardGame.Engine.Characters;
 using CardGame.Engine.Combats;
 using CardGame.Engine.Effects.Active;
+using PockedeckBattler.Content.Characters.Attributes;
 
-namespace PockedeckBattler.Content;
+namespace PockedeckBattler.Content.Characters;
 
-public static class Creatures
+public static partial class Characters
 {
+    [Starter]
     public static Character Charmander { get; } = new(
         new CharacterIdentity(
             "charmander",
@@ -39,6 +41,7 @@ public static class Creatures
         }
     );
 
+    [Starter]
     public static Character Squirtle { get; } = new(
         new CharacterIdentity("squirtle", "Squirtle", "It takes time for the shell to form and harden after hatching. It sprays foam powerfully from its mouth."),
         new CharacterStatistics
@@ -59,6 +62,7 @@ public static class Creatures
         }
     );
 
+    [Starter]
     public static Character Bulbasaur { get; } = new(
         new CharacterIdentity("bulbasaur", "Bulbasaur", "The bulb-like pouch on its back grows larger as it ages. The pouch is filled with numerous seeds."),
         new CharacterStatistics

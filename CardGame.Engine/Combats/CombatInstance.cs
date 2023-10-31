@@ -36,25 +36,13 @@ public class CombatInstance
 
         Turn = 0;
         Side = CombatSide.None;
-        SideTurnPhase = CombatSideTurnPhase.None;
+        Phase = CombatSideTurnPhase.None;
     }
 
     public CombatSideInstance LeftSide { get; }
     public CombatSideInstance RightSide { get; }
-
-    public CombatSideInstance CurrentSide =>
-        Side switch
-        {
-            CombatSide.Left => LeftSide, CombatSide.Right => RightSide,
-            _ => throw new ArgumentOutOfRangeException(nameof(Side), Side, null)
-        };
-
-    public CombatSideInstance OtherSide =>
-        Side switch
-        {
-            CombatSide.Left => RightSide, CombatSide.Right => LeftSide,
-            _ => throw new ArgumentOutOfRangeException(nameof(Side), Side, null)
-        };
+    public CombatSideInstance CurrentSide => GetSide(Side);
+    public CombatSideInstance OtherSide => GetSide(Side.OtherSide());
 
     public CombatOptions Options { get; }
 
@@ -62,7 +50,7 @@ public class CombatInstance
     public bool Over { get; private set; }
     public int Turn { get; private set; }
     public CombatSide Side { get; private set; }
-    public CombatSideTurnPhase SideTurnPhase { get; private set; }
+    public CombatSideTurnPhase Phase { get; private set; }
     public CombatSide Winner { get; private set; }
 
     public void Start()
@@ -73,7 +61,7 @@ public class CombatInstance
         Turn = 1;
         Ongoing = true;
         Side = Options.StartingSide;
-        SideTurnPhase = CombatSideTurnPhase.None;
+        Phase = CombatSideTurnPhase.None;
 
         StartSideTurn();
     }
@@ -98,6 +86,16 @@ public class CombatInstance
         CurrentSide.PlayCardAt(index);
 
         CheckWinCondition();
+    }
+
+    public CombatSideInstance GetSide(CombatSide side)
+    {
+        return side switch
+        {
+            CombatSide.Left => LeftSide,
+            CombatSide.Right => RightSide,
+            _ => throw new ArgumentOutOfRangeException(nameof(Side), Side, null)
+        };
     }
 
     public CharacterCombatState? GetCharacter(CombatSide side, CombatPosition position)
@@ -135,7 +133,7 @@ public class CombatInstance
         AssertNotOver();
         AssertSideTurnNotStartedYet();
 
-        SideTurnPhase = CombatSideTurnPhase.StartOfTurn;
+        Phase = CombatSideTurnPhase.StartOfTurn;
 
         StartOfTurnResolver.Resolve(this);
 
@@ -144,11 +142,11 @@ public class CombatInstance
             return;
         }
 
-        SideTurnPhase = CombatSideTurnPhase.Draw;
+        Phase = CombatSideTurnPhase.Draw;
 
         CurrentSide.DrawUntil(Options.HandSize);
 
-        SideTurnPhase = CombatSideTurnPhase.Play;
+        Phase = CombatSideTurnPhase.Play;
 
         CurrentSide.StartTurn();
     }
@@ -157,7 +155,7 @@ public class CombatInstance
     {
         AssertSideTurnStarted();
 
-        SideTurnPhase = CombatSideTurnPhase.EndOfTurn;
+        Phase = CombatSideTurnPhase.EndOfTurn;
 
         EndOfTurnResolver.Resolve(this);
 
@@ -168,7 +166,7 @@ public class CombatInstance
 
         CurrentSide.EndTurn();
 
-        SideTurnPhase = CombatSideTurnPhase.None;
+        Phase = CombatSideTurnPhase.None;
         Side = NextSide();
 
         if (Side == CombatSide.None)
@@ -389,7 +387,7 @@ public class CombatInstance
 
     void AssertSideCanPlay(CombatSide side)
     {
-        if (Side != side || SideTurnPhase != CombatSideTurnPhase.Play)
+        if (Side != side || Phase != CombatSideTurnPhase.Play)
         {
             throw new InvalidMoveException("Not your turn");
         }
@@ -397,7 +395,7 @@ public class CombatInstance
 
     void AssertSideTurnStarted()
     {
-        if (SideTurnPhase == CombatSideTurnPhase.None)
+        if (Phase == CombatSideTurnPhase.None)
         {
             throw new InvalidMoveException("Side turn not started yet");
         }
@@ -405,7 +403,7 @@ public class CombatInstance
 
     void AssertSideTurnNotStartedYet()
     {
-        if (SideTurnPhase != CombatSideTurnPhase.None)
+        if (Phase != CombatSideTurnPhase.None)
         {
             throw new InvalidMoveException("Side turn already started");
         }

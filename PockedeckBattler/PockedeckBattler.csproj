@@ -13,7 +13,8 @@
 
 
     <ItemGroup>
-        <ProjectReference Include="..\CardGame.Engine\CardGame.Engine.csproj" />
+        <ProjectReference Include="..\CardGame.Engine\CardGame.Engine.csproj"/>
     </ItemGroup>
+
 
 </Project>

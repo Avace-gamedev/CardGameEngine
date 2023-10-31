@@ -45,7 +45,7 @@ public class SimpleCombatTest
         _combat.Over.Should().BeFalse();
         _combat.Turn.Should().Be(1);
         _combat.Side.Should().Be(CombatSide.Left);
-        _combat.SideTurnPhase.Should().Be(CombatSideTurnPhase.Play);
+        _combat.Phase.Should().Be(CombatSideTurnPhase.Play);
 
         _combat.CurrentSide.Side.Should().Be(CombatSide.Left);
         _combat.CurrentSide.Front.Character.Should().Be(_leftCharacter);
@@ -89,7 +89,7 @@ public class SimpleCombatTest
         _combat.Over.Should().BeFalse();
         _combat.Turn.Should().Be(1);
         _combat.Side.Should().Be(CombatSide.Right);
-        _combat.SideTurnPhase.Should().Be(CombatSideTurnPhase.Play);
+        _combat.Phase.Should().Be(CombatSideTurnPhase.Play);
 
         _combat.CurrentSide.Side.Should().Be(CombatSide.Right);
         _combat.CurrentSide.Front.Character.Should().Be(_rightCharacter);
@@ -123,7 +123,7 @@ public class SimpleCombatTest
         _combat.Over.Should().BeFalse();
         _combat.Turn.Should().Be(2);
         _combat.Side.Should().Be(CombatSide.Left);
-        _combat.SideTurnPhase.Should().Be(CombatSideTurnPhase.Play);
+        _combat.Phase.Should().Be(CombatSideTurnPhase.Play);
 
         _combat.CurrentSide.Side.Should().Be(CombatSide.Left);
         _combat.CurrentSide.Front.Character.Should().Be(_leftCharacter);

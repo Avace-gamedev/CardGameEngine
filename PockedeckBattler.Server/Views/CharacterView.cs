@@ -1,7 +1,7 @@
 ﻿using CardGame.Engine.Cards.ActionCard;
 using CardGame.Engine.Characters;
 
-namespace PockedeckBattler.Views;
+namespace PockedeckBattler.Server.Views;
 
 public class CharacterView
 {

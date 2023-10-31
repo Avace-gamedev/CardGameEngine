@@ -1,6 +1,6 @@
 ﻿using CardGame.Engine.Combats;
 
-namespace PockedeckBattler.Views;
+namespace PockedeckBattler.Server.Views;
 
 public class BaseCombatView
 {

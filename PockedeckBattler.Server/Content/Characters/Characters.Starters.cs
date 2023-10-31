@@ -2,9 +2,9 @@
 using CardGame.Engine.Characters;
 using CardGame.Engine.Combats;
 using CardGame.Engine.Effects.Active;
-using PockedeckBattler.Content.Characters.Attributes;
+using PockedeckBattler.Server.Content.Characters.Attributes;
 
-namespace PockedeckBattler.Content.Characters;
+namespace PockedeckBattler.Server.Content.Characters;
 
 public static partial class Characters
 {

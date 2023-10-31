@@ -1,7 +1,7 @@
 ﻿using CardGame.Engine.Combats;
 using CardGame.Engine.Effects.Passive;
 
-namespace PockedeckBattler.Views;
+namespace PockedeckBattler.Server.Views;
 
 public class CharacterCombatView
 {

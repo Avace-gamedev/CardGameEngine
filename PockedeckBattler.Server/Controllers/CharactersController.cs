@@ -1,9 +1,9 @@
 ﻿using CardGame.Engine.Characters;
 using Microsoft.AspNetCore.Mvc;
-using PockedeckBattler.Content.Characters;
-using PockedeckBattler.Views;
+using PockedeckBattler.Server.Content.Characters;
+using PockedeckBattler.Server.Views;
 
-namespace PockedeckBattler.Controllers;
+namespace PockedeckBattler.Server.Controllers;
 
 [ApiController]
 [Route("characters")]

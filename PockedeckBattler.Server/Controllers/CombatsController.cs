@@ -1,11 +1,11 @@
 ﻿using CardGame.Engine.Characters;
 using CardGame.Engine.Combats;
 using Microsoft.AspNetCore.Mvc;
-using PockedeckBattler.Content.Characters;
-using PockedeckBattler.Stores;
-using PockedeckBattler.Views;
+using PockedeckBattler.Server.Content.Characters;
+using PockedeckBattler.Server.Stores;
+using PockedeckBattler.Server.Views;
 
-namespace PockedeckBattler.Controllers;
+namespace PockedeckBattler.Server.Controllers;
 
 [ApiController]
 [Route("combats")]

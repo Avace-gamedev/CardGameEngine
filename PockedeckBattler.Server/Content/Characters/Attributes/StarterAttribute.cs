@@ -1,6 +1,6 @@
 ﻿using CardGame.Engine.Characters;
 
-namespace PockedeckBattler.Content.Characters.Attributes;
+namespace PockedeckBattler.Server.Content.Characters.Attributes;
 
 /// <summary>
 ///     Mark a <see cref="Character" /> as starter.

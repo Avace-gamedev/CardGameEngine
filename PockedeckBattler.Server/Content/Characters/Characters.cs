@@ -1,8 +1,8 @@
 ﻿using System.Reflection;
 using CardGame.Engine.Characters;
-using PockedeckBattler.Content.Characters.Attributes;
+using PockedeckBattler.Server.Content.Characters.Attributes;
 
-namespace PockedeckBattler.Content.Characters;
+namespace PockedeckBattler.Server.Content.Characters;
 
 public static partial class Characters
 {

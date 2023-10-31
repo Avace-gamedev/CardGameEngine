@@ -1,10 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardGameEngine", "CardGameEngine\CardGameEngine.csproj", "{24C5C460-6ECD-4F9C-BCB4-0CE5716FA54D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardGame.Engine", "CardGame.Engine\CardGame.Engine.csproj", "{24C5C460-6ECD-4F9C-BCB4-0CE5716FA54D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PockedeckBattler", "PockedeckBattler\PockedeckBattler.csproj", "{0A12DA43-5AA2-4AB1-8C95-5AD964DA8291}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PockedeckBattler", "PockedeckBattler", "{3EC25314-8001-4BFD-8145-E0F132CCFF00}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Engine", "Engine", "{3206943D-3430-425D-BA79-EC266126079C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,5 +25,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{0A12DA43-5AA2-4AB1-8C95-5AD964DA8291} = {3EC25314-8001-4BFD-8145-E0F132CCFF00}
+		{24C5C460-6ECD-4F9C-BCB4-0CE5716FA54D} = {3206943D-3430-425D-BA79-EC266126079C}
 	EndGlobalSection
 EndGlobal

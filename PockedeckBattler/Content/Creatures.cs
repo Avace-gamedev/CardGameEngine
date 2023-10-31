@@ -1,7 +1,7 @@
-﻿using CardGameEngine.Cards.ActionCard;
-using CardGameEngine.Characters;
-using CardGameEngine.Combats;
-using CardGameEngine.Effects.Active;
+﻿using CardGame.Engine.Cards.ActionCard;
+using CardGame.Engine.Characters;
+using CardGame.Engine.Combats;
+using CardGame.Engine.Effects.Active;
 
 namespace PockedeckBattler.Content;
 

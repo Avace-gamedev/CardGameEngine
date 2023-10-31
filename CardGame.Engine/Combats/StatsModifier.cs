@@ -2,10 +2,11 @@
 
 public class StatsModifier
 {
+    public static StatsModifier None =>
+        new() { HealthAdditiveModifier = 0, ApCostAdditiveModifier = 0, DamageAdditiveModifier = 0, DamageReductionAdditiveModifier = 0 };
+
     public int HealthAdditiveModifier { get; init; }
-
     public int ApCostAdditiveModifier { get; init; }
-
     public int DamageAdditiveModifier { get; init; }
     public int DamageReductionAdditiveModifier { get; init; }
 

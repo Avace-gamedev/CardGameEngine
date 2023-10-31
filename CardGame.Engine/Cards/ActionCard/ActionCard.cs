@@ -5,10 +5,14 @@ namespace CardGame.Engine.Cards.ActionCard;
 
 public class ActionCard : Card
 {
-    public ActionCard(string name, string description, int apCost, ActionCardTarget target, ActiveEffect mainEffect, params ActiveEffect[] additionalEffects) : base(
-        name,
-        description
-    )
+    public ActionCard(
+        string name,
+        string? description,
+        int apCost,
+        ActionCardTarget target,
+        ActiveEffect mainEffect,
+        params ActiveEffect[] additionalEffects
+    ) : base(name, description)
     {
         ApCost = apCost;
         MainEffect = mainEffect;
@@ -26,9 +30,14 @@ public class ActionCard : Card
         MainEffect.Resolve(source, targets);
     }
 
+    public static ActionCard Damage(string name, int apCost, ActionCardTarget target, int damage, Element element, params ActiveEffect[] additionalEffects)
+    {
+        return Damage(name, null, apCost, target, damage, element, additionalEffects);
+    }
+
     public static ActionCard Damage(
         string name,
-        string description,
+        string? description,
         int apCost,
         ActionCardTarget target,
         int damage,
@@ -39,17 +48,17 @@ public class ActionCard : Card
         return new ActionCard(name, description, apCost, target, new DamageEffect(damage, element), additionalEffects);
     }
 
-    public static ActionCard Heal(string name, string description, int apCost, ActionCardTarget target, int heal)
+    public static ActionCard Heal(string name, string? description, int apCost, ActionCardTarget target, int heal)
     {
         return new ActionCard(name, description, apCost, target, new HealEffect(heal));
     }
 
-    public static ActionCard Shield(string name, string description, int apCost, ActionCardTarget target, int shield)
+    public static ActionCard Shield(string name, string? description, int apCost, ActionCardTarget target, int shield)
     {
         return new ActionCard(name, description, apCost, target, new ShieldEffect(shield));
     }
 
-    public static ActionCard AddPassive(string name, string description, int apCost, ActionCardTarget target, AddPassiveEffect passiveEffect)
+    public static ActionCard AddPassive(string name, string? description, int apCost, ActionCardTarget target, AddPassiveEffect passiveEffect)
     {
         return new ActionCard(name, description, apCost, target, passiveEffect);
     }

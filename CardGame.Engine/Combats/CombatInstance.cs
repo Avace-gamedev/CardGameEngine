@@ -1,4 +1,5 @@
 ﻿using CardGame.Engine.Characters;
+using CardGame.Engine.Combats.Exceptions;
 using CardGame.Engine.Combats.Resolve;
 using CardGame.Engine.Extensions;
 
@@ -6,9 +7,6 @@ namespace CardGame.Engine.Combats;
 
 public class CombatInstance
 {
-    readonly CombatSideInstance _leftSide;
-    readonly CombatSideInstance _rightSide;
-
     public CombatInstance(IReadOnlyList<Character> leftCharacters, IReadOnlyList<Character> rightCharacters, CombatOptions options)
     {
         if (leftCharacters.Count == 0)
@@ -30,8 +28,8 @@ public class CombatInstance
         CharacterCombatState frontRight = new(this, CombatSide.Right, rightCharacters[0]);
         CharacterCombatState? backRight = backRightCharacter == null ? null : new CharacterCombatState(this, CombatSide.Right, backRightCharacter);
 
-        _leftSide = new CombatSideInstance(this, CombatSide.Left, frontLeft, backLeft);
-        _rightSide = new CombatSideInstance(this, CombatSide.Right, frontRight, backRight);
+        LeftSide = new CombatSideInstance(this, CombatSide.Left, frontLeft, backLeft);
+        RightSide = new CombatSideInstance(this, CombatSide.Right, frontRight, backRight);
 
         Ongoing = false;
         Over = false;
@@ -41,10 +39,20 @@ public class CombatInstance
         SideTurnPhase = CombatSideTurnPhase.None;
     }
 
-    CombatSideInstance CurrentSide =>
+    public CombatSideInstance LeftSide { get; }
+    public CombatSideInstance RightSide { get; }
+
+    public CombatSideInstance CurrentSide =>
         Side switch
         {
-            CombatSide.Left => _leftSide, CombatSide.Right => _rightSide,
+            CombatSide.Left => LeftSide, CombatSide.Right => RightSide,
+            _ => throw new ArgumentOutOfRangeException(nameof(Side), Side, null)
+        };
+
+    public CombatSideInstance OtherSide =>
+        Side switch
+        {
+            CombatSide.Left => RightSide, CombatSide.Right => LeftSide,
             _ => throw new ArgumentOutOfRangeException(nameof(Side), Side, null)
         };
 
@@ -64,7 +72,7 @@ public class CombatInstance
 
         Turn = 1;
         Ongoing = true;
-        Side = CombatSide.None;
+        Side = Options.StartingSide;
         SideTurnPhase = CombatSideTurnPhase.None;
 
         StartSideTurn();
@@ -82,24 +90,22 @@ public class CombatInstance
         StartSideTurn();
     }
 
-    public void PlayCardAt(int index)
+    public void PlayCardAt(CombatSide side, int index)
     {
+        AssertOngoing();
+        AssertSideCanPlay(side);
+
         CurrentSide.PlayCardAt(index);
 
-        if (CheckWinCondition())
-        {
-            return;
-        }
-
-        AutoEndCurrentTurnIfNoMovesLeft();
+        CheckWinCondition();
     }
 
     public CharacterCombatState? GetCharacter(CombatSide side, CombatPosition position)
     {
         CombatSideInstance combatSide = side switch
         {
-            CombatSide.Left => _leftSide,
-            CombatSide.Right => _rightSide,
+            CombatSide.Left => LeftSide,
+            CombatSide.Right => RightSide,
             _ => throw new ArgumentOutOfRangeException(nameof(side), side, null)
         };
 
@@ -115,8 +121,8 @@ public class CombatInstance
     {
         CombatSideInstance combatSide = side switch
         {
-            CombatSide.Left => _leftSide,
-            CombatSide.Right => _rightSide,
+            CombatSide.Left => LeftSide,
+            CombatSide.Right => RightSide,
             _ => throw new ArgumentOutOfRangeException(nameof(side), side, null)
         };
 
@@ -129,17 +135,11 @@ public class CombatInstance
         AssertNotOver();
         AssertSideTurnNotStartedYet();
 
-        Side = Options.StartingSide;
         SideTurnPhase = CombatSideTurnPhase.StartOfTurn;
 
         StartOfTurnResolver.Resolve(this);
 
         if (CheckWinCondition())
-        {
-            return;
-        }
-
-        if (AutoEndCurrentTurnIfNoMovesLeft())
         {
             return;
         }
@@ -166,10 +166,7 @@ public class CombatInstance
             return;
         }
 
-        if (AutoEndCurrentTurnIfNoMovesLeft())
-        {
-            return;
-        }
+        CurrentSide.EndTurn();
 
         SideTurnPhase = CombatSideTurnPhase.None;
         Side = NextSide();
@@ -177,19 +174,8 @@ public class CombatInstance
         if (Side == CombatSide.None)
         {
             Turn++;
+            Side = Options.StartingSide;
         }
-    }
-
-    bool AutoEndCurrentTurnIfNoMovesLeft()
-    {
-        if (!CurrentSide.NoMovesLeft)
-        {
-            return false;
-        }
-
-        EndSideTurn();
-        StartSideTurn();
-        return true;
     }
 
     CombatSide NextSide()
@@ -204,11 +190,11 @@ public class CombatInstance
 
     bool CheckWinCondition()
     {
-        _leftSide.RemoveDeadCreatures();
-        _rightSide.RemoveDeadCreatures();
+        LeftSide.RemoveDeadCreatures();
+        RightSide.RemoveDeadCreatures();
 
-        bool leftLost = _leftSide.Lost;
-        bool rightLost = _rightSide.Lost;
+        bool leftLost = LeftSide.Lost;
+        bool rightLost = RightSide.Lost;
 
         if (leftLost && rightLost)
         {
@@ -238,7 +224,7 @@ public class CombatInstance
         Winner = winner;
     }
 
-    class CombatSideInstance
+    public class CombatSideInstance
     {
         readonly List<ActionCardInstance> _deck;
         readonly List<ActionCardInstance> _hand;
@@ -279,17 +265,22 @@ public class CombatInstance
         public bool Lost => Front.IsDead && (Back == null || Back.IsDead);
         public bool NoMovesLeft => _hand.All(c => c.ApCost > Ap);
 
-        public void StartTurn()
+        internal void StartTurn()
         {
-            Ap = Math.Min(Combat.Options.StartingAp + Combat.Turn, Combat.Options.MaxAp);
+            Ap = Math.Min(Combat.Options.StartingAp + Combat.Turn - 1, Combat.Options.MaxAp);
         }
 
-        public void PlayCardAt(int index)
+        internal void EndTurn()
+        {
+            Ap = Math.Min(Combat.Options.StartingAp + Combat.Turn - 1, Combat.Options.MaxAp);
+        }
+
+        internal void PlayCardAt(int index)
         {
             ActionCardInstance? card = _hand.ElementAtOrDefault(index);
             if (card == null)
             {
-                throw new IndexOutOfRangeException();
+                throw new InvalidMoveException($"Could not find card at index {index}");
             }
 
             ConsumeAp(card.ApCost);
@@ -302,7 +293,7 @@ public class CombatInstance
             card.Resolve();
         }
 
-        public bool DrawCard()
+        internal bool DrawCard()
         {
             ActionCardInstance? card = _deck.FirstOrDefault();
             if (card == null)
@@ -316,7 +307,7 @@ public class CombatInstance
             return true;
         }
 
-        public void DrawUntil(int nCards)
+        internal void DrawUntil(int nCards)
         {
             while (_hand.Count < nCards)
             {
@@ -327,7 +318,7 @@ public class CombatInstance
             }
         }
 
-        public void Swap()
+        internal void Swap()
         {
             if (Back == null)
             {
@@ -337,7 +328,7 @@ public class CombatInstance
             (Front, Back) = (Back, Front);
         }
 
-        public void RemoveDeadCreatures()
+        internal void RemoveDeadCreatures()
         {
             if (Back != null && Back.IsDead)
             {
@@ -369,6 +360,11 @@ public class CombatInstance
                 return;
             }
 
+            if (ap > Ap)
+            {
+                throw new InvalidMoveException("Not enough Ap");
+            }
+
             Ap -= ap;
         }
     }
@@ -379,7 +375,7 @@ public class CombatInstance
     {
         if (Ongoing)
         {
-            throw new Exception("Already started");
+            throw new InvalidMoveException("Already started");
         }
     }
 
@@ -387,7 +383,15 @@ public class CombatInstance
     {
         if (!Ongoing)
         {
-            throw new Exception("Combat not started yet");
+            throw new InvalidMoveException("Combat not started yet");
+        }
+    }
+
+    void AssertSideCanPlay(CombatSide side)
+    {
+        if (Side != side || SideTurnPhase != CombatSideTurnPhase.Play)
+        {
+            throw new InvalidMoveException("Not your turn");
         }
     }
 
@@ -395,7 +399,7 @@ public class CombatInstance
     {
         if (SideTurnPhase == CombatSideTurnPhase.None)
         {
-            throw new Exception("Side turn not started yet");
+            throw new InvalidMoveException("Side turn not started yet");
         }
     }
 
@@ -403,7 +407,7 @@ public class CombatInstance
     {
         if (SideTurnPhase != CombatSideTurnPhase.None)
         {
-            throw new Exception("Side turn already started");
+            throw new InvalidMoveException("Side turn already started");
         }
     }
 
@@ -411,7 +415,7 @@ public class CombatInstance
     {
         if (Over)
         {
-            throw new Exception("Combat already over");
+            throw new InvalidMoveException("Combat already over");
         }
     }
 

@@ -24,7 +24,9 @@ public class CharacterCombatState
     public CharacterStatistics Stats => Character.Stats;
 
     public StatsModifier StatsModifier =>
-        PassiveEffects.Select(e => e.Effect).OfType<PassiveStatsModifier>().Select(e => e.StatsModifier).Aggregate(StatsModifier.Combine);
+        PassiveEffects.Select(e => e.Effect).OfType<PassiveStatsModifier>().Any()
+            ? PassiveEffects.Select(e => e.Effect).OfType<PassiveStatsModifier>().Select(e => e.StatsModifier).Aggregate(StatsModifier.Combine)
+            : StatsModifier.None;
 
     public bool IsDead { get; private set; }
     public int Health { get; private set; }

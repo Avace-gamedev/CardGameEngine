@@ -8,6 +8,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PockedeckBattler", "Pockede
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Engine", "Engine", "{3206943D-3430-425D-BA79-EC266126079C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardGame.Engine.IntegrationTests", "CardGame.Engine.IntegrationTests\CardGame.Engine.IntegrationTests.csproj", "{DFEADF86-74BA-4B56-A4B0-A7B7F06AAAC9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -22,9 +24,14 @@ Global
 		{0A12DA43-5AA2-4AB1-8C95-5AD964DA8291}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0A12DA43-5AA2-4AB1-8C95-5AD964DA8291}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0A12DA43-5AA2-4AB1-8C95-5AD964DA8291}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFEADF86-74BA-4B56-A4B0-A7B7F06AAAC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFEADF86-74BA-4B56-A4B0-A7B7F06AAAC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFEADF86-74BA-4B56-A4B0-A7B7F06AAAC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFEADF86-74BA-4B56-A4B0-A7B7F06AAAC9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{0A12DA43-5AA2-4AB1-8C95-5AD964DA8291} = {3EC25314-8001-4BFD-8145-E0F132CCFF00}
 		{24C5C460-6ECD-4F9C-BCB4-0CE5716FA54D} = {3206943D-3430-425D-BA79-EC266126079C}
+		{DFEADF86-74BA-4B56-A4B0-A7B7F06AAAC9} = {3206943D-3430-425D-BA79-EC266126079C}
 	EndGlobalSection
 EndGlobal

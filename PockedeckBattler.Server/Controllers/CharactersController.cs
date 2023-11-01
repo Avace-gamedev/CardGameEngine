@@ -1,7 +1,7 @@
 ﻿using CardGame.Engine.Characters;
 using Microsoft.AspNetCore.Mvc;
 using PockedeckBattler.Server.Content.Characters;
-using PockedeckBattler.Server.Views;
+using PockedeckBattler.Server.Controllers.Views;
 
 namespace PockedeckBattler.Server.Controllers;
 

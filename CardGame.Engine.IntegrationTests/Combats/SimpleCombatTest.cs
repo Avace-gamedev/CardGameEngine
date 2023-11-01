@@ -83,7 +83,7 @@ public class SimpleCombatTest
     public void ShouldEndSideTurn()
     {
         _combat.Start();
-        _combat.EndCurrentSideTurnAndStartNextOne();
+        _combat.EndSideTurnAndStartNextOne(CombatSide.Left);
 
         _combat.Ongoing.Should().BeTrue();
         _combat.Over.Should().BeFalse();
@@ -116,8 +116,8 @@ public class SimpleCombatTest
     public void ShouldEndTurn()
     {
         _combat.Start();
-        _combat.EndCurrentSideTurnAndStartNextOne();
-        _combat.EndCurrentSideTurnAndStartNextOne();
+        _combat.EndSideTurnAndStartNextOne(CombatSide.Left);
+        _combat.EndSideTurnAndStartNextOne(CombatSide.Right);
 
         _combat.Ongoing.Should().BeTrue();
         _combat.Over.Should().BeFalse();
@@ -151,8 +151,8 @@ public class SimpleCombatTest
     {
         _combat.Start();
         _combat.PlayCardAt(CombatSide.Left, 0);
-        _combat.EndCurrentSideTurnAndStartNextOne();
-        _combat.EndCurrentSideTurnAndStartNextOne();
+        _combat.EndSideTurnAndStartNextOne(CombatSide.Left);
+        _combat.EndSideTurnAndStartNextOne(CombatSide.Right);
         _combat.PlayCardAt(CombatSide.Left, 0);
 
         _combat.Ongoing.Should().BeFalse();

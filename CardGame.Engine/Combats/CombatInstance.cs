@@ -66,8 +66,11 @@ public class CombatInstance
         StartSideTurn();
     }
 
-    public void EndCurrentSideTurnAndStartNextOne()
+    public void EndSideTurnAndStartNextOne(CombatSide side)
     {
+        AssertOngoing();
+        AssertSideCanPlay(side);
+
         EndSideTurn();
 
         if (Over)

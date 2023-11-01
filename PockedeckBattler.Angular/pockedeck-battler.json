@@ -72,69 +72,6 @@
         }
       }
     },
-    "/combats": {
-      "get": {
-        "tags": [
-          "Combats"
-        ],
-        "operationId": "Combats_GetAll",
-        "produces": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "responses": {
-          "200": {
-            "x-nullable": false,
-            "description": "",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "format": "guid"
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Combats"
-        ],
-        "operationId": "Combats_CreateCombat",
-        "consumes": [
-          "application/json-patch+json",
-          "application/json",
-          "text/json",
-          "application/*+json"
-        ],
-        "produces": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "parameters": [
-          {
-            "name": "request",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/CreateCombatRequest"
-            },
-            "x-nullable": false
-          }
-        ],
-        "responses": {
-          "200": {
-            "x-nullable": false,
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/PlayerCombatView"
-            }
-          }
-        }
-      }
-    },
     "/combats/{id}": {
       "get": {
         "tags": [
@@ -167,12 +104,73 @@
         }
       }
     },
-    "/combats/{id}/{side}": {
+    "/combats": {
       "get": {
         "tags": [
           "Combats"
         ],
-        "operationId": "Combats_GetPlayerView",
+        "operationId": "Combats_GetCombatsOfPlayer",
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "name": "playerName",
+            "in": "query",
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/PlayerCombatView"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Combats"
+        ],
+        "operationId": "Combats_CreateCombat",
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "name": "playerName",
+            "in": "query",
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/CombatInPreparationView"
+            }
+          }
+        }
+      }
+    },
+    "/combats/in-preparation/{id}": {
+      "get": {
+        "tags": [
+          "Combats"
+        ],
+        "operationId": "Combats_GetCombatInPreparation",
         "produces": [
           "text/plain",
           "application/json",
@@ -186,21 +184,6 @@
             "required": true,
             "format": "guid",
             "x-nullable": false
-          },
-          {
-            "type": "string",
-            "name": "side",
-            "in": "path",
-            "required": true,
-            "x-schema": {
-              "$ref": "#/definitions/CombatSide"
-            },
-            "x-nullable": false,
-            "enum": [
-              "none",
-              "left",
-              "right"
-            ]
           }
         ],
         "responses": {
@@ -208,7 +191,149 @@
             "x-nullable": false,
             "description": "",
             "schema": {
-              "$ref": "#/definitions/PlayerCombatView"
+              "$ref": "#/definitions/CombatInPreparationView"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Combats"
+        ],
+        "operationId": "Combats_UpdateCombatInPreparation",
+        "consumes": [
+          "application/json-patch+json",
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "format": "guid",
+            "x-nullable": false
+          },
+          {
+            "type": "string",
+            "name": "playerName",
+            "in": "query",
+            "x-nullable": false
+          },
+          {
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UpdateCombatInPreparationRequest"
+            },
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/combats/in-preparation": {
+      "get": {
+        "tags": [
+          "Combats"
+        ],
+        "operationId": "Combats_GetCombatsInPreparationOfPlayer",
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "name": "playerName",
+            "in": "query",
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/CombatInPreparationView"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/combats/in-preparation/{id}/leave": {
+      "post": {
+        "tags": [
+          "Combats"
+        ],
+        "operationId": "Combats_LeaveCombatInPreparation",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "format": "guid",
+            "x-nullable": false
+          },
+          {
+            "type": "string",
+            "name": "playerName",
+            "in": "query",
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/combats/{id}/start": {
+      "post": {
+        "tags": [
+          "Combats"
+        ],
+        "operationId": "Combats_StartCombat",
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "name": "combatId",
+            "in": "query",
+            "format": "guid",
+            "x-nullable": false
+          },
+          {
+            "type": "string",
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/CombatView"
             }
           }
         }
@@ -914,9 +1039,14 @@
         {
           "type": "object",
           "required": [
+            "playerName",
             "hand"
           ],
           "properties": {
+            "playerName": {
+              "type": "string",
+              "minLength": 1
+            },
             "hand": {
               "type": "array",
               "items": {
@@ -948,24 +1078,56 @@
     "CardInstanceView": {
       "type": "object"
     },
-    "CreateCombatRequest": {
+    "CombatInPreparationView": {
       "type": "object",
       "required": [
-        "opponentTeam",
-        "playerTeam"
+        "id",
+        "leftPlayerName"
       ],
       "properties": {
-        "opponentTeam": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+        "id": {
+          "type": "string",
+          "format": "guid"
         },
-        "playerTeam": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+        "leftPlayerName": {
+          "type": "string"
+        },
+        "leftFrontCharacter": {
+          "type": "string"
+        },
+        "leftBackCharacter": {
+          "type": "string"
+        },
+        "rightPlayerName": {
+          "type": "string"
+        },
+        "rightFrontCharacter": {
+          "type": "string"
+        },
+        "rightBackCharacter": {
+          "type": "string"
+        }
+      }
+    },
+    "UpdateCombatInPreparationRequest": {
+      "type": "object",
+      "required": [
+        "playerName",
+        "frontCharacter",
+        "backCharacter"
+      ],
+      "properties": {
+        "playerName": {
+          "type": "string",
+          "minLength": 1
+        },
+        "frontCharacter": {
+          "type": "string",
+          "minLength": 1
+        },
+        "backCharacter": {
+          "type": "string",
+          "minLength": 1
         }
       }
     }

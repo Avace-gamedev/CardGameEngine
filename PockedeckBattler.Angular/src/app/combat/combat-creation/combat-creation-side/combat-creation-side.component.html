@@ -1,46 +1,78 @@
-<header class="d-flex justify-content-center">
-  <input [(ngModel)]="name" class="text-center h1" [disabled]="disableNameEdition"/>
-</header>
+<div class="vstack">
+  <header>
+    <div class="form-floating w-100">
+      <input
+        id="name"
+        class="text-center form-control-lg"
+        [class.form-control]="!disableNameEdition"
+        [class.form-control-plaintext]="disableNameEdition"
+        [placeholder]="initialName"
+        [(ngModel)]="name"
+        [disabled]="disableNameEdition"
+        [readonly]="disableNameEdition"
+      />
+      <label for="name">Name</label>
+    </div>
+  </header>
 
-<hr>
+  <hr />
 
-<section>
   <h3 class="text-center">Characters</h3>
-  <ul class="list-group">
-    <li *ngFor="let character of characters" class="list-group-item">
-      <div class="d-flex w-100 justify-content-between">
-        <h5>{{ character.identity.displayName }}</h5>
-        <small>{{ character.statistics.maxHealth}} HP</small>
-      </div>
-      <p>{{ character.identity.description}}</p>
-    </li>
-  </ul>
-</section>
 
-<hr>
-
-<section>
-  <h3 class="text-center">Team</h3>
-  <div class="row">
-    <ng-container *ngIf="!placeFrontCharacterOnLeftSide">
-      <div class="col">
-        <h4 class="text-center">Front</h4>
-        <div class="fs-1 fw-bold text-center"> ?</div>
-      </div>
-      <div class="col">
-        <h4 class="text-center">Back</h4>
-        <div class="fs-1 fw-bold text-center"> ?</div>
-      </div>
-    </ng-container>
-    <ng-container *ngIf="placeFrontCharacterOnLeftSide">
-      <div class="col">
-        <h4 class="text-center">Back</h4>
-        <div class="fs-1 fw-bold text-center"> ?</div>
-      </div>
-      <div class="col">
-        <h4 class="text-center">Front</h4>
-        <div class="fs-1 fw-bold text-center"> ?</div>
-      </div>
-    </ng-container>
+  <div class="overflow-y-auto" style="max-height: 50vh">
+    <ul class="list-group">
+      <a
+        *ngFor="let character of characters"
+        href="javascript:void 0"
+        (click)="select(character)"
+        class="list-group-item list-group-item-action"
+        [class.active]="isSelected(character)"
+      >
+        <div class="d-flex w-100 justify-content-between">
+          <h5>{{ character.identity.displayName }}</h5>
+          <small>{{ character.statistics.maxHealth }} HP</small>
+        </div>
+        <p>{{ character.identity.description }}</p>
+      </a>
+    </ul>
   </div>
-</section>
+
+  <hr />
+
+  <section>
+    <h3 class="text-center">
+      Team
+      <button
+        class="btn btn-outline-secondary"
+        ngbTooltip="Swap"
+        (click)="swap()"
+      >
+        <i class="bi bi-arrow-left-right"></i>
+      </button>
+    </h3>
+    <div class="row">
+      <ng-container *ngIf="!placeFrontCharacterOnLeftSide">
+        <ng-container [ngTemplateOutlet]="frontCharacter"></ng-container>
+        <ng-container [ngTemplateOutlet]="backCharacter"></ng-container>
+      </ng-container>
+      <ng-container *ngIf="placeFrontCharacterOnLeftSide">
+        <ng-container [ngTemplateOutlet]="backCharacter"></ng-container>
+        <ng-container [ngTemplateOutlet]="frontCharacter"></ng-container>
+      </ng-container>
+    </div>
+  </section>
+</div>
+
+<ng-template #frontCharacter>
+  <div class="col">
+    <h4 class="text-center">Front</h4>
+    <app-character-img-view [character]="character1"></app-character-img-view>
+  </div>
+</ng-template>
+
+<ng-template #backCharacter>
+  <div class="col">
+    <h4 class="text-center">Back</h4>
+    <app-character-img-view [character]="character2"></app-character-img-view>
+  </div>
+</ng-template>

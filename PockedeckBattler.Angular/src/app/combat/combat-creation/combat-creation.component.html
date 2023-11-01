@@ -1,11 +1,30 @@
-<section class="container">
-  <h1 class="text-center">Combat creation</h1>
+<section class="container h-100 vstack gap-4 py-4">
   <div class="row">
-    <div class="col border-end">
-      <app-combat-creation-side name="Player" [characters]="characters" [placeFrontCharacterOnLeftSide]="true"></app-combat-creation-side>
+    <h1 class="text-center">Combat creation</h1>
+  </div>
+
+  <div class="flex-fill"></div>
+
+  <div class="row flex-fill overflow-y-auto">
+    <div class="col-lg">
+      <app-combat-creation-side
+        name="Player"
+        [characters]="characters"
+        [placeFrontCharacterOnLeftSide]="true"
+      ></app-combat-creation-side>
     </div>
-    <div class="col">
-      <app-combat-creation-side name="Opponent" [characters]="characters" [disableNameEdition]="true"></app-combat-creation-side>
+    <div class="col-lg">
+      <app-combat-creation-side
+        name="Opponent"
+        [characters]="characters"
+        [disableNameEdition]="true"
+      ></app-combat-creation-side>
     </div>
+  </div>
+
+  <div class="flex-fill"></div>
+
+  <div class="row">
+    <button class="btn btn-primary">Start</button>
   </div>
 </section>

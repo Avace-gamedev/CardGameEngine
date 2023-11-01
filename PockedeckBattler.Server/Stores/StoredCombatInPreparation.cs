@@ -12,8 +12,10 @@ public class StoredCombatInPreparation
     public string LeftPlayerName { get; }
     public string? LeftFrontCharacter { get; set; }
     public string? LeftBackCharacter { get; set; }
+    public bool LeftReady { get; set; }
 
     public string? RightPlayerName { get; set; }
     public string? RightFrontCharacter { get; set; }
     public string? RightBackCharacter { get; set; }
+    public bool RightReady { get; set; }
 }

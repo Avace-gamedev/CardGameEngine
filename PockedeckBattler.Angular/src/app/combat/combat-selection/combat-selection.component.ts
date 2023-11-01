@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { finalize, forkJoin, ignoreElements, map, Observable } from 'rxjs';
 import {
   CombatInPreparationView,
@@ -19,6 +20,7 @@ export class CombatSelectionComponent implements OnInit {
   constructor(
     private combatController: CombatsService,
     private identityService: IdentityService,
+    private router: Router,
   ) {}
 
   ngOnInit() {
@@ -27,6 +29,25 @@ export class CombatSelectionComponent implements OnInit {
 
   public refresh() {
     this.loadCombats().subscribe();
+  }
+
+  protected create() {
+    const identity = this.identityService.getIdentity();
+
+    this.combatController
+      .createCombat(identity)
+      .pipe(
+        map((newCombat) => {
+          this.router.toCombatConfiguration(newCombat.id).then();
+        }),
+      )
+      .subscribe();
+  }
+
+  protected select(combat: CombatInPreparationView | PlayerCombatView) {
+    if (combat instanceof CombatInPreparationView) {
+      this.router.toCombatConfiguration(combat.id).then();
+    }
   }
 
   private loadCombats(): Observable<void> {

@@ -1,0 +1,15 @@
+<div class="h-100 vstack justify-content-center">
+  <h3 class="hstack justify-content-center gap-2">
+    Invite a friend
+    <button
+      class="btn btn-outline-secondary"
+      ngbTooltip="Copy"
+      (click)="copyUrl()"
+    >
+      <i class="bi bi-clipboard"></i>
+    </button>
+  </h3>
+  <code class="fs-4">
+    {{ url }}
+  </code>
+</div>

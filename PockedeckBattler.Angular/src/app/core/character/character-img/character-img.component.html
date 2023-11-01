@@ -3,7 +3,7 @@
     class="border border-1 d-flex align-items-center justify-content-center"
     [class.border-4]="characterBeingDragged"
     [ngStyle]="{ 'width.px': imgSize, 'height.px': imgSize }"
-    [ngbPopover]="enablePopoverDetails ? popover : null"
+    [ngbPopover]="character && enablePopoverDetails ? popover : null"
     container="body"
     triggers="mouseenter:mouseleave"
     (dragenter)="dragenter($event); $event.preventDefault()"

@@ -1,5 +1,12 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { CharacterView } from '../../../api/pockedeck-battler-api-client';
+import { Component, Input } from '@angular/core';
+import { finalize, switchMap } from 'rxjs';
+import {
+  CharacterView,
+  CombatInPreparationView,
+  CombatsService,
+  UpdateCombatInPreparationRequest,
+} from '../../../api/pockedeck-battler-api-client';
+import { IdentityService } from '../../../core/authentication/services/identity.service';
 
 @Component({
   selector: 'app-combat-creation-side',
@@ -8,47 +15,40 @@ import { CharacterView } from '../../../api/pockedeck-battler-api-client';
 })
 export class CombatCreationSideComponent {
   @Input()
-  get name(): string {
-    return this._name;
-  }
-  set name(value: string) {
-    this._name = value;
-    this.initialName = value;
-  }
-  private _name: string = '';
-
-  protected initialName: string = '';
+  public name: string | undefined;
 
   @Input()
-  public disableNameEdition: boolean = false;
-
-  @Input()
-  get characters(): CharacterView[] {
-    return this._characters;
+  get combat(): CombatInPreparationView | undefined {
+    return this._combat;
   }
-
-  set characters(value: CharacterView[]) {
-    this._characters = value;
-    this.autoSelect();
+  set combat(value: CombatInPreparationView | undefined) {
+    this._combat = value;
+    this.update(value);
   }
-  private _characters: CharacterView[] = [];
+  private _combat: CombatInPreparationView | undefined;
 
   @Input()
-  public frontCharacter: CharacterView | undefined;
+  public readonly: boolean = false;
 
   @Input()
-  public backCharacter: CharacterView | undefined;
+  public characters: CharacterView[] = [];
 
   @Input()
   public invertSlotPositions: boolean = false;
 
-  @Output()
-  public frontCharacterChange: EventEmitter<CharacterView | undefined> =
-    new EventEmitter<CharacterView | undefined>();
+  protected refreshing: boolean = false;
+  protected frontCharacter: CharacterView | undefined;
+  protected backCharacter: CharacterView | undefined;
+  protected ready: boolean = false;
 
-  @Output()
-  public backCharacterChange: EventEmitter<CharacterView | undefined> =
-    new EventEmitter<CharacterView | undefined>();
+  protected get disabled(): boolean {
+    return this.readonly || this.ready;
+  }
+
+  constructor(
+    private identityService: IdentityService,
+    private combatsService: CombatsService,
+  ) {}
 
   getAt(slot: 'front' | 'back'): CharacterView | undefined {
     switch (slot) {
@@ -62,8 +62,9 @@ export class CombatCreationSideComponent {
   swap() {
     if (this.frontCharacter && this.backCharacter) {
       const tmp = this.frontCharacter;
-      this.setFront(this.backCharacter);
-      this.setBack(tmp);
+      this.frontCharacter = this.backCharacter;
+      this.backCharacter = tmp;
+      this.sendUpdateRequestAndRefresh();
     }
   }
 
@@ -81,20 +82,23 @@ export class CombatCreationSideComponent {
 
     switch (slot) {
       case 'front':
-        this.setFront(character);
+        this.frontCharacter = character;
+        this.sendUpdateRequestAndRefresh();
         break;
       case 'back':
-        this.setBack(character);
+        this.backCharacter = character;
+        this.sendUpdateRequestAndRefresh();
         break;
       default:
         if (
           !this.frontCharacter ||
           (this.frontCharacter && this.backCharacter)
         ) {
-          this.setFront(character);
+          this.frontCharacter = character;
         } else if (!this.backCharacter) {
-          this.setBack(character);
+          this.backCharacter = character;
         }
+        this.sendUpdateRequestAndRefresh();
     }
   }
 
@@ -110,10 +114,12 @@ export class CombatCreationSideComponent {
   unselect(slot: 'front' | 'back') {
     switch (slot) {
       case 'front':
-        this.setFront(undefined);
+        this.frontCharacter = undefined;
+        this.sendUpdateRequestAndRefresh();
         break;
       case 'back':
-        this.setBack(undefined);
+        this.backCharacter = undefined;
+        this.sendUpdateRequestAndRefresh();
         break;
     }
   }
@@ -137,7 +143,7 @@ export class CombatCreationSideComponent {
     }
 
     const characterName = data.substring(10);
-    const character = this._characters.find(
+    const character = this.characters.find(
       (c) => c.identity.name === characterName,
     );
 
@@ -150,29 +156,58 @@ export class CombatCreationSideComponent {
     $event.preventDefault();
   }
 
-  private autoSelect() {
-    if (
-      (!this.frontCharacter || !this.backCharacter) &&
-      this._characters.length > 0
-    ) {
-      this.select(this._characters[0]);
-    }
+  protected setReady(ready: boolean) {
+    this.ready = ready;
+    this.sendUpdateRequestAndRefresh();
+  }
 
-    if (
-      (!this.frontCharacter || !this.backCharacter) &&
-      this._characters.length > 1
-    ) {
-      this.select(this._characters[1]);
+  private sendUpdateRequestAndRefresh() {
+    if (this.combat) {
+      this.refreshing = true;
+      this.combatsService
+        .updateCombatInPreparation(
+          this.combat.id,
+          new UpdateCombatInPreparationRequest({
+            playerName: this.name ?? '',
+            frontCharacter: this.frontCharacter?.identity.name,
+            backCharacter: this.frontCharacter?.identity.name,
+            ready: this.ready,
+          }),
+        )
+        .pipe(
+          switchMap(() =>
+            this.combatsService.getCombatInPreparation(
+              this.combat?.id ?? '',
+              this.identityService.getIdentity(),
+            ),
+          ),
+          finalize(() => (this.refreshing = false)),
+        )
+        .subscribe();
     }
   }
 
-  private setFront(character: CharacterView | undefined) {
-    this.frontCharacter = character;
-    this.frontCharacterChange.emit(character);
-  }
+  private update(combat: CombatInPreparationView | undefined) {
+    if (!combat) {
+      return;
+    }
 
-  private setBack(character: CharacterView | undefined) {
-    this.backCharacter = character;
-    this.backCharacterChange.emit(character);
+    if (this.name == combat.leftPlayerName) {
+      this.frontCharacter = this.characters.find(
+        (c) => c.identity.name === combat.leftFrontCharacter,
+      );
+      this.backCharacter = this.characters.find(
+        (c) => c.identity.name === combat.leftBackCharacter,
+      );
+      this.ready = combat.leftReady;
+    } else if (this.name == combat.rightPlayerName) {
+      this.frontCharacter = this.characters.find(
+        (c) => c.identity.name === combat.rightFrontCharacter,
+      );
+      this.backCharacter = this.characters.find(
+        (c) => c.identity.name === combat.rightBackCharacter,
+      );
+      this.ready = combat.rightReady;
+    }
   }
 }

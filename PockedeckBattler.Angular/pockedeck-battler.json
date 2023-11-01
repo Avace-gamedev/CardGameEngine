@@ -91,6 +91,12 @@
             "required": true,
             "format": "guid",
             "x-nullable": false
+          },
+          {
+            "type": "string",
+            "name": "playerName",
+            "in": "query",
+            "x-nullable": false
           }
         ],
         "responses": {
@@ -184,6 +190,12 @@
             "required": true,
             "format": "guid",
             "x-nullable": false
+          },
+          {
+            "type": "string",
+            "name": "playerName",
+            "in": "query",
+            "x-nullable": false
           }
         ],
         "responses": {
@@ -214,12 +226,6 @@
             "in": "path",
             "required": true,
             "format": "guid",
-            "x-nullable": false
-          },
-          {
-            "type": "string",
-            "name": "playerName",
-            "in": "query",
             "x-nullable": false
           },
           {
@@ -296,7 +302,11 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "x-nullable": true,
+            "description": "",
+            "schema": {
+              "type": "file"
+            }
           }
         }
       }
@@ -318,6 +328,12 @@
             "name": "combatId",
             "in": "query",
             "format": "guid",
+            "x-nullable": false
+          },
+          {
+            "type": "string",
+            "name": "playerName",
+            "in": "query",
             "x-nullable": false
           },
           {
@@ -356,18 +372,9 @@
           },
           {
             "type": "string",
-            "name": "side",
-            "in": "path",
-            "required": true,
-            "x-schema": {
-              "$ref": "#/definitions/CombatSide"
-            },
-            "x-nullable": false,
-            "enum": [
-              "none",
-              "left",
-              "right"
-            ]
+            "name": "playerName",
+            "in": "query",
+            "x-nullable": false
           },
           {
             "type": "integer",
@@ -376,11 +383,22 @@
             "required": true,
             "format": "int32",
             "x-nullable": false
+          },
+          {
+            "type": "string",
+            "name": "side",
+            "in": "path",
+            "required": true,
+            "x-nullable": false
           }
         ],
         "responses": {
           "200": {
-            "description": ""
+            "x-nullable": true,
+            "description": "",
+            "schema": {
+              "type": "file"
+            }
           }
         }
       }
@@ -402,23 +420,25 @@
           },
           {
             "type": "string",
+            "name": "playerName",
+            "in": "query",
+            "x-nullable": false
+          },
+          {
+            "type": "string",
             "name": "side",
             "in": "path",
             "required": true,
-            "x-schema": {
-              "$ref": "#/definitions/CombatSide"
-            },
-            "x-nullable": false,
-            "enum": [
-              "none",
-              "left",
-              "right"
-            ]
+            "x-nullable": false
           }
         ],
         "responses": {
           "200": {
-            "description": ""
+            "x-nullable": true,
+            "description": "",
+            "schema": {
+              "type": "file"
+            }
           }
         }
       }
@@ -1094,7 +1114,9 @@
       "type": "object",
       "required": [
         "id",
-        "leftPlayerName"
+        "leftPlayerName",
+        "leftReady",
+        "rightReady"
       ],
       "properties": {
         "id": {
@@ -1110,6 +1132,9 @@
         "leftBackCharacter": {
           "type": "string"
         },
+        "leftReady": {
+          "type": "boolean"
+        },
         "rightPlayerName": {
           "type": "string"
         },
@@ -1118,6 +1143,9 @@
         },
         "rightBackCharacter": {
           "type": "string"
+        },
+        "rightReady": {
+          "type": "boolean"
         }
       }
     },
@@ -1125,21 +1153,21 @@
       "type": "object",
       "required": [
         "playerName",
-        "frontCharacter",
-        "backCharacter"
+        "ready"
       ],
       "properties": {
         "playerName": {
           "type": "string",
           "minLength": 1
         },
+        "ready": {
+          "type": "boolean"
+        },
         "frontCharacter": {
-          "type": "string",
-          "minLength": 1
+          "type": "string"
         },
         "backCharacter": {
-          "type": "string",
-          "minLength": 1
+          "type": "string"
         }
       }
     }

@@ -8,8 +8,8 @@ public class UpdateCombatInPreparationRequest
     public string PlayerName { get; set; }
 
     [Required]
-    public string FrontCharacter { get; set; }
+    public bool Ready { get; set; }
 
-    [Required]
-    public string BackCharacter { get; set; }
+    public string? FrontCharacter { get; set; }
+    public string? BackCharacter { get; set; }
 }

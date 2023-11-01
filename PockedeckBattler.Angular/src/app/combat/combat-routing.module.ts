@@ -14,7 +14,7 @@ const routes: Routes = [
     component: CombatSelectionComponent,
   },
   {
-    path: 'creation',
+    path: 'creation/:id',
     component: CombatCreationComponent,
   },
 ];

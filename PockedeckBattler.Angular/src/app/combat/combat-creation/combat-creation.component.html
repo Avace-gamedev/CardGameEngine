@@ -1,4 +1,4 @@
-<section class="container h-100 vstack gap-4 py-4">
+<section class="container h-100 vstack gap-4 py-4" *ngIf="combat">
   <div class="row">
     <h1 class="text-center">Combat creation</h1>
   </div>
@@ -6,23 +6,31 @@
   <div class="row flex-fill overflow-y-auto">
     <div class="col-lg">
       <app-combat-creation-side
-        name="Player"
+        [name]="combat.leftPlayerName"
         [characters]="characters"
         [invertSlotPositions]="true"
+        [readonly]="side !== CombatSide.Left"
       ></app-combat-creation-side>
     </div>
     <div class="col-lg">
       <app-combat-creation-side
-        name="Opponent"
+        [name]="combat.rightPlayerName"
         [characters]="characters"
-        [disableNameEdition]="true"
+        [readonly]="side !== CombatSide.Right"
+        *ngIf="combat.rightPlayerName"
       ></app-combat-creation-side>
+      <app-combat-empty-side *ngIf="!combat.rightPlayerName">
+      </app-combat-empty-side>
     </div>
   </div>
 
   <div class="flex-fill"></div>
 
-  <div class="row">
-    <button class="btn btn-primary">Start</button>
-  </div>
+  <button
+    class="btn btn-primary"
+    [class.disabled]="!combat || !combat.leftReady || !combat.rightReady"
+    [disabled]="!combat || !combat.leftReady || !combat.rightReady"
+  >
+    Start
+  </button>
 </section>

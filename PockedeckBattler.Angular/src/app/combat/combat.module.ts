@@ -8,12 +8,14 @@ import { CombatCreationComponent } from './combat-creation/combat-creation.compo
 
 import { CombatRoutingModule } from './combat-routing.module';
 import { CombatSelectionComponent } from './combat-selection/combat-selection.component';
+import { CombatEmptySideComponent } from './combat-creation/combat-empty-side/combat-empty-side.component';
 
 @NgModule({
   declarations: [
     CombatSelectionComponent,
     CombatCreationComponent,
     CombatCreationSideComponent,
+    CombatEmptySideComponent,
   ],
   imports: [
     CommonModule,

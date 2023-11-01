@@ -4,6 +4,7 @@
     [class.border-4]="characterBeingDragged"
     [ngStyle]="{ 'width.px': imgSize, 'height.px': imgSize }"
     [ngbPopover]="enablePopoverDetails ? popover : null"
+    container="body"
     triggers="mouseenter:mouseleave"
     (dragenter)="dragenter($event); $event.preventDefault()"
     (dragover)="$event.preventDefault()"

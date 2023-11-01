@@ -5,6 +5,7 @@
     color: 'var(' + textColorCssVariable + ')'
   }"
   [ngbPopover]="enablePopoverDetails ? cardTpl : null"
+  container="body"
   [placement]="popoverDetailsPlacement"
   triggers="mouseenter:mouseleave"
 >

@@ -1,11 +1,13 @@
 ﻿using CardGame.Engine.Characters;
 using CardGame.Engine.Effects.Passive;
+using CardGame.Engine.Effects.Triggered;
 
 namespace CardGame.Engine.Combats;
 
 public class CharacterCombatState
 {
     readonly List<PassiveEffectInstance> _passiveEffects = new();
+    readonly List<TriggeredEffectInstance> _triggeredEffects = new();
 
     public CharacterCombatState(CombatInstance combat, CombatSide side, Character character)
     {
@@ -32,6 +34,7 @@ public class CharacterCombatState
     public int Health { get; private set; }
     public int Shield { get; private set; }
     public IReadOnlyList<PassiveEffectInstance> PassiveEffects => _passiveEffects;
+    public IReadOnlyList<TriggeredEffectInstance> TriggeredEffects => _triggeredEffects;
 
     public DamageReceived Damage(int amount)
     {
@@ -92,9 +95,9 @@ public class CharacterCombatState
         _passiveEffects.Add(passiveEffect);
     }
 
-    public void RemovePassiveEffect(PassiveEffectInstance passiveEffect)
+    public void AddTriggeredEffect(TriggeredEffectInstance triggeredEffect)
     {
-        _passiveEffects.Remove(passiveEffect);
+        _triggeredEffects.Add(triggeredEffect);
     }
 
     void SetShield(int shield)

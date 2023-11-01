@@ -1,0 +1,9 @@
+<div class="hstack gap-2 align-items-start">
+  <div>
+    <i class="bi bi-stopwatch-fill"></i>
+  </div>
+  <div class="vstack">
+    <span class="text-nowrap">{{ effectTriggerString }}:</span>
+    <app-active-effect-line [effect]="effect?.effect"></app-active-effect-line>
+  </div>
+</div>

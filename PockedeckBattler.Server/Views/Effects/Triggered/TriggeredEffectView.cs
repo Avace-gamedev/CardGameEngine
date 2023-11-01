@@ -1,13 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using CardGame.Engine.Effects.Triggered;
 using PockedeckBattler.Server.Views.Effects.Active;
-using PockedeckBattler.Server.Views.Effects.Passive;
 
 namespace PockedeckBattler.Server.Views.Effects.Triggered;
 
-public class TriggeredEffectView : PassiveEffectView
+public class TriggeredEffectView
 {
-    public TriggeredEffectView(EffectTriggerView trigger, ActiveEffectView effect, int duration) : base(duration)
+    public TriggeredEffectView(EffectTriggerView trigger, ActiveEffectView effect)
     {
         Trigger = trigger;
         Effect = effect;
@@ -22,8 +21,8 @@ public class TriggeredEffectView : PassiveEffectView
 
 public static class TriggeredEffectViewMappingExtensions
 {
-    public static TriggeredEffectView TriggeredEffectView(this TriggeredEffect effect)
+    public static TriggeredEffectView View(this TriggeredEffect effect)
     {
-        return new TriggeredEffectView(effect.Trigger.View(), effect.Effect.View(), effect.Duration);
+        return new TriggeredEffectView(effect.Trigger.View(), effect.Effect.View());
     }
 }

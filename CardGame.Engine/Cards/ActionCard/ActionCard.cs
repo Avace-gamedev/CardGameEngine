@@ -1,5 +1,6 @@
 ﻿using CardGame.Engine.Combats;
 using CardGame.Engine.Effects.Active;
+using CardGame.Engine.Effects.Triggered;
 
 namespace CardGame.Engine.Cards.ActionCard;
 
@@ -61,5 +62,10 @@ public class ActionCard : Card
     public static ActionCard AddPassive(string name, string? description, int apCost, ActionCardTarget target, AddPassiveEffect passiveEffect)
     {
         return new ActionCard(name, description, apCost, target, passiveEffect);
+    }
+
+    public static ActionCard AddTriggered(string name, string? description, int apCost, ActionCardTarget target, TriggeredEffect triggeredEffect)
+    {
+        return new ActionCard(name, description, apCost, target, new AddTriggeredEffect(triggeredEffect));
     }
 }

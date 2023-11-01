@@ -27,6 +27,7 @@
         draggable="true"
         (dragstart)="dragCharacter($event, character)"
         [ngbPopover]="characterCardTpl"
+        container="body"
         [popoverContext]="{ $implicit: character }"
         [placement]="invertSlotPositions ? 'right' : 'left'"
         triggers="mouseenter:mouseleave"

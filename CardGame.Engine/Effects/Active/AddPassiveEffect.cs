@@ -1,6 +1,5 @@
 ﻿using CardGame.Engine.Combats;
 using CardGame.Engine.Effects.Passive;
-using CardGame.Engine.Effects.Triggered;
 
 namespace CardGame.Engine.Effects.Active;
 
@@ -19,11 +18,6 @@ public class AddPassiveEffect : ActiveEffect
         {
             target.AddPassiveEffect(new PassiveEffectInstance(Effect, source));
         }
-    }
-
-    public static AddPassiveEffect DamageOverTime(DamageEffect damage, int duration, TurnMoment triggerMoment = TurnMoment.StartOfTurn)
-    {
-        return new AddPassiveEffect(new TriggeredEffect(damage, new TurnTrigger(triggerMoment), duration));
     }
 
     public static AddPassiveEffect StatsModifier(StatsModifier modifier, int duration)

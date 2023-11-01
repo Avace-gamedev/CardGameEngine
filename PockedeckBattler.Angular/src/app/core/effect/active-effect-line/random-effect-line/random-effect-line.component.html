@@ -1,10 +1,10 @@
 <ng-container *ngIf="effect && effect.entries">
-  <div class="hstack">
+  <div class="hstack align-items-start">
     <div class="pe-1">
       <i class="bi bi-dice-2-fill"></i>
     </div>
     <ng-container *ngFor="let effect of effect?.entries ?? []">
-      <div class="hstack gap-1" *ngIf="effect">
+      <div class="hstack gap-1 align-items-start" *ngIf="effect">
         <span class="fw-semibold text-nowrap">
           {{ effect.probability | percent }}:
         </span>

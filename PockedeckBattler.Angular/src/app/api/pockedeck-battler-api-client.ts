@@ -735,6 +735,11 @@ export abstract class ActiveEffectView implements IActiveEffectView {
             result.init(data);
             return result;
         }
+        if (data["type"] === "AddTriggeredEffectView") {
+            let result = new AddTriggeredEffectView();
+            result.init(data);
+            return result;
+        }
         if (data["type"] === "RandomEffectView") {
             let result = new RandomEffectView();
             result.init(data);
@@ -936,11 +941,6 @@ export class PassiveEffectView implements IPassiveEffectView {
             result.init(data);
             return result;
         }
-        if (data["type"] === "TriggeredEffectView") {
-            let result = new TriggeredEffectView();
-            result.init(data);
-            return result;
-        }
         let result = new PassiveEffectView();
         result.init(data);
         return result;
@@ -1043,43 +1043,45 @@ export interface IStatsModifier {
     damageReductionAdditiveModifier: number;
 }
 
-export class TriggeredEffectView extends PassiveEffectView implements ITriggeredEffectView {
+export class TriggeredEffectView implements ITriggeredEffectView {
     trigger!: EffectTriggerView;
     effect!: ActiveEffectView;
 
     constructor(data?: ITriggeredEffectView) {
-        super(data);
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
         if (!data) {
             this.trigger = new EffectTriggerView();
         }
-        this._discriminator = "TriggeredEffectView";
     }
 
-    override init(_data?: any) {
-        super.init(_data);
+    init(_data?: any) {
         if (_data) {
             this.trigger = _data["trigger"] ? EffectTriggerView.fromJS(_data["trigger"]) : new EffectTriggerView();
             this.effect = _data["effect"] ? ActiveEffectView.fromJS(_data["effect"]) : <any>undefined;
         }
     }
 
-    static override fromJS(data: any): TriggeredEffectView {
+    static fromJS(data: any): TriggeredEffectView {
         data = typeof data === 'object' ? data : {};
         let result = new TriggeredEffectView();
         result.init(data);
         return result;
     }
 
-    override toJSON(data?: any) {
+    toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["trigger"] = this.trigger ? this.trigger.toJSON() : <any>undefined;
         data["effect"] = this.effect ? this.effect.toJSON() : <any>undefined;
-        super.toJSON(data);
         return data;
     }
 }
 
-export interface ITriggeredEffectView extends IPassiveEffectView {
+export interface ITriggeredEffectView {
     trigger: EffectTriggerView;
     effect: ActiveEffectView;
 }
@@ -1124,7 +1126,9 @@ export interface IEffectTriggerView {
 }
 
 export class TurnTriggerView extends EffectTriggerView implements ITurnTriggerView {
-    moment!: TurnMoment;
+    moment!: TriggerMoment;
+    duration!: number;
+    initialDelay!: number;
 
     constructor(data?: ITurnTriggerView) {
         super(data);
@@ -1135,6 +1139,8 @@ export class TurnTriggerView extends EffectTriggerView implements ITurnTriggerVi
         super.init(_data);
         if (_data) {
             this.moment = _data["moment"];
+            this.duration = _data["duration"];
+            this.initialDelay = _data["initialDelay"];
         }
     }
 
@@ -1148,18 +1154,61 @@ export class TurnTriggerView extends EffectTriggerView implements ITurnTriggerVi
     override toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["moment"] = this.moment;
+        data["duration"] = this.duration;
+        data["initialDelay"] = this.initialDelay;
         super.toJSON(data);
         return data;
     }
 }
 
 export interface ITurnTriggerView extends IEffectTriggerView {
-    moment: TurnMoment;
+    moment: TriggerMoment;
+    duration: number;
+    initialDelay: number;
 }
 
-export enum TurnMoment {
-    StartOfTurn = "startOfTurn",
-    EndOfTurn = "endOfTurn",
+export enum TriggerMoment {
+    StartOfSourceTurn = "startOfSourceTurn",
+    EndOfSourceTurn = "endOfSourceTurn",
+    StartOfTargetTurn = "startOfTargetTurn",
+    EndOfTargetTurn = "endOfTargetTurn",
+}
+
+export class AddTriggeredEffectView extends ActiveEffectView implements IAddTriggeredEffectView {
+    triggeredEffect!: TriggeredEffectView;
+
+    constructor(data?: IAddTriggeredEffectView) {
+        super(data);
+        if (!data) {
+            this.triggeredEffect = new TriggeredEffectView();
+        }
+        this._discriminator = "AddTriggeredEffectView";
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.triggeredEffect = _data["triggeredEffect"] ? TriggeredEffectView.fromJS(_data["triggeredEffect"]) : new TriggeredEffectView();
+        }
+    }
+
+    static override fromJS(data: any): AddTriggeredEffectView {
+        data = typeof data === 'object' ? data : {};
+        let result = new AddTriggeredEffectView();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["triggeredEffect"] = this.triggeredEffect ? this.triggeredEffect.toJSON() : <any>undefined;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IAddTriggeredEffectView extends IActiveEffectView {
+    triggeredEffect: TriggeredEffectView;
 }
 
 export class RandomEffectView extends ActiveEffectView implements IRandomEffectView {

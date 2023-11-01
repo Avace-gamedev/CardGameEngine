@@ -3,24 +3,34 @@
     class="text-nowrap"
     *ngIf="effect.statsModifier.apCostAdditiveModifier !== 0"
   >
-    {{ effect.statsModifier.apCostAdditiveModifier | sign }} AP cost
+    {{ effect.statsModifier.apCostAdditiveModifier | sign }} AP cost ({{
+      effect.duration
+    }}
+    turns)
   </div>
   <div
     class="text-nowrap"
     *ngIf="effect.statsModifier.damageAdditiveModifier !== 0"
   >
-    {{ effect.statsModifier.damageAdditiveModifier | sign }} damage
+    {{ effect.statsModifier.damageAdditiveModifier | sign }} damage ({{
+      effect.duration
+    }}
+    turns)
   </div>
   <div
     class="text-nowrap"
     *ngIf="effect.statsModifier.damageReductionAdditiveModifier !== 0"
   >
     {{ effect.statsModifier.damageReductionAdditiveModifier | sign }} resistance
+    ({{ effect.duration }} turns)
   </div>
   <div
     class="text-nowrap"
     *ngIf="effect.statsModifier.healthAdditiveModifier !== 0"
   >
-    {{ effect.statsModifier.healthAdditiveModifier | sign }} HP
+    {{ effect.statsModifier.healthAdditiveModifier | sign }} HP ({{
+      effect.duration
+    }}
+    turns)
   </div>
 </div>

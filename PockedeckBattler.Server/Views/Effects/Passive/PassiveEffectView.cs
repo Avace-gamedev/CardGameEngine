@@ -27,7 +27,6 @@ public static class PassiveEffectViewMappingExtensions
         return effect switch
         {
             PassiveStatsModifier passiveStatsModifier => passiveStatsModifier.View(),
-            TriggeredEffect triggeredEffect => triggeredEffect.TriggeredEffectView(),
             _ => throw new ArgumentOutOfRangeException(nameof(effect))
         };
     }

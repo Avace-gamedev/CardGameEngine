@@ -2,6 +2,7 @@
 using CardGame.Engine.Characters;
 using CardGame.Engine.Combats;
 using CardGame.Engine.Effects.Active;
+using CardGame.Engine.Effects.Triggered;
 using PockedeckBattler.Server.Content.Characters.Attributes;
 
 namespace PockedeckBattler.Server.Content.Characters;
@@ -29,7 +30,7 @@ public static partial class Characters
                 ActionCardTarget.FrontOpponent,
                 5,
                 Element.Fire,
-                RandomEffect.Uniform(AddPassiveEffect.DamageOverTime(new DamageEffect(2, Element.Fire), 3), null, null, null)
+                RandomEffect.Uniform(new AddTriggeredEffect(TriggeredEffect.DamageOverTime(new DamageEffect(2, Element.Fire), 3)), null, null, null)
             ),
             ActionCard.AddPassive(
                 "Growl",
@@ -59,7 +60,8 @@ public static partial class Characters
                 ActionCardTarget.FrontOpponent,
                 AddPassiveEffect.StatsModifier(new StatsModifier { DamageReductionAdditiveModifier = -2 }, 3)
             ),
-            ActionCard.Shield("Protect", "Use its shell to protect against next attacks.", 3, ActionCardTarget.Self, 10)
+            ActionCard.Shield("Protect", "Use its shell to protect against next attacks.", 3, ActionCardTarget.Self, 10),
+            ActionCard.Damage("Hydro Pump", "Blasts water at high power to strike the foe.", 7, ActionCardTarget.FrontOpponent, 36, Element.Water)
         }
     );
 
@@ -81,12 +83,19 @@ public static partial class Characters
                 ActionCardTarget.FrontOpponent,
                 AddPassiveEffect.StatsModifier(new StatsModifier { DamageReductionAdditiveModifier = 2 }, 3)
             ),
-            ActionCard.AddPassive(
+            ActionCard.AddTriggered(
                 "Leech Seed",
                 "Plants a seed on the target. It slowly drains the target's HP for the attacker.",
                 3,
                 ActionCardTarget.FrontOpponent,
-                AddPassiveEffect.DamageOverTime(new DamageEffect(2, Element.Earth) { LifeStealRatio = 1 }, 3)
+                TriggeredEffect.DamageOverTime(new DamageEffect(2, Element.Earth) { LifeStealRatio = 1 }, 3)
+            ),
+            ActionCard.AddTriggered(
+                "Solar Beam",
+                "Gathers light energy, then blasts a bundled beam on the next turn. ",
+                7,
+                ActionCardTarget.AllOpponents,
+                TriggeredEffect.DamageOverTime(new DamageEffect(36, Element.Earth), 0, 1, TurnTrigger.TriggerMoment.StartOfSourceTurn)
             )
         }
     );

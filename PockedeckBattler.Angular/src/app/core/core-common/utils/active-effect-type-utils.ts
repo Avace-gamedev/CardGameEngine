@@ -1,6 +1,7 @@
 import {
   ActiveEffectView,
   AddPassiveEffectView,
+  AddTriggeredEffectView,
   DamageEffectView,
   HealEffectView,
   RandomEffectView,
@@ -24,6 +25,8 @@ export class ActiveEffectTypeUtils {
       return ActiveEffectType.Random;
     } else if (card instanceof AddPassiveEffectView) {
       return ActiveEffectType.AddPassive;
+    } else if (card instanceof AddTriggeredEffectView) {
+      return ActiveEffectType.AddTriggered;
     }
 
     return ActiveEffectType.None;

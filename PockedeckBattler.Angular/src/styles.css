@@ -3,6 +3,7 @@
 html,
 body {
   height: 100%;
+  overflow: hidden;
 
   --damage-card-color: #c6303e;
   --heal-card-color: #13795b;

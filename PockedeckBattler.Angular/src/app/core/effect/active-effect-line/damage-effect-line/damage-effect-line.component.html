@@ -3,12 +3,11 @@
   {{ effect?.amount ?? "?" }}
   damage
   <ng-container *ngIf="effect && effect.lifeStealRatio == 1">
-    <span class="fw-semibold">lifesteal</span>
+    (lifesteal)
   </ng-container>
   <ng-container
     *ngIf="effect && effect.lifeStealRatio != 1 && effect.lifeStealRatio > 0"
   >
-    <span class="fw-semibold">lifesteal</span>
-    {{ effect.lifeStealRatio | percent }}
+    (lifesteal: {{ effect.lifeStealRatio | percent }})
   </ng-container>
 </div>

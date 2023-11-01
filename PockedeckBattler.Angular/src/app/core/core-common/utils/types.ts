@@ -13,10 +13,10 @@ export enum ActiveEffectType {
   Shield = 'shield',
   Random = 'random',
   AddPassive = 'add-passive',
+  AddTriggered = 'add-triggered',
 }
 
 export enum PassiveEffectType {
   None = 'non',
   Stats = 'stats',
-  Triggered = 'triggered',
 }

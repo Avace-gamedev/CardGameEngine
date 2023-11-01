@@ -1,22 +1,25 @@
-﻿using CardGame.Engine.Combats;
-using CardGame.Engine.Effects.Triggered;
+﻿using CardGame.Engine.Effects.Triggered;
 
 namespace PockedeckBattler.Server.Views.Effects.Triggered;
 
 public class TurnTriggerView : EffectTriggerView
 {
-    public TurnTriggerView(TurnMoment moment)
+    public TurnTriggerView(TurnTrigger.TriggerMoment moment, int duration, int initialDelay)
     {
         Moment = moment;
+        Duration = duration;
+        InitialDelay = initialDelay;
     }
 
-    public TurnMoment Moment { get; }
+    public TurnTrigger.TriggerMoment Moment { get; }
+    public int Duration { get; }
+    public int InitialDelay { get; }
 }
 
 public static class TurnTriggerViewMappingExtensions
 {
     public static TurnTriggerView View(this TurnTrigger effect)
     {
-        return new TurnTriggerView(effect.Moment);
+        return new TurnTriggerView(effect.Moment, effect.Duration, effect.InitialDelay);
     }
 }

@@ -591,26 +591,19 @@
       }
     },
     "TriggeredEffectView": {
-      "allOf": [
-        {
-          "$ref": "#/definitions/PassiveEffectView"
+      "type": "object",
+      "required": [
+        "trigger",
+        "effect"
+      ],
+      "properties": {
+        "trigger": {
+          "$ref": "#/definitions/EffectTriggerView"
         },
-        {
-          "type": "object",
-          "required": [
-            "trigger",
-            "effect"
-          ],
-          "properties": {
-            "trigger": {
-              "$ref": "#/definitions/EffectTriggerView"
-            },
-            "effect": {
-              "$ref": "#/definitions/ActiveEffectView"
-            }
-          }
+        "effect": {
+          "$ref": "#/definitions/ActiveEffectView"
         }
-      ]
+      }
     },
     "EffectTriggerView": {
       "type": "object",
@@ -632,26 +625,58 @@
         {
           "type": "object",
           "required": [
-            "moment"
+            "moment",
+            "duration",
+            "initialDelay"
           ],
           "properties": {
             "moment": {
-              "$ref": "#/definitions/TurnMoment"
+              "$ref": "#/definitions/TriggerMoment"
+            },
+            "duration": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "initialDelay": {
+              "type": "integer",
+              "format": "int32"
             }
           }
         }
       ]
     },
-    "TurnMoment": {
+    "TriggerMoment": {
       "type": "string",
       "description": "",
       "x-enumNames": [
-        "StartOfTurn",
-        "EndOfTurn"
+        "StartOfSourceTurn",
+        "EndOfSourceTurn",
+        "StartOfTargetTurn",
+        "EndOfTargetTurn"
       ],
       "enum": [
-        "startOfTurn",
-        "endOfTurn"
+        "startOfSourceTurn",
+        "endOfSourceTurn",
+        "startOfTargetTurn",
+        "endOfTargetTurn"
+      ]
+    },
+    "AddTriggeredEffectView": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ActiveEffectView"
+        },
+        {
+          "type": "object",
+          "required": [
+            "triggeredEffect"
+          ],
+          "properties": {
+            "triggeredEffect": {
+              "$ref": "#/definitions/TriggeredEffectView"
+            }
+          }
+        }
       ]
     },
     "RandomEffectView": {

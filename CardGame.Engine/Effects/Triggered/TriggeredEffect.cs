@@ -16,10 +16,18 @@ public class TriggeredEffect
     public static TriggeredEffect DamageOverTime(
         DamageEffect damage,
         int duration,
-        int initialDelay = 0,
         TurnTrigger.TriggerMoment triggerMoment = TurnTrigger.TriggerMoment.StartOfTargetTurn
     )
     {
-        return new TriggeredEffect(damage, new TurnTrigger(triggerMoment, duration, initialDelay));
+        return new TriggeredEffect(damage, new TurnTrigger(triggerMoment, duration));
+    }
+
+    public static TriggeredEffect DelayedDamage(
+        DamageEffect damage,
+        int delay,
+        TurnTrigger.TriggerMoment triggerMoment = TurnTrigger.TriggerMoment.StartOfTargetTurn
+    )
+    {
+        return new TriggeredEffect(damage, new TurnTrigger(triggerMoment, 0, delay));
     }
 }

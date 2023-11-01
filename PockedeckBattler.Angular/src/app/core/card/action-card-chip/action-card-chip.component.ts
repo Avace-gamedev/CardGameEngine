@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { Placement } from '@ng-bootstrap/ng-bootstrap';
 import {
   ActionCardView,
+  AddTriggeredEffectView,
   DamageEffectView,
   Element,
 } from '../../../api/pockedeck-battler-api-client';
@@ -33,6 +34,7 @@ export class ActionCardChipComponent {
   protected bgColorCssVariable: string | undefined;
   protected textColorCssVariable: string | undefined;
   protected damage: { value: number; element: Element } | undefined;
+  protected isTriggered: boolean = false;
 
   private update() {
     const type = this._card
@@ -46,6 +48,7 @@ export class ActionCardChipComponent {
       ? ActionCardTypeUtils.computeTextColor(this.card)
       : undefined;
     this.damage = this.computeDamage();
+    this.isTriggered = this.card?.mainEffect instanceof AddTriggeredEffectView;
   }
 
   private computeDamage(): { value: number; element: Element } | undefined {

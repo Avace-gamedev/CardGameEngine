@@ -1,0 +1,31 @@
+<div
+  class="card p-1 hstack gap-2 user-select-none"
+  [ngStyle]="{
+    backgroundColor: 'var(' + bgColorCssVariable + ')',
+    color: 'var(' + textColorCssVariable + ')'
+  }"
+  [ngbPopover]="enablePopoverDetails ? cardTpl : null"
+  [placement]="popoverDetailsPlacement"
+  triggers="mouseenter:mouseleave"
+>
+  <app-action-card-type-icon [card]="card"></app-action-card-type-icon>
+
+  <span class="text-nowrap flex-fill">{{ card?.name ?? "???" }}</span>
+
+  <div class="vr"></div>
+
+  <span class="hstack gap-1">
+    <app-action-points [value]="card?.apCost"></app-action-points>
+  </span>
+
+  <span class="hstack gap-1" *ngIf="damage">
+    <app-card-damage
+      [value]="damage.value"
+      [element]="damage.element"
+    ></app-card-damage>
+  </span>
+</div>
+
+<ng-template #cardTpl>
+  <app-action-card [card]="card" [contentOnly]="true"></app-action-card>
+</ng-template>

@@ -756,6 +756,7 @@ export interface IActiveEffectView {
 export class DamageEffectView extends ActiveEffectView implements IDamageEffectView {
     amount!: number;
     element!: Element;
+    lifeStealRatio!: number;
 
     constructor(data?: IDamageEffectView) {
         super(data);
@@ -767,6 +768,7 @@ export class DamageEffectView extends ActiveEffectView implements IDamageEffectV
         if (_data) {
             this.amount = _data["amount"];
             this.element = _data["element"];
+            this.lifeStealRatio = _data["lifeStealRatio"];
         }
     }
 
@@ -781,6 +783,7 @@ export class DamageEffectView extends ActiveEffectView implements IDamageEffectV
         data = typeof data === 'object' ? data : {};
         data["amount"] = this.amount;
         data["element"] = this.element;
+        data["lifeStealRatio"] = this.lifeStealRatio;
         super.toJSON(data);
         return data;
     }
@@ -789,6 +792,7 @@ export class DamageEffectView extends ActiveEffectView implements IDamageEffectV
 export interface IDamageEffectView extends IActiveEffectView {
     amount: number;
     element: Element;
+    lifeStealRatio: number;
 }
 
 export enum Element {

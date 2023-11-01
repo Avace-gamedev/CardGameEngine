@@ -3,4 +3,16 @@
 html,
 body {
   height: 100%;
+
+  --damage-card-color: #c6303e;
+  --heal-card-color: #13795b;
+  --shield-card-color: #0d6efd;
+  --effect-card-color: #4c0bce;
+  --other-card-color: #6c757d;
+
+  --text-on-damage-card-color: #fff;
+  --text-on-heal-card-color: #fff;
+  --text-on-shield-card-color: #fff;
+  --text-on-effect-card-color: #fff;
+  --text-on-other-card-color: #fff;
 }

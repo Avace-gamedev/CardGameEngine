@@ -29,7 +29,7 @@ public static partial class Characters
                 ActionCardTarget.FrontOpponent,
                 5,
                 Element.Fire,
-                RandomEffect.Uniform(AddPassiveEffect.DamageOverTime(2, Element.Fire, 3), null, null, null)
+                RandomEffect.Uniform(AddPassiveEffect.DamageOverTime(new DamageEffect(2, Element.Fire), 3), null, null, null)
             ),
             ActionCard.AddPassive(
                 "Growl",
@@ -58,7 +58,8 @@ public static partial class Characters
                 3,
                 ActionCardTarget.FrontOpponent,
                 AddPassiveEffect.StatsModifier(new StatsModifier { DamageReductionAdditiveModifier = -2 }, 3)
-            )
+            ),
+            ActionCard.Shield("Protect", "Use its shell to protect against next attacks.", 3, ActionCardTarget.Self, 10)
         }
     );
 
@@ -79,6 +80,13 @@ public static partial class Characters
                 3,
                 ActionCardTarget.FrontOpponent,
                 AddPassiveEffect.StatsModifier(new StatsModifier { DamageReductionAdditiveModifier = 2 }, 3)
+            ),
+            ActionCard.AddPassive(
+                "Leech Seed",
+                "Plants a seed on the target. It slowly drains the target's HP for the attacker.",
+                3,
+                ActionCardTarget.FrontOpponent,
+                AddPassiveEffect.DamageOverTime(new DamageEffect(2, Element.Earth) { LifeStealRatio = 1 }, 3)
             )
         }
     );

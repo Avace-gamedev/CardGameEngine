@@ -21,9 +21,9 @@ public class AddPassiveEffect : ActiveEffect
         }
     }
 
-    public static AddPassiveEffect DamageOverTime(int damage, Element element, int duration, TurnMoment triggerMoment = TurnMoment.StartOfTurn)
+    public static AddPassiveEffect DamageOverTime(DamageEffect damage, int duration, TurnMoment triggerMoment = TurnMoment.StartOfTurn)
     {
-        return new AddPassiveEffect(new TriggeredEffect(new DamageEffect(damage, element), new TurnTrigger(triggerMoment), duration));
+        return new AddPassiveEffect(new TriggeredEffect(damage, new TurnTrigger(triggerMoment), duration));
     }
 
     public static AddPassiveEffect StatsModifier(StatsModifier modifier, int duration)

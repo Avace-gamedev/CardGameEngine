@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CharacterView } from '../../../api/pockedeck-battler-api-client';
 
 @Component({
@@ -23,13 +23,32 @@ export class CombatCreationSideComponent {
   public disableNameEdition: boolean = false;
 
   @Input()
-  public characters: CharacterView[] = [];
+  get characters(): CharacterView[] {
+    return this._characters;
+  }
+
+  set characters(value: CharacterView[]) {
+    this._characters = value;
+    this.autoSelect();
+  }
+  private _characters: CharacterView[] = [];
+
+  @Input()
+  public frontCharacter: CharacterView | undefined;
+
+  @Input()
+  public backCharacter: CharacterView | undefined;
 
   @Input()
   public invertSlotPositions: boolean = false;
 
-  protected frontCharacter: CharacterView | undefined;
-  protected backCharacter: CharacterView | undefined;
+  @Output()
+  public frontCharacterChange: EventEmitter<CharacterView | undefined> =
+    new EventEmitter<CharacterView | undefined>();
+
+  @Output()
+  public backCharacterChange: EventEmitter<CharacterView | undefined> =
+    new EventEmitter<CharacterView | undefined>();
 
   getAt(slot: 'front' | 'back'): CharacterView | undefined {
     switch (slot) {
@@ -42,9 +61,9 @@ export class CombatCreationSideComponent {
 
   swap() {
     if (this.frontCharacter && this.backCharacter) {
-      const tmp = this.backCharacter;
-      this.backCharacter = this.frontCharacter;
-      this.frontCharacter = tmp;
+      const tmp = this.frontCharacter;
+      this.setFront(this.backCharacter);
+      this.setBack(tmp);
     }
   }
 
@@ -62,19 +81,19 @@ export class CombatCreationSideComponent {
 
     switch (slot) {
       case 'front':
-        this.frontCharacter = character;
+        this.setFront(character);
         break;
       case 'back':
-        this.backCharacter = character;
+        this.setBack(character);
         break;
       default:
         if (
           !this.frontCharacter ||
           (this.frontCharacter && this.backCharacter)
         ) {
-          this.frontCharacter = character;
+          this.setFront(character);
         } else if (!this.backCharacter) {
-          this.backCharacter = character;
+          this.setBack(character);
         }
     }
   }
@@ -91,10 +110,10 @@ export class CombatCreationSideComponent {
   unselect(slot: 'front' | 'back') {
     switch (slot) {
       case 'front':
-        this.frontCharacter = undefined;
+        this.setFront(undefined);
         break;
       case 'back':
-        this.backCharacter = undefined;
+        this.setBack(undefined);
         break;
     }
   }
@@ -118,7 +137,7 @@ export class CombatCreationSideComponent {
     }
 
     const characterName = data.substring(10);
-    const character = this.characters.find(
+    const character = this._characters.find(
       (c) => c.identity.name === characterName,
     );
 
@@ -129,5 +148,31 @@ export class CombatCreationSideComponent {
     this.select(character, slot);
 
     $event.preventDefault();
+  }
+
+  private autoSelect() {
+    if (
+      (!this.frontCharacter || !this.backCharacter) &&
+      this._characters.length > 0
+    ) {
+      this.select(this._characters[0]);
+    }
+
+    if (
+      (!this.frontCharacter || !this.backCharacter) &&
+      this._characters.length > 1
+    ) {
+      this.select(this._characters[1]);
+    }
+  }
+
+  private setFront(character: CharacterView | undefined) {
+    this.frontCharacter = character;
+    this.frontCharacterChange.emit(character);
+  }
+
+  private setBack(character: CharacterView | undefined) {
+    this.backCharacter = character;
+    this.backCharacterChange.emit(character);
   }
 }

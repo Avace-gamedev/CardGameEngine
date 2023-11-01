@@ -103,6 +103,7 @@
         ],
         "operationId": "Combats_CreateCombat",
         "consumes": [
+          "application/json-patch+json",
           "application/json",
           "text/json",
           "application/*+json"
@@ -414,7 +415,281 @@
     },
     "ActiveEffectView": {
       "type": "object",
-      "x-abstract": true
+      "discriminator": "type",
+      "x-abstract": true,
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string"
+        }
+      }
+    },
+    "DamageEffectView": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ActiveEffectView"
+        },
+        {
+          "type": "object",
+          "required": [
+            "amount",
+            "element",
+            "lifeStealRatio"
+          ],
+          "properties": {
+            "amount": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "element": {
+              "$ref": "#/definitions/Element"
+            },
+            "lifeStealRatio": {
+              "type": "number",
+              "format": "float"
+            }
+          }
+        }
+      ]
+    },
+    "Element": {
+      "type": "string",
+      "description": "",
+      "x-enumNames": [
+        "Neutral",
+        "Fire",
+        "Earth",
+        "Water",
+        "Wind"
+      ],
+      "enum": [
+        "neutral",
+        "fire",
+        "earth",
+        "water",
+        "wind"
+      ]
+    },
+    "HealEffectView": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ActiveEffectView"
+        },
+        {
+          "type": "object",
+          "required": [
+            "amount"
+          ],
+          "properties": {
+            "amount": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        }
+      ]
+    },
+    "ShieldEffectView": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ActiveEffectView"
+        },
+        {
+          "type": "object",
+          "required": [
+            "amount"
+          ],
+          "properties": {
+            "amount": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        }
+      ]
+    },
+    "AddPassiveEffectView": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ActiveEffectView"
+        },
+        {
+          "type": "object",
+          "required": [
+            "passiveEffect"
+          ],
+          "properties": {
+            "passiveEffect": {
+              "$ref": "#/definitions/PassiveEffectView"
+            }
+          }
+        }
+      ]
+    },
+    "PassiveEffectView": {
+      "type": "object",
+      "discriminator": "type",
+      "required": [
+        "duration",
+        "type"
+      ],
+      "properties": {
+        "duration": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "type": {
+          "type": "string"
+        }
+      }
+    },
+    "PassiveStatsModifierView": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/PassiveEffectView"
+        },
+        {
+          "type": "object",
+          "required": [
+            "statsModifier"
+          ],
+          "properties": {
+            "statsModifier": {
+              "$ref": "#/definitions/StatsModifier"
+            }
+          }
+        }
+      ]
+    },
+    "StatsModifier": {
+      "type": "object",
+      "required": [
+        "healthAdditiveModifier",
+        "apCostAdditiveModifier",
+        "damageAdditiveModifier",
+        "damageReductionAdditiveModifier"
+      ],
+      "properties": {
+        "healthAdditiveModifier": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "apCostAdditiveModifier": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "damageAdditiveModifier": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "damageReductionAdditiveModifier": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "TriggeredEffectView": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/PassiveEffectView"
+        },
+        {
+          "type": "object",
+          "required": [
+            "trigger",
+            "effect"
+          ],
+          "properties": {
+            "trigger": {
+              "$ref": "#/definitions/EffectTriggerView"
+            },
+            "effect": {
+              "$ref": "#/definitions/ActiveEffectView"
+            }
+          }
+        }
+      ]
+    },
+    "EffectTriggerView": {
+      "type": "object",
+      "discriminator": "type",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string"
+        }
+      }
+    },
+    "TurnTriggerView": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/EffectTriggerView"
+        },
+        {
+          "type": "object",
+          "required": [
+            "moment"
+          ],
+          "properties": {
+            "moment": {
+              "$ref": "#/definitions/TurnMoment"
+            }
+          }
+        }
+      ]
+    },
+    "TurnMoment": {
+      "type": "string",
+      "description": "",
+      "x-enumNames": [
+        "StartOfTurn",
+        "EndOfTurn"
+      ],
+      "enum": [
+        "startOfTurn",
+        "endOfTurn"
+      ]
+    },
+    "RandomEffectView": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ActiveEffectView"
+        },
+        {
+          "type": "object",
+          "required": [
+            "entries"
+          ],
+          "properties": {
+            "entries": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/RandomEffectEntryView"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "RandomEffectEntryView": {
+      "type": "object",
+      "required": [
+        "effect",
+        "probability"
+      ],
+      "properties": {
+        "effect": {
+          "$ref": "#/definitions/ActiveEffectView"
+        },
+        "probability": {
+          "type": "number",
+          "format": "double"
+        }
+      }
     },
     "CombatView": {
       "allOf": [
@@ -533,45 +808,6 @@
           "type": "string"
         },
         "remainingDuration": {
-          "type": "integer",
-          "format": "int32"
-        }
-      }
-    },
-    "PassiveEffectView": {
-      "type": "object",
-      "required": [
-        "duration"
-      ],
-      "properties": {
-        "duration": {
-          "type": "integer",
-          "format": "int32"
-        }
-      }
-    },
-    "StatsModifier": {
-      "type": "object",
-      "required": [
-        "healthAdditiveModifier",
-        "apCostAdditiveModifier",
-        "damageAdditiveModifier",
-        "damageReductionAdditiveModifier"
-      ],
-      "properties": {
-        "healthAdditiveModifier": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "apCostAdditiveModifier": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "damageAdditiveModifier": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "damageReductionAdditiveModifier": {
           "type": "integer",
           "format": "int32"
         }

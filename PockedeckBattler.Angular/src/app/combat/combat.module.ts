@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
+import { NgbPopover, NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 import { CoreModule } from '../core/core.module';
 import { CombatCreationSideComponent } from './combat-creation/combat-creation-side/combat-creation-side.component';
 import { CombatCreationComponent } from './combat-creation/combat-creation.component';
@@ -21,6 +21,7 @@ import { CombatSelectionComponent } from './combat-selection/combat-selection.co
     FormsModule,
     NgbTooltip,
     CoreModule,
+    NgbPopover,
   ],
 })
 export class CombatModule {}

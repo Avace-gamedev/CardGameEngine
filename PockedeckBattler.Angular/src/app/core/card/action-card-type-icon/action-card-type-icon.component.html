@@ -1,0 +1,17 @@
+<ng-container [ngSwitch]="type">
+  <ng-container *ngSwitchCase="CardType.None">
+    <i class="bi bi-dot"></i>
+  </ng-container>
+  <ng-container *ngSwitchCase="CardType.Damage">
+    <i class="fw-bold">D</i>
+  </ng-container>
+  <ng-container *ngSwitchCase="CardType.Heal">
+    <i class="fw-bold">H</i>
+  </ng-container>
+  <ng-container *ngSwitchCase="CardType.Shield">
+    <i class="bi bi-shield-fill"></i>
+  </ng-container>
+  <ng-container *ngSwitchCase="CardType.Effect">
+    <i class="bi bi-tropical-storm"></i>
+  </ng-container>
+</ng-container>

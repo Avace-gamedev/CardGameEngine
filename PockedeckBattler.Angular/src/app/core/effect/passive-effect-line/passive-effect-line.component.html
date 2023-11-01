@@ -1,0 +1,16 @@
+<div class="hstack gap-1 text-nowrap">
+  <ng-container [ngSwitch]="type">
+    <ng-container *ngSwitchCase="PassiveEffectType.Stats">
+      <app-stats-passive-effect-line [effect]="$any(effect)">
+      </app-stats-passive-effect-line>
+    </ng-container>
+    <ng-container *ngSwitchCase="PassiveEffectType.Triggered">
+      <app-triggered-effect-line [effect]="$any(effect)">
+      </app-triggered-effect-line>
+    </ng-container>
+    <ng-container *ngSwitchDefault>
+      __passive_effect__ {{ effect?.toJSON()?.type }}
+    </ng-container>
+  </ng-container>
+  ({{ effect?.duration }} turns)
+</div>

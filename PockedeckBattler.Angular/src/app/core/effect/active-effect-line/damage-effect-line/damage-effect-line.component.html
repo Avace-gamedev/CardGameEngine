@@ -1,0 +1,14 @@
+<div class="hstack gap-1">
+  <app-element-icon [element]="effect?.element"></app-element-icon>
+  {{ effect?.amount ?? "?" }}
+  damage
+  <ng-container *ngIf="effect && effect.lifeStealRatio == 1">
+    <span class="fw-semibold">lifesteal</span>
+  </ng-container>
+  <ng-container
+    *ngIf="effect && effect.lifeStealRatio != 1 && effect.lifeStealRatio > 0"
+  >
+    <span class="fw-semibold">lifesteal</span>
+    {{ effect.lifeStealRatio | percent }}
+  </ng-container>
+</div>

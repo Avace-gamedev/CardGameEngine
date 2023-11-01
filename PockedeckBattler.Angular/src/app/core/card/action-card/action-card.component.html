@@ -1,0 +1,38 @@
+<ng-container *ngIf="!contentOnly">
+  <div class="card p-2">
+    <ng-container [ngTemplateOutlet]="content"></ng-container>
+  </div>
+</ng-container>
+<ng-container *ngIf="contentOnly">
+  <ng-container [ngTemplateOutlet]="content"></ng-container>
+</ng-container>
+
+<ng-template #content>
+  <div class="vstack gap-2">
+    <app-action-card-chip [card]="card"></app-action-card-chip>
+
+    <section>
+      <div class="fw-bold">Description</div>
+      <div>
+        {{ card?.description ?? "???" }}
+      </div>
+    </section>
+
+    <section>
+      <div class="fw-bold">Effects</div>
+      <div class="vstack">
+        <app-action-card-target-line [target]="card?.target">
+        </app-action-card-target-line>
+        <app-active-effect-line
+          [effect]="card?.mainEffect"
+        ></app-active-effect-line>
+        <ng-container *ngIf="card?.additionalEffects">
+          <app-active-effect-line
+            [effect]="effect"
+            *ngFor="let effect of card?.additionalEffects"
+          ></app-active-effect-line>
+        </ng-container>
+      </div>
+    </section>
+  </div>
+</ng-template>

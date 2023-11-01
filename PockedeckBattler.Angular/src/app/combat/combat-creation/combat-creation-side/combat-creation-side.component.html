@@ -15,8 +15,6 @@
     </div>
   </header>
 
-  <hr />
-
   <h3 class="text-center">Characters</h3>
 
   <div class="overflow-y-auto" style="max-height: 50vh">
@@ -28,12 +26,12 @@
         [class.active]="isSelected(character)"
         draggable="true"
         (dragstart)="dragCharacter($event, character)"
+        [ngbPopover]="characterCardTpl"
+        [popoverContext]="{ $implicit: character }"
+        [placement]="invertSlotPositions ? 'right' : 'left'"
+        triggers="mouseenter:mouseleave"
       >
-        <div class="d-flex w-100 justify-content-between">
-          <h5>{{ character.identity.displayName }}</h5>
-          <small>{{ character.statistics.maxHealth }} HP</small>
-        </div>
-        <p>{{ character.identity.description }}</p>
+        {{ character.identity.displayName }}
       </a>
     </ul>
   </div>
@@ -65,23 +63,67 @@
 </div>
 
 <ng-template #frontCharacterTpl>
-  <div class="col">
-    <h4 class="text-center">Front</h4>
+  <div class="w-50 col vstack">
+    <h4 class="text-center">
+      Front
+      <button
+        type="button"
+        class="btn-close p-0"
+        [ngStyle]="{ 'width.em': 0.75, 'height.em': 0.75 }"
+        ngbTooltip="Clear"
+        aria-label="Close"
+        (click)="unselect('front')"
+        *ngIf="frontCharacter"
+      ></button>
+    </h4>
     <app-character-img
       [character]="frontCharacter"
+      size="lg"
+      [enablePopoverDetails]="true"
       (dropped)="dropCharacter($event, 'front')"
-      (pressed)="unselect('front')"
     ></app-character-img>
+    <app-character-card
+      class="mt-2"
+      [character]="frontCharacter"
+      [enablePopoverDetails]="true"
+      [popoverDetailsPlacement]="invertSlotPositions ? 'right' : 'left'"
+      *ngIf="frontCharacter"
+    ></app-character-card>
   </div>
 </ng-template>
 
 <ng-template #backCharacterTpl>
-  <div class="col">
-    <h4 class="text-center">Back</h4>
+  <div class="w-50 col vstack">
+    <h4 class="text-center">
+      Back
+      <button
+        type="button"
+        class="btn-close p-0"
+        [ngStyle]="{ 'width.em': 0.75, 'height.em': 0.75 }"
+        ngbTooltip="Clear"
+        aria-label="Close"
+        (click)="unselect('back')"
+        *ngIf="backCharacter"
+      ></button>
+    </h4>
     <app-character-img
       [character]="backCharacter"
+      size="lg"
       (dropped)="dropCharacter($event, 'back')"
-      (pressed)="unselect('back')"
     ></app-character-img>
+    <app-character-card
+      class="mt-2"
+      [character]="backCharacter"
+      [enablePopoverDetails]="true"
+      [popoverDetailsPlacement]="invertSlotPositions ? 'right' : 'left'"
+      *ngIf="backCharacter"
+    ></app-character-card>
   </div>
+</ng-template>
+
+<ng-template #characterCardTpl let-context>
+  <app-character-card
+    [character]="context"
+    [contentOnly]="true"
+  ></app-character-card>
 </ng-template>

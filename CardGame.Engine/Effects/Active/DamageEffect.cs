@@ -12,12 +12,19 @@ public class DamageEffect : ActiveEffect
 
     public int Amount { get; }
     public Element Element { get; }
+    public float LifeStealRatio { get; init; } = 0;
 
     public override void Resolve(CharacterCombatState source, IEnumerable<CharacterCombatState> targets)
     {
         foreach (CharacterCombatState target in targets)
         {
-            target.Damage(Amount);
+            DamageReceived damage = target.Damage(Amount);
+
+            int stolenHp = (int)(damage.Health * LifeStealRatio);
+            if (stolenHp > 0)
+            {
+                source.Heal(stolenHp);
+            }
         }
     }
 }

@@ -16,7 +16,7 @@ public class CharactersController : ControllerBase
     }
 
     [HttpGet("{name}")]
-    public ActionResult<CharacterView> GetAll(string name)
+    public ActionResult<CharacterView> Get(string name)
     {
         Character? character = Characters.GetByName(name);
         if (character == null)

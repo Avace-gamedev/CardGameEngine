@@ -1,0 +1,46 @@
+<header class="d-flex justify-content-center">
+  <input [(ngModel)]="name" class="text-center h1" [disabled]="disableNameEdition"/>
+</header>
+
+<hr>
+
+<section>
+  <h3 class="text-center">Characters</h3>
+  <ul class="list-group">
+    <li *ngFor="let character of characters" class="list-group-item">
+      <div class="d-flex w-100 justify-content-between">
+        <h5>{{ character.identity.displayName }}</h5>
+        <small>{{ character.statistics.maxHealth}} HP</small>
+      </div>
+      <p>{{ character.identity.description}}</p>
+    </li>
+  </ul>
+</section>
+
+<hr>
+
+<section>
+  <h3 class="text-center">Team</h3>
+  <div class="row">
+    <ng-container *ngIf="!placeFrontCharacterOnLeftSide">
+      <div class="col">
+        <h4 class="text-center">Front</h4>
+        <div class="fs-1 fw-bold text-center"> ?</div>
+      </div>
+      <div class="col">
+        <h4 class="text-center">Back</h4>
+        <div class="fs-1 fw-bold text-center"> ?</div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="placeFrontCharacterOnLeftSide">
+      <div class="col">
+        <h4 class="text-center">Back</h4>
+        <div class="fs-1 fw-bold text-center"> ?</div>
+      </div>
+      <div class="col">
+        <h4 class="text-center">Front</h4>
+        <div class="fs-1 fw-bold text-center"> ?</div>
+      </div>
+    </ng-container>
+  </div>
+</section>

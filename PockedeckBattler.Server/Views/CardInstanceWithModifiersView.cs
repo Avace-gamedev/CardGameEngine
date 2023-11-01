@@ -1,31 +1,33 @@
-﻿using CardGame.Engine.Cards.ActionCard;
+﻿using System.ComponentModel.DataAnnotations;
 using CardGame.Engine.Combats;
+using PockedeckBattler.Server.Views.Effects.Active;
 
 namespace PockedeckBattler.Server.Views;
 
 public class CardInstanceWithModifiersView : CardInstanceView
 {
-    public CardInstanceWithModifiersView(ActionCard cardWithModifiers, ActionCard baseCard, string character) : base(cardWithModifiers, character)
+    public CardInstanceWithModifiersView(ActionCardView cardWithModifiers, ActionCardView baseCard, string character) : base(cardWithModifiers, character)
     {
         BaseCard = baseCard;
     }
 
-    public ActionCard BaseCard { get; }
+    [Required]
+    public ActionCardView BaseCard { get; }
 }
 
 public static class CardInstanceWithModifiersViewMappingExtensions
 {
     public static CardInstanceWithModifiersView ViewWithModifiers(this ActionCardInstance card)
     {
-        ActionCard cardWithModifiers = new(
+        ActionCardView cardWithModifiers = new(
             card.Card.Name,
             card.Card.Description,
             card.ApCost,
             card.Card.Target,
-            card.Card.MainEffect,
-            card.Card.AdditionalEffects.ToArray()
+            card.Card.MainEffect.View(),
+            card.Card.AdditionalEffects.Select(c => c.View()).ToArray()
         );
 
-        return new CardInstanceWithModifiersView(cardWithModifiers, card.Card, card.Character.Character.Identity.Name);
+        return new CardInstanceWithModifiersView(cardWithModifiers, card.Card.View(), card.Character.Character.Identity.Name);
     }
 }

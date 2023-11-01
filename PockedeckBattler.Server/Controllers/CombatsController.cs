@@ -12,9 +12,9 @@ namespace PockedeckBattler.Server.Controllers;
 public class CombatsController : ControllerBase
 {
     [HttpGet]
-    public IEnumerable<CombatView> GetAll()
+    public IEnumerable<Guid> GetAll()
     {
-        return CombatStore.All.Select(c => c.View());
+        return CombatStore.AllIds;
     }
 
     [HttpGet("{id:guid}")]

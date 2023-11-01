@@ -11,6 +11,6 @@ public class TriggeredEffect : PassiveEffect
         Trigger = trigger;
     }
 
-    EffectTrigger Trigger { get; }
-    ActiveEffect Effect { get; }
+    public EffectTrigger Trigger { get; }
+    public ActiveEffect Effect { get; }
 }

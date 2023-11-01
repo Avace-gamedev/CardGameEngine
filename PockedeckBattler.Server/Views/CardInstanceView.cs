@@ -1,17 +1,19 @@
-﻿using CardGame.Engine.Cards.ActionCard;
+﻿using System.ComponentModel.DataAnnotations;
 using CardGame.Engine.Combats;
 
 namespace PockedeckBattler.Server.Views;
 
 public class CardInstanceView
 {
-    public CardInstanceView(ActionCard card, string character)
+    public CardInstanceView(ActionCardView card, string character)
     {
         Card = card;
         Character = character;
     }
 
-    ActionCard Card { get; }
+    [Required]
+    ActionCardView Card { get; }
+
     string Character { get; }
 }
 
@@ -19,6 +21,6 @@ public static class CardInstanceViewMappingExtensions
 {
     public static CardInstanceView View(this ActionCardInstance card)
     {
-        return new CardInstanceView(card.Card, card.Character.Character.Identity.Name);
+        return new CardInstanceView(card.Card.View(), card.Character.Character.Identity.Name);
     }
 }

@@ -9,5 +9,5 @@ public class TurnTrigger : EffectTrigger
         Moment = moment;
     }
 
-    TurnMoment Moment { get; }
+    public TurnMoment Moment { get; }
 }

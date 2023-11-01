@@ -43,7 +43,7 @@ public class RandomEffect : ActiveEffect
             throw new Exception("Expected at least one effect");
         }
 
-        int probability = 1 / effects.Length;
+        double probability = 1.0 / effects.Length;
         return new RandomEffect(effects.Where(e => e != null).Select(e => new Entry(e, probability)).ToArray());
     }
 

@@ -1,0 +1,712 @@
+{
+  "x-generator": "NSwag v13.20.0.0 (NJsonSchema v10.9.0.0 (Newtonsoft.Json v13.0.0.0))",
+  "swagger": "2.0",
+  "info": {
+    "title": "PockeDeck Battler API",
+    "description": "",
+    "contact": {
+      "name": "Ismail Bennani",
+      "url": "http://www.ismailbennani.fr",
+      "email": "contact@ismailbennani.fr"
+    },
+    "version": "v1"
+  },
+  "host": "localhost:5295",
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/characters": {
+      "get": {
+        "tags": [
+          "Characters"
+        ],
+        "operationId": "Characters_GetAll",
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/CharacterView"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/characters/{name}": {
+      "get": {
+        "tags": [
+          "Characters"
+        ],
+        "operationId": "Characters_Get",
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/CharacterView"
+            }
+          }
+        }
+      }
+    },
+    "/combats": {
+      "get": {
+        "tags": [
+          "Combats"
+        ],
+        "operationId": "Combats_GetAll",
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "guid"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Combats"
+        ],
+        "operationId": "Combats_CreateCombat",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CreateCombatRequest"
+            },
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/PlayerCombatView"
+            }
+          }
+        }
+      }
+    },
+    "/combats/{id}": {
+      "get": {
+        "tags": [
+          "Combats"
+        ],
+        "operationId": "Combats_Get",
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "format": "guid",
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/CombatView"
+            }
+          }
+        }
+      }
+    },
+    "/combats/{id}/{side}": {
+      "get": {
+        "tags": [
+          "Combats"
+        ],
+        "operationId": "Combats_GetPlayerView",
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "format": "guid",
+            "x-nullable": false
+          },
+          {
+            "type": "string",
+            "name": "side",
+            "in": "path",
+            "required": true,
+            "x-schema": {
+              "$ref": "#/definitions/CombatSide"
+            },
+            "x-nullable": false,
+            "enum": [
+              "none",
+              "left",
+              "right"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/PlayerCombatView"
+            }
+          }
+        }
+      }
+    },
+    "/combats/{id}/{side}/play/{index}": {
+      "post": {
+        "tags": [
+          "Combats"
+        ],
+        "operationId": "Combats_PlayCard",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "format": "guid",
+            "x-nullable": false
+          },
+          {
+            "type": "string",
+            "name": "side",
+            "in": "path",
+            "required": true,
+            "x-schema": {
+              "$ref": "#/definitions/CombatSide"
+            },
+            "x-nullable": false,
+            "enum": [
+              "none",
+              "left",
+              "right"
+            ]
+          },
+          {
+            "type": "integer",
+            "name": "index",
+            "in": "path",
+            "required": true,
+            "format": "int32",
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/combats/{id}/{side}/end-turn": {
+      "post": {
+        "tags": [
+          "Combats"
+        ],
+        "operationId": "Combats_EndTurn",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "format": "guid",
+            "x-nullable": false
+          },
+          {
+            "type": "string",
+            "name": "side",
+            "in": "path",
+            "required": true,
+            "x-schema": {
+              "$ref": "#/definitions/CombatSide"
+            },
+            "x-nullable": false,
+            "enum": [
+              "none",
+              "left",
+              "right"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "CharacterView": {
+      "type": "object",
+      "required": [
+        "identity",
+        "statistics",
+        "deck"
+      ],
+      "properties": {
+        "identity": {
+          "$ref": "#/definitions/CharacterIdentity"
+        },
+        "statistics": {
+          "$ref": "#/definitions/CharacterStatistics"
+        },
+        "deck": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ActionCardView"
+          }
+        }
+      }
+    },
+    "CharacterIdentity": {
+      "type": "object",
+      "required": [
+        "name",
+        "displayName"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "displayName": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "CharacterStatistics": {
+      "type": "object",
+      "required": [
+        "maxHealth"
+      ],
+      "properties": {
+        "maxHealth": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "ActionCardView": {
+      "type": "object",
+      "required": [
+        "name",
+        "apCost",
+        "target",
+        "mainEffect",
+        "additionalEffects"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string"
+        },
+        "apCost": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "target": {
+          "$ref": "#/definitions/ActionCardTarget"
+        },
+        "mainEffect": {
+          "$ref": "#/definitions/ActiveEffectView"
+        },
+        "additionalEffects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ActiveEffectView"
+          }
+        }
+      }
+    },
+    "ActionCardTarget": {
+      "type": "string",
+      "description": "",
+      "x-enumNames": [
+        "None",
+        "Self",
+        "OtherAlly",
+        "FrontOpponent",
+        "BackOpponent",
+        "AllOpponents",
+        "FrontAlly",
+        "BackAlly",
+        "AllAllies"
+      ],
+      "enum": [
+        "none",
+        "self",
+        "otherAlly",
+        "frontOpponent",
+        "backOpponent",
+        "allOpponents",
+        "frontAlly",
+        "backAlly",
+        "allAllies"
+      ]
+    },
+    "ActiveEffectView": {
+      "type": "object",
+      "x-abstract": true
+    },
+    "CombatView": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseCombatView"
+        },
+        {
+          "type": "object",
+          "required": [
+            "leftSide",
+            "rightSide"
+          ],
+          "properties": {
+            "leftSide": {
+              "$ref": "#/definitions/CombatSideView"
+            },
+            "rightSide": {
+              "$ref": "#/definitions/CombatSideView"
+            }
+          }
+        }
+      ]
+    },
+    "CombatSideView": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseCombatSideView"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "BaseCombatSideView": {
+      "type": "object",
+      "x-abstract": true,
+      "required": [
+        "side",
+        "deckSize",
+        "frontCharacter"
+      ],
+      "properties": {
+        "side": {
+          "$ref": "#/definitions/CombatSide"
+        },
+        "deckSize": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "frontCharacter": {
+          "$ref": "#/definitions/CharacterCombatView"
+        },
+        "backCharacter": {
+          "$ref": "#/definitions/CharacterCombatView"
+        }
+      }
+    },
+    "CombatSide": {
+      "type": "string",
+      "description": "",
+      "x-enumNames": [
+        "None",
+        "Left",
+        "Right"
+      ],
+      "enum": [
+        "none",
+        "left",
+        "right"
+      ]
+    },
+    "CharacterCombatView": {
+      "type": "object",
+      "required": [
+        "character",
+        "health",
+        "passiveEffects",
+        "modifiers"
+      ],
+      "properties": {
+        "character": {
+          "$ref": "#/definitions/CharacterView"
+        },
+        "health": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "passiveEffects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PassiveEffectInstanceView"
+          }
+        },
+        "modifiers": {
+          "$ref": "#/definitions/StatsModifier"
+        }
+      }
+    },
+    "PassiveEffectInstanceView": {
+      "type": "object",
+      "required": [
+        "id",
+        "effect",
+        "source",
+        "remainingDuration"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "guid"
+        },
+        "effect": {
+          "$ref": "#/definitions/PassiveEffectView"
+        },
+        "source": {
+          "type": "string"
+        },
+        "remainingDuration": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "PassiveEffectView": {
+      "type": "object",
+      "required": [
+        "duration"
+      ],
+      "properties": {
+        "duration": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "StatsModifier": {
+      "type": "object",
+      "required": [
+        "healthAdditiveModifier",
+        "apCostAdditiveModifier",
+        "damageAdditiveModifier",
+        "damageReductionAdditiveModifier"
+      ],
+      "properties": {
+        "healthAdditiveModifier": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "apCostAdditiveModifier": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "damageAdditiveModifier": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "damageReductionAdditiveModifier": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "BaseCombatView": {
+      "type": "object",
+      "required": [
+        "ongoing",
+        "over",
+        "turn",
+        "currentSide",
+        "currentPhase"
+      ],
+      "properties": {
+        "ongoing": {
+          "type": "boolean"
+        },
+        "over": {
+          "type": "boolean"
+        },
+        "turn": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "currentSide": {
+          "$ref": "#/definitions/CombatSide"
+        },
+        "currentPhase": {
+          "$ref": "#/definitions/CombatSideTurnPhase"
+        }
+      }
+    },
+    "CombatSideTurnPhase": {
+      "type": "string",
+      "description": "",
+      "x-enumNames": [
+        "None",
+        "StartOfTurn",
+        "Draw",
+        "Play",
+        "EndOfTurn"
+      ],
+      "enum": [
+        "none",
+        "startOfTurn",
+        "draw",
+        "play",
+        "endOfTurn"
+      ]
+    },
+    "PlayerCombatView": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseCombatView"
+        },
+        {
+          "type": "object",
+          "required": [
+            "player",
+            "combat"
+          ],
+          "properties": {
+            "player": {
+              "$ref": "#/definitions/PlayerSideView"
+            },
+            "combat": {
+              "$ref": "#/definitions/CombatSideView"
+            }
+          }
+        }
+      ]
+    },
+    "PlayerSideView": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/BaseCombatSideView"
+        },
+        {
+          "type": "object",
+          "required": [
+            "hand"
+          ],
+          "properties": {
+            "hand": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/CardInstanceWithModifiersView"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "CardInstanceWithModifiersView": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/CardInstanceView"
+        },
+        {
+          "type": "object",
+          "required": [
+            "baseCard"
+          ],
+          "properties": {
+            "baseCard": {
+              "$ref": "#/definitions/ActionCardView"
+            }
+          }
+        }
+      ]
+    },
+    "CardInstanceView": {
+      "type": "object"
+    },
+    "CreateCombatRequest": {
+      "type": "object",
+      "required": [
+        "opponentTeam",
+        "playerTeam"
+      ],
+      "properties": {
+        "opponentTeam": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "playerTeam": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

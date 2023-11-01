@@ -6,6 +6,7 @@ public static class CombatStore
 {
     static readonly Dictionary<Guid, CombatInstance> Combats = new();
 
+    public static IEnumerable<Guid> AllIds => Combats.Keys;
     public static IEnumerable<CombatInstance> All => Combats.Values;
 
     public static Guid Register(CombatInstance combat)

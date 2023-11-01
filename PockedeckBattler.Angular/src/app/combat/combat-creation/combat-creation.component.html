@@ -1,0 +1,11 @@
+<section class="container">
+  <h1 class="text-center">Combat creation</h1>
+  <div class="row">
+    <div class="col border-end">
+      <app-combat-creation-side name="Player" [characters]="characters" [placeFrontCharacterOnLeftSide]="true"></app-combat-creation-side>
+    </div>
+    <div class="col">
+      <app-combat-creation-side name="Opponent" [characters]="characters" [disableNameEdition]="true"></app-combat-creation-side>
+    </div>
+  </div>
+</section>

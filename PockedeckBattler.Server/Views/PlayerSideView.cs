@@ -1,4 +1,5 @@
-﻿using CardGame.Engine.Combats;
+﻿using System.ComponentModel.DataAnnotations;
+using CardGame.Engine.Combats;
 
 namespace PockedeckBattler.Server.Views;
 
@@ -14,6 +15,7 @@ public class PlayerSideView : BaseCombatSideView
         Hand = hand;
     }
 
+    [Required]
     public CardInstanceWithModifiersView[] Hand { get; }
 }
 

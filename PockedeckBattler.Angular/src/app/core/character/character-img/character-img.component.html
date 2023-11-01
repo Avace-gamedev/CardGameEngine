@@ -1,0 +1,25 @@
+<div class="d-flex align-items-center justify-content-center">
+  <button
+    class="border border-1 d-flex align-items-center justify-content-center"
+    [class.border-4]="characterBeingDragged"
+    style="width: 100px; height: 100px"
+    [ngbPopover]="cardPopover ? popover : null"
+    triggers="mouseenter:mouseleave"
+    (dragenter)="dragenter($event); $event.preventDefault()"
+    (dragover)="$event.preventDefault()"
+    (dragleave)="dragleave()"
+    (drop)="ondrop($event)"
+    (click)="pressed.emit($event)"
+  >
+    <span class="fs-1 fw-bold pe-none user-select-none" *ngIf="!character">
+      ?
+    </span>
+    <span class="fs-1 fw-bold pe-none user-select-none" *ngIf="character">
+      {{ character.identity.displayName.substring(0, 2) }}
+    </span>
+  </button>
+</div>
+
+<ng-template #popover>
+  <app-character-card [character]="character"></app-character-card>
+</ng-template>

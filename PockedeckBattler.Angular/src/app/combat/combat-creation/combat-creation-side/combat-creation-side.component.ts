@@ -26,37 +26,108 @@ export class CombatCreationSideComponent {
   public characters: CharacterView[] = [];
 
   @Input()
-  public placeFrontCharacterOnLeftSide: boolean = false;
+  public invertSlotPositions: boolean = false;
 
-  protected character1: CharacterView | undefined;
-  protected character2: CharacterView | undefined;
+  protected frontCharacter: CharacterView | undefined;
+  protected backCharacter: CharacterView | undefined;
 
-  swap() {
-    if (this.character1 && this.character2) {
-      const tmp = this.character2;
-      this.character2 = this.character1;
-      this.character1 = tmp;
+  getAt(slot: 'front' | 'back'): CharacterView | undefined {
+    switch (slot) {
+      case 'front':
+        return this.frontCharacter;
+      case 'back':
+        return this.backCharacter;
     }
   }
 
-  select(character: CharacterView) {
+  swap() {
+    if (this.frontCharacter && this.backCharacter) {
+      const tmp = this.backCharacter;
+      this.backCharacter = this.frontCharacter;
+      this.frontCharacter = tmp;
+    }
+  }
+
+  select(character: CharacterView, slot?: 'front' | 'back') {
     if (this.isSelected(character)) {
+      if (
+        slot &&
+        this.getAt(slot)?.identity?.name !== character.identity.name
+      ) {
+        this.swap();
+      }
+
       return;
     }
 
-    if (!this.character1 || (this.character1 && this.character2)) {
-      this.character1 = character;
-    } else if (!this.character2) {
-      this.character2 = character;
+    switch (slot) {
+      case 'front':
+        this.frontCharacter = character;
+        break;
+      case 'back':
+        this.backCharacter = character;
+        break;
+      default:
+        if (
+          !this.frontCharacter ||
+          (this.frontCharacter && this.backCharacter)
+        ) {
+          this.frontCharacter = character;
+        } else if (!this.backCharacter) {
+          this.backCharacter = character;
+        }
     }
   }
 
   isSelected(character: CharacterView) {
     return (
-      (this.character1 &&
-        character.identity.name === this.character1.identity.name) ||
-      (this.character2 &&
-        character.identity.name === this.character2.identity.name)
+      (this.frontCharacter &&
+        character.identity.name === this.frontCharacter.identity.name) ||
+      (this.backCharacter &&
+        character.identity.name === this.backCharacter.identity.name)
     );
+  }
+
+  unselect(slot: 'front' | 'back') {
+    switch (slot) {
+      case 'front':
+        this.frontCharacter = undefined;
+        break;
+      case 'back':
+        this.backCharacter = undefined;
+        break;
+    }
+  }
+
+  protected dragCharacter($event: DragEvent, character: CharacterView) {
+    if (!$event.dataTransfer) {
+      return;
+    }
+
+    $event.dataTransfer.setData(
+      'text/plain',
+      `character:${character.identity.name}`,
+    );
+    $event.dataTransfer.effectAllowed = 'copy';
+  }
+
+  protected dropCharacter($event: DragEvent, slot: 'front' | 'back') {
+    const data = $event.dataTransfer?.getData('text/plain');
+    if (!data || !data.startsWith('character:')) {
+      return;
+    }
+
+    const characterName = data.substring(10);
+    const character = this.characters.find(
+      (c) => c.identity.name === characterName,
+    );
+
+    if (!character) {
+      return;
+    }
+
+    this.select(character, slot);
+
+    $event.preventDefault();
   }
 }

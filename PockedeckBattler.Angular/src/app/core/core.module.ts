@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ApiModule } from '../api/api.module';
-import { CharacterImgViewComponent } from './character-img-view/character-img-view.component';
+import { CharacterModule } from './character/character.module';
 
 @NgModule({
-  declarations: [CharacterImgViewComponent],
-  imports: [CommonModule, ApiModule],
-  exports: [ApiModule, CharacterImgViewComponent],
+  declarations: [],
+  imports: [CommonModule, ApiModule, CharacterModule],
+  exports: [ApiModule, CharacterModule],
 })
 export class CoreModule {}

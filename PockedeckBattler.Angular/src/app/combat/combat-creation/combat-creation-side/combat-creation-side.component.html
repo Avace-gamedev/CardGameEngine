@@ -23,10 +23,11 @@
     <ul class="list-group">
       <a
         *ngFor="let character of characters"
-        href="javascript:void 0"
         (click)="select(character)"
         class="list-group-item list-group-item-action"
         [class.active]="isSelected(character)"
+        draggable="true"
+        (dragstart)="dragCharacter($event, character)"
       >
         <div class="d-flex w-100 justify-content-between">
           <h5>{{ character.identity.displayName }}</h5>
@@ -51,28 +52,36 @@
       </button>
     </h3>
     <div class="row">
-      <ng-container *ngIf="!placeFrontCharacterOnLeftSide">
-        <ng-container [ngTemplateOutlet]="frontCharacter"></ng-container>
-        <ng-container [ngTemplateOutlet]="backCharacter"></ng-container>
+      <ng-container *ngIf="!invertSlotPositions">
+        <ng-container [ngTemplateOutlet]="frontCharacterTpl"></ng-container>
+        <ng-container [ngTemplateOutlet]="backCharacterTpl"></ng-container>
       </ng-container>
-      <ng-container *ngIf="placeFrontCharacterOnLeftSide">
-        <ng-container [ngTemplateOutlet]="backCharacter"></ng-container>
-        <ng-container [ngTemplateOutlet]="frontCharacter"></ng-container>
+      <ng-container *ngIf="invertSlotPositions">
+        <ng-container [ngTemplateOutlet]="backCharacterTpl"></ng-container>
+        <ng-container [ngTemplateOutlet]="frontCharacterTpl"></ng-container>
       </ng-container>
     </div>
   </section>
 </div>
 
-<ng-template #frontCharacter>
+<ng-template #frontCharacterTpl>
   <div class="col">
     <h4 class="text-center">Front</h4>
-    <app-character-img-view [character]="character1"></app-character-img-view>
+    <app-character-img
+      [character]="frontCharacter"
+      (dropped)="dropCharacter($event, 'front')"
+      (pressed)="unselect('front')"
+    ></app-character-img>
   </div>
 </ng-template>
 
-<ng-template #backCharacter>
+<ng-template #backCharacterTpl>
   <div class="col">
     <h4 class="text-center">Back</h4>
-    <app-character-img-view [character]="character2"></app-character-img-view>
+    <app-character-img
+      [character]="backCharacter"
+      (dropped)="dropCharacter($event, 'back')"
+      (pressed)="unselect('back')"
+    ></app-character-img>
   </div>
 </ng-template>

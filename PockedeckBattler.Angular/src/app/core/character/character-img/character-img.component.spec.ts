@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CharacterImgViewComponent } from './character-img-view.component';
+import { CharacterImgComponent } from './character-img.component';
 
 describe('CharacterImageViewComponent', () => {
-  let component: CharacterImgViewComponent;
-  let fixture: ComponentFixture<CharacterImgViewComponent>;
+  let component: CharacterImgComponent;
+  let fixture: ComponentFixture<CharacterImgComponent>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [CharacterImgViewComponent],
+      declarations: [CharacterImgComponent],
     });
-    fixture = TestBed.createComponent(CharacterImgViewComponent);
+    fixture = TestBed.createComponent(CharacterImgComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -1574,6 +1574,7 @@ export interface IBaseCombatView {
 }
 
 export class CombatView extends BaseCombatView implements ICombatView {
+    id!: string;
     leftSide!: CombatSideView;
     rightSide!: CombatSideView;
 
@@ -1588,6 +1589,7 @@ export class CombatView extends BaseCombatView implements ICombatView {
     override init(_data?: any) {
         super.init(_data);
         if (_data) {
+            this.id = _data["id"];
             this.leftSide = _data["leftSide"] ? CombatSideView.fromJS(_data["leftSide"]) : new CombatSideView();
             this.rightSide = _data["rightSide"] ? CombatSideView.fromJS(_data["rightSide"]) : new CombatSideView();
         }
@@ -1602,6 +1604,7 @@ export class CombatView extends BaseCombatView implements ICombatView {
 
     override toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
         data["leftSide"] = this.leftSide ? this.leftSide.toJSON() : <any>undefined;
         data["rightSide"] = this.rightSide ? this.rightSide.toJSON() : <any>undefined;
         super.toJSON(data);
@@ -1610,6 +1613,7 @@ export class CombatView extends BaseCombatView implements ICombatView {
 }
 
 export interface ICombatView extends IBaseCombatView {
+    id: string;
     leftSide: CombatSideView;
     rightSide: CombatSideView;
 }
@@ -1817,6 +1821,7 @@ export enum CombatSideTurnPhase {
 }
 
 export class PlayerCombatView extends BaseCombatView implements IPlayerCombatView {
+    id!: string;
     player!: PlayerSideView;
     combat!: CombatSideView;
 
@@ -1831,6 +1836,7 @@ export class PlayerCombatView extends BaseCombatView implements IPlayerCombatVie
     override init(_data?: any) {
         super.init(_data);
         if (_data) {
+            this.id = _data["id"];
             this.player = _data["player"] ? PlayerSideView.fromJS(_data["player"]) : new PlayerSideView();
             this.combat = _data["combat"] ? CombatSideView.fromJS(_data["combat"]) : new CombatSideView();
         }
@@ -1845,6 +1851,7 @@ export class PlayerCombatView extends BaseCombatView implements IPlayerCombatVie
 
     override toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
         data["player"] = this.player ? this.player.toJSON() : <any>undefined;
         data["combat"] = this.combat ? this.combat.toJSON() : <any>undefined;
         super.toJSON(data);
@@ -1853,6 +1860,7 @@ export class PlayerCombatView extends BaseCombatView implements IPlayerCombatVie
 }
 
 export interface IPlayerCombatView extends IBaseCombatView {
+    id: string;
     player: PlayerSideView;
     combat: CombatSideView;
 }

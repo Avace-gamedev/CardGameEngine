@@ -849,10 +849,16 @@
         {
           "type": "object",
           "required": [
+            "id",
             "leftSide",
             "rightSide"
           ],
           "properties": {
+            "id": {
+              "type": "string",
+              "format": "guid",
+              "minLength": 1
+            },
             "leftSide": {
               "$ref": "#/definitions/CombatSideView"
             },
@@ -1017,10 +1023,16 @@
         {
           "type": "object",
           "required": [
+            "id",
             "player",
             "combat"
           ],
           "properties": {
+            "id": {
+              "type": "string",
+              "format": "guid",
+              "minLength": 1
+            },
             "player": {
               "$ref": "#/definitions/PlayerSideView"
             },

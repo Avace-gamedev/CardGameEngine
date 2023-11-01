@@ -8,9 +8,15 @@
   <div class="list-group">
     <a
       class="list-group-item list-group-item-action"
-      *ngFor="let combatId of combatIds"
+      *ngFor="let combat of combatsInPreparation"
     >
-      {{ combatId }}
+      {{ combat.id }} (in preparation)
+    </a>
+    <a
+      class="list-group-item list-group-item-action"
+      *ngFor="let combat of combats"
+    >
+      {{ combat.id }}
     </a>
   </div>
 </section>

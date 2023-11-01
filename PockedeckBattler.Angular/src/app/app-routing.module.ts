@@ -1,11 +1,14 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AppComponent } from './app.component';
+import { LoginComponent } from './common-pages/login/login.component';
 import { NotFoundComponent } from './common-pages/not-found/not-found.component';
+import { authenticationGuard } from './core/authentication/services/authentication.guard';
 
 const routes: Routes = [
   {
     path: '',
+    canActivate: [authenticationGuard],
+
     children: [
       {
         path: '',
@@ -27,6 +30,10 @@ const routes: Routes = [
         component: NotFoundComponent,
       },
     ],
+  },
+  {
+    path: 'login',
+    component: LoginComponent,
   },
   {
     path: '**',

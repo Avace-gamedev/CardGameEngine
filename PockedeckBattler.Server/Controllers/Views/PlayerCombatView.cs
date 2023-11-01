@@ -6,15 +6,19 @@ namespace PockedeckBattler.Server.Controllers.Views;
 
 public class PlayerCombatView : BaseCombatView
 {
-    public PlayerCombatView(PlayerSideView player, CombatSideView combat, int turn, CombatSide currentSide, CombatSideTurnPhase currentPhase) : base(
+    public PlayerCombatView(Guid id, PlayerSideView player, CombatSideView combat, int turn, CombatSide currentSide, CombatSideTurnPhase currentPhase) : base(
         turn,
         currentSide,
         currentPhase
     )
     {
+        Id = id;
         Player = player;
         Combat = combat;
     }
+
+    [Required]
+    public Guid Id { get; }
 
     [Required]
     public PlayerSideView Player { get; }
@@ -42,6 +46,7 @@ public static class PlayerCombatViewMappingExtensions
         };
 
         return new PlayerCombatView(
+            combat.Id,
             combat.Combat.GetSide(side).PlayerView(sidePlayerName),
             combat.Combat.GetSide(side.OtherSide()).View(otherSidePlayerName),
             combat.Combat.Turn,

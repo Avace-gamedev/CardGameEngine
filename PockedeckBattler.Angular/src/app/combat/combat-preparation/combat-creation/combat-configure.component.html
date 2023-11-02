@@ -3,8 +3,8 @@
     <h1 class="text-center">Combat creation</h1>
   </div>
 
-  <div class="row flex-fill overflow-y-auto">
-    <div class="col-lg">
+  <div class="row row-cols-2 flex-fill overflow-y-auto">
+    <div class="col">
       <app-combat-configure-side
         [combat]="combat"
         [name]="combat.leftPlayerName"
@@ -13,7 +13,7 @@
         [readonly]="side !== CombatSide.Left"
       ></app-combat-configure-side>
     </div>
-    <div class="col-lg">
+    <div class="col">
       <app-combat-configure-side
         [combat]="combat"
         [name]="combat.rightPlayerName"

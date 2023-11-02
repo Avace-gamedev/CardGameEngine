@@ -2,11 +2,11 @@ import { Component, Input } from '@angular/core';
 import { CharacterCombatView } from '../../api/pockedeck-battler-api-client';
 
 @Component({
-  selector: 'app-combat-side',
-  templateUrl: './combat-side.component.html',
-  styleUrls: ['./combat-side.component.css'],
+  selector: 'app-combat-side-common-elements',
+  templateUrl: './combat-side-common-elements.component.html',
+  styleUrls: ['./combat-side-common-elements.component.css'],
 })
-export class CombatSideComponent {
+export class CombatSideCommonElementsComponent {
   @Input()
   public frontCharacter: CharacterCombatView | undefined;
 

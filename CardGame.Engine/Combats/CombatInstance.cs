@@ -63,6 +63,9 @@ public class CombatInstance
         Side = Options.StartingSide;
         Phase = CombatSideTurnPhase.None;
 
+        LeftSide.OnStart();
+        RightSide.OnStart();
+
         StartSideTurn();
     }
 
@@ -146,8 +149,6 @@ public class CombatInstance
         }
 
         Phase = CombatSideTurnPhase.Draw;
-
-        CurrentSide.DrawUntil(Options.HandSize);
 
         Phase = CombatSideTurnPhase.Play;
 
@@ -266,14 +267,22 @@ public class CombatInstance
         public bool Lost => Front.IsDead && (Back == null || Back.IsDead);
         public bool NoMovesLeft => _hand.All(c => c.ApCost > Ap);
 
+        internal void OnStart()
+        {
+            RestoreAps();
+            DrawHand();
+        }
+
         internal void StartTurn()
         {
-            Ap = Math.Min(Combat.Options.StartingAp + Combat.Turn - 1, Combat.Options.MaxAp);
+            RestoreAps();
+            DrawHand();
         }
 
         internal void EndTurn()
         {
-            Ap = Math.Min(Combat.Options.StartingAp + Combat.Turn - 1, Combat.Options.MaxAp);
+            RestoreAps();
+            DrawHand();
         }
 
         internal void PlayCardAt(int index)
@@ -306,17 +315,6 @@ public class CombatInstance
             _deck.RemoveAt(0);
 
             return true;
-        }
-
-        internal void DrawUntil(int nCards)
-        {
-            while (_hand.Count < nCards)
-            {
-                if (!DrawCard())
-                {
-                    break;
-                }
-            }
         }
 
         internal void Swap()
@@ -367,6 +365,23 @@ public class CombatInstance
             }
 
             Ap -= ap;
+        }
+
+        void RestoreAps()
+        {
+            Ap = Math.Min(Combat.Options.StartingAp + Combat.Turn - 1, Combat.Options.MaxAp);
+        }
+
+        void DrawHand()
+        {
+            int nCards = Combat.Options.HandSize;
+            while (_hand.Count < nCards)
+            {
+                if (!DrawCard())
+                {
+                    break;
+                }
+            }
         }
     }
 

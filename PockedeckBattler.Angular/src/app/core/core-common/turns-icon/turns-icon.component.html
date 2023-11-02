@@ -1,0 +1,10 @@
+<ng-container *ngIf="value && value >= 0 && value <= 9; else default">
+  <i
+    class="bi bi-{{ value }}-circle"
+    [ngbTooltip]="enableTooltip ? value + ' turns' : null"
+  >
+  </i>
+</ng-container>
+<ng-template #default>
+  {{ value }}
+</ng-template>

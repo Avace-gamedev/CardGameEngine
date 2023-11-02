@@ -12,4 +12,9 @@ export class ActionCardComponent {
 
   @Input()
   public contentOnly: boolean = false;
+
+  @Input()
+  public size: ActionCardSize = 'md';
 }
+
+export type ActionCardSize = 'sm' | 'md';

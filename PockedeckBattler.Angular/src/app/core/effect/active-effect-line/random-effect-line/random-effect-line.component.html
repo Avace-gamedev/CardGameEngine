@@ -1,16 +1,8 @@
 <ng-container *ngIf="effect && effect.entries">
-  <div class="hstack align-items-start">
-    <div class="pe-1">
+  <div class="hstack gap-1" *ngFor="let effect of effect?.entries ?? []">
+    <app-active-effect-line [effect]="effect.effect"> </app-active-effect-line>
+    <div class="pe-1" ngbTooltip="{{ effect.probability | percent }} chance">
       <i class="bi bi-dice-2-fill"></i>
     </div>
-    <ng-container *ngFor="let effect of effect?.entries ?? []">
-      <div class="hstack gap-1 align-items-start" *ngIf="effect">
-        <span class="fw-semibold text-nowrap">
-          {{ effect.probability | percent }}:
-        </span>
-        <app-active-effect-line [effect]="effect.effect">
-        </app-active-effect-line>
-      </div>
-    </ng-container>
   </div>
 </ng-container>

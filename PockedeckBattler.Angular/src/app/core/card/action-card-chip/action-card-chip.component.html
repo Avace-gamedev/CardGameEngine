@@ -1,5 +1,6 @@
 <div
   class="card p-1 hstack gap-2 user-select-none"
+  [class.small]="size === 'sm'"
   [ngStyle]="{
     backgroundColor: 'var(' + bgColorCssVariable + ')',
     color: 'var(' + textColorCssVariable + ')'
@@ -11,7 +12,9 @@
 >
   <app-action-card-type-icon [card]="card"></app-action-card-type-icon>
 
-  <span class="text-nowrap flex-fill">{{ card?.name ?? "???" }}</span>
+  <span class="text-truncate flex-fill" [title]="card?.name ?? '???'">{{
+    card?.name ?? "???"
+  }}</span>
 
   <app-card-damage [element]="damage.element" *ngIf="damage"></app-card-damage>
 

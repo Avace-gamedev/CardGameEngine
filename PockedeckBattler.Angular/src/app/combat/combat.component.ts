@@ -45,6 +45,26 @@ export class CombatComponent implements OnInit {
       )
       .subscribe();
   }
+
+  play(index: number) {
+    if (!this.combat) {
+      return;
+    }
+
+    this.combatsService
+      .playCard(this.combat.id, index, this.identityService.getIdentity())
+      .subscribe();
+  }
+
+  endTurn() {
+    if (!this.combat) {
+      return;
+    }
+
+    this.combatsService
+      .endTurn(this.combat.id, this.identityService.getIdentity())
+      .subscribe();
+  }
 }
 
 declare module '@angular/router' {

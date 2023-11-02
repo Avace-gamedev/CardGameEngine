@@ -1,17 +1,26 @@
 <div class="h-100 container-lg vstack" *ngIf="combat">
-  <div [ngStyle]="{ 'height.%': 15 }" class="bg-body-tertiary"></div>
+  <div [ngStyle]="{ 'height.%': 10 }" class="bg-body-tertiary">
+    <app-opponent-side-elements [combat]="combat"> </app-opponent-side-elements>
+  </div>
   <div [ngStyle]="{ 'height.%': 35 }" class="bg-secondary">
-    <app-combat-side
+    <app-combat-side-common-elements
       [frontCharacter]="combat.opponent.frontCharacter"
       [backCharacter]="combat.opponent.backCharacter"
       [invert]="true"
-    ></app-combat-side>
+    ></app-combat-side-common-elements>
   </div>
   <div [ngStyle]="{ 'height.%': 35 }" class="bg-primary">
-    <app-combat-side
+    <app-combat-side-common-elements
       [frontCharacter]="combat.player.frontCharacter"
       [backCharacter]="combat.player.backCharacter"
-    ></app-combat-side>
+    ></app-combat-side-common-elements>
   </div>
-  <div [ngStyle]="{ 'height.%': 15 }" class="bg-body-tertiary"></div>
+  <div [ngStyle]="{ 'height.%': 20 }" class="bg-body-tertiary">
+    <app-player-side-elements
+      [combat]="combat"
+      (play)="play($event)"
+      (endTurn)="endTurn()"
+    >
+    </app-player-side-elements>
+  </div>
 </div>

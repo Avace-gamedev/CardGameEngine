@@ -18,6 +18,6 @@ import { CardDamageComponent } from './card-damage/card-damage.component';
     ActionCardTargetLineComponent,
   ],
   imports: [CommonModule, NgbPopover, CoreCommonModule, EffectModule],
-  exports: [ActionCardChipComponent],
+  exports: [ActionCardChipComponent, ActionCardComponent],
 })
 export class CardModule {}

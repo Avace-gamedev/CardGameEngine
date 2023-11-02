@@ -157,6 +157,7 @@ public class CombatsController : ControllerBase
             new[] { rightFrontCharacter, rightBackCharacter }.Where(c => c != null).Select(c => c!).ToArray(),
             new CombatOptions()
         );
+        combatInstance.Start();
 
         CombatWithMetadata combat = new(inPreparation.Id, inPreparation.LeftPlayerName, inPreparation.RightPlayerName, combatInstance, inPreparation);
         await _combatService.SaveCombat(combat);

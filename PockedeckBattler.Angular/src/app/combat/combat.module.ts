@@ -8,16 +8,20 @@ import { CombatPreparationModule } from './combat-preparation/combat-preparation
 
 import { CombatRoutingModule } from './combat-routing.module';
 import { CombatSelectionComponent } from './combat-selection/combat-selection.component';
-import { CombatSideComponent } from './combat-side/combat-side.component';
+import { CombatSideCommonElementsComponent } from './combat-side/combat-side-common-elements.component';
 import { CombatComponent } from './combat.component';
 import { GenericUiModule } from './generic-ui/generic-ui.module';
+import { PlayerSideElementsComponent } from './player-side-elements/player-side-elements.component';
+import { OpponentSideElementsComponent } from './opponent-side-elements/opponent-side-elements.component';
 
 @NgModule({
   declarations: [
     CombatSelectionComponent,
     CombatComponent,
-    CombatSideComponent,
+    CombatSideCommonElementsComponent,
     CombatCharacterImgComponent,
+    PlayerSideElementsComponent,
+    OpponentSideElementsComponent,
   ],
   imports: [
     CommonModule,

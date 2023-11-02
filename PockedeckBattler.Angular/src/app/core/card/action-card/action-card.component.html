@@ -1,5 +1,5 @@
 <ng-container *ngIf="!contentOnly">
-  <div class="card p-2">
+  <div class="card p-2 h-100">
     <ng-container [ngTemplateOutlet]="content"></ng-container>
   </div>
 </ng-container>
@@ -8,10 +8,10 @@
 </ng-container>
 
 <ng-template #content>
-  <div class="vstack">
-    <app-action-card-chip [card]="card"></app-action-card-chip>
+  <div class="vstack" [class.small]="size === 'sm'">
+    <app-action-card-chip [card]="card" [size]="size"></app-action-card-chip>
 
-    <section>
+    <section *ngIf="size !== 'sm'">
       <div class="fw-bold">Description</div>
       <div>
         {{ card?.description ?? "???" }}
@@ -26,18 +26,20 @@
       </div>
     </section>
 
-    <section>
-      <div class="fw-bold">Effects</div>
-      <div class="vstack">
-        <app-active-effect-line
-          [effect]="card?.mainEffect"
-        ></app-active-effect-line>
-        <ng-container *ngIf="card?.additionalEffects">
+    <section class="flex-fill vstack justify-content-center text-start">
+      <div>
+        <div class="fw-bold">Effects</div>
+        <div class="vstack">
           <app-active-effect-line
-            [effect]="effect"
-            *ngFor="let effect of card?.additionalEffects"
+            [effect]="card?.mainEffect"
           ></app-active-effect-line>
-        </ng-container>
+          <ng-container *ngIf="card?.additionalEffects">
+            <app-active-effect-line
+              [effect]="effect"
+              *ngFor="let effect of card?.additionalEffects"
+            ></app-active-effect-line>
+          </ng-container>
+        </div>
       </div>
     </section>
   </div>

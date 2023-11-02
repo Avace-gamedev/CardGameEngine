@@ -1,36 +1,12 @@
 <div class="vstack" *ngIf="effect">
-  <div
-    class="text-nowrap"
-    *ngIf="effect.statsModifier.apCostAdditiveModifier !== 0"
-  >
-    {{ effect.statsModifier.apCostAdditiveModifier | sign }} AP cost ({{
-      effect.duration
-    }}
-    turns)
-  </div>
-  <div
-    class="text-nowrap"
-    *ngIf="effect.statsModifier.damageAdditiveModifier !== 0"
-  >
-    {{ effect.statsModifier.damageAdditiveModifier | sign }} damage ({{
-      effect.duration
-    }}
-    turns)
-  </div>
-  <div
-    class="text-nowrap"
-    *ngIf="effect.statsModifier.damageReductionAdditiveModifier !== 0"
-  >
-    {{ effect.statsModifier.damageReductionAdditiveModifier | sign }} resistance
-    ({{ effect.duration }} turns)
-  </div>
-  <div
-    class="text-nowrap"
-    *ngIf="effect.statsModifier.healthAdditiveModifier !== 0"
-  >
-    {{ effect.statsModifier.healthAdditiveModifier | sign }} HP ({{
-      effect.duration
-    }}
-    turns)
-  </div>
+  <ng-container *ngFor="let modifier of modifiers">
+    <div class="text-nowrap" *ngIf="modifier.value !== 0">
+      {{ modifier.value | sign }}
+      {{ modifier.name }}
+      <app-turns-icon
+        [value]="modifier.duration"
+        [enableTooltip]="true"
+      ></app-turns-icon>
+    </div>
+  </ng-container>
 </div>

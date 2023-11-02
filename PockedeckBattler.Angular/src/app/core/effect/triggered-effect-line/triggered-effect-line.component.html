@@ -1,9 +1,4 @@
-<div class="hstack gap-2 align-items-start">
-  <div>
-    <i class="bi bi-stopwatch"></i>
-  </div>
-  <div class="vstack">
-    <span class="text-nowrap text-truncate">{{ effectTriggerString }}:</span>
-    <app-active-effect-line [effect]="effect?.effect"></app-active-effect-line>
-  </div>
+<div class="hstack gap-1 align-items-start">
+  <app-active-effect-line [effect]="effect?.effect"></app-active-effect-line>
+  <i class="bi bi-stopwatch" [ngbTooltip]="effectTriggerString"></i>
 </div>

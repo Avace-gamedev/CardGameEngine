@@ -31,6 +31,9 @@ export class ActionCardChipComponent {
   @Input()
   public popoverDetailsPlacement: Placement = 'auto';
 
+  @Input()
+  public size: ActionCardChipSize = 'md';
+
   protected bgColorCssVariable: string | undefined;
   protected textColorCssVariable: string | undefined;
   protected damage: { value: number; element: Element } | undefined;
@@ -62,3 +65,5 @@ export class ActionCardChipComponent {
     };
   }
 }
+
+export type ActionCardChipSize = 'sm' | 'md';

@@ -18,6 +18,7 @@
   <div [ngStyle]="{ 'height.%': 20 }">
     <app-player-side-elements
       [combat]="combat"
+      [disabled]="combat.currentSide !== combat.player.side"
       (play)="play($event)"
       (endTurn)="endTurn()"
     >

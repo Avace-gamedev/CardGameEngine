@@ -13,6 +13,9 @@ export class PlayerSideElementsComponent {
   @Input()
   public combat: PlayerCombatView | undefined;
 
+  @Input()
+  public disabled: boolean = false;
+
   @Output()
   public play: EventEmitter<number> = new EventEmitter<number>();
 

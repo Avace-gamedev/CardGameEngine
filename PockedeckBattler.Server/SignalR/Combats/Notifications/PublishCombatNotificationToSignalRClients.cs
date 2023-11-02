@@ -27,7 +27,7 @@ public class PublishCombatNotificationToSignalRClients : INotificationHandler<Co
 
         if (IsConnected(notification.Combat.RightPlayerName, out string? rightId))
         {
-            await _hub.Clients.Client(rightId).CombatCreated(notification.Combat.PlayerView(CombatSide.Left));
+            await _hub.Clients.Client(rightId).CombatCreated(notification.Combat.PlayerView(CombatSide.Right));
         }
     }
 
@@ -40,7 +40,7 @@ public class PublishCombatNotificationToSignalRClients : INotificationHandler<Co
 
         if (IsConnected(notification.Combat.RightPlayerName, out string? rightId))
         {
-            await _hub.Clients.Client(rightId).CombatChanged(notification.Combat.PlayerView(CombatSide.Left));
+            await _hub.Clients.Client(rightId).CombatChanged(notification.Combat.PlayerView(CombatSide.Right));
         }
     }
 

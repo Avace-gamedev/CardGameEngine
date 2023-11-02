@@ -4,6 +4,8 @@
       <button
         class="btn m-0 p-0"
         style="height: 100%; width: 175px"
+        [class.btn-disabled]="disabled || card.card.apCost > combat.player.ap"
+        [disabled]="disabled || card.card.apCost > combat.player.ap"
         (click)="play.emit(i)"
         *ngFor="let card of combat.player.hand; let i = index"
       >
@@ -15,7 +17,7 @@
       class="btn p-4"
       [class.btn-primary]="combat.currentSide === combat.player.side"
       [class.btn-disabled]="combat.currentSide !== combat.player.side"
-      [disabled]="combat.currentSide !== combat.player.side"
+      [disabled]="disabled"
       (click)="endTurn.emit()"
     >
       End Turn

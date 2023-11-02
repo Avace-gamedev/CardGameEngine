@@ -5,6 +5,7 @@ import {
   CombatsService,
   PlayerCombatView,
 } from '../api/pockedeck-battler-api-client';
+import { SignalRService } from '../api/signal-r/signal-r.service';
 import { IdentityService } from '../core/authentication/services/identity.service';
 
 @Component({
@@ -17,6 +18,7 @@ export class CombatComponent implements OnInit {
 
   constructor(
     private identityService: IdentityService,
+    private signalrService: SignalRService,
     private combatsService: CombatsService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
@@ -24,6 +26,14 @@ export class CombatComponent implements OnInit {
 
   ngOnInit() {
     const identity = this.identityService.getIdentity();
+
+    this.signalrService
+      .listen<PlayerCombatView>(
+        'combats',
+        'CombatChanged',
+        PlayerCombatView.fromJS,
+      )
+      .subscribe((combat) => (this.combat = combat));
 
     this.activatedRoute.paramMap
       .pipe(

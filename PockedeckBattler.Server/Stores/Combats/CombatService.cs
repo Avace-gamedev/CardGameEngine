@@ -1,5 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using MediatR;
+using PockedeckBattler.Server.Stores.Combats.Notifications;
 
 namespace PockedeckBattler.Server.Stores.Combats;
 
@@ -16,7 +17,19 @@ public class CombatService : ICombatService
 
     public async Task SaveCombat(CombatWithMetadata combat, CancellationToken cancellationToken = default)
     {
-        await _store.Save(GetKey(combat.Id), combat, cancellationToken);
+        string key = GetKey(combat.Id);
+        bool created = !await _store.Exists(key, cancellationToken);
+
+        await _store.Save(key, combat, cancellationToken);
+
+        if (created)
+        {
+            await _mediator.Publish(new CombatCreated(combat), cancellationToken);
+        }
+        else
+        {
+            await _mediator.Publish(new CombatSaved(combat), cancellationToken);
+        }
     }
 
     public async Task<CombatWithMetadata?> GetCombat(Guid id, CancellationToken cancellationToken = default)

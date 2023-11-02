@@ -2,6 +2,8 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using NSwag;
+using PockedeckBattler.Server.Middlewares.Exceptions;
+using PockedeckBattler.Server.Rest.Exceptions;
 using PockedeckBattler.Server.SignalR;
 using PockedeckBattler.Server.SignalR.Combats;
 using PockedeckBattler.Server.Stores;
@@ -31,8 +33,16 @@ builder.Services.AddSwaggerDocument(
         };
     }
 );
+
+builder.Services.AddProblemDetails();
+
+builder.Services.AddSingleton<IWebApiExceptionHandler, GameEngineExceptionHandler>();
+builder.Services.AddSingleton<ExceptionMiddleware>();
+
 builder.Services.AddSignalR().AddNewtonsoftJsonProtocol(options => ConfigureNewtonsoft(options.PayloadSerializerSettings));
 builder.Services.AddMediatR(options => { options.RegisterServicesFromAssemblyContaining<Program>(); });
+
+builder.Services.AddSingleton<IHubConnections, HubConnectionsInMemory>();
 
 builder.Services.AddSingleton<IHubConnections, HubConnectionsInMemory>();
 
@@ -44,6 +54,8 @@ builder.Services.AddSingleton<ICombatInPreparationService, CombatInPreparationSe
 
 WebApplication app = builder.Build();
 
+app.UseExceptionHandler();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -52,6 +64,8 @@ if (app.Environment.IsDevelopment())
 
     app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin().DisallowCredentials());
 }
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseHttpsRedirection();
 

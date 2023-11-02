@@ -22,13 +22,13 @@ export class SelfClosingAlertComponent implements OnInit {
   public type: AlertType = AlertType.Info;
 
   @Input()
-  public delay: number = 1;
+  public delay: number = 1000;
 
   @Output()
   public closed: EventEmitter<void> = new EventEmitter<void>();
 
   ngOnInit() {
-    //setTimeout(() => this.close(), this.delay);
+    setTimeout(() => this.close(), this.delay);
   }
 
   private close() {

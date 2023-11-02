@@ -36,7 +36,8 @@ builder.Services.AddMediatR(options => { options.RegisterServicesFromAssemblyCon
 
 builder.Services.AddSingleton<IHubConnections, HubConnectionsInMemory>();
 
-builder.Services.AddSingleton<ICombatService, CombatsMemoryStore>();
+builder.Services.AddSingleton<IStore<Combat>, CombatFileStore>();
+builder.Services.AddSingleton<ICombatService, CombatService>();
 
 builder.Services.AddSingleton<IStore<CombatInPreparation>, CombatInPreparationFileStore>();
 builder.Services.AddSingleton<ICombatInPreparationService, CombatInPreparationService>();
@@ -66,7 +67,7 @@ log?.LogInformation("App is starting");
 
 app.Run();
 
-log?.LogInformation("App is exiting");
+log?.LogInformation("Last log before exit");
 
 return;
 

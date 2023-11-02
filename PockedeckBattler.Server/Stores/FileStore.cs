@@ -65,7 +65,7 @@ public abstract class FileStore<TData> : IStore<TData>
         try
         {
             await using FileStream stream = File.OpenWrite(filePath);
-            await Write(value, stream, cancellationToken);
+            await Write(filePath, stream, value, cancellationToken);
         }
         catch
         {
@@ -85,13 +85,13 @@ public abstract class FileStore<TData> : IStore<TData>
         return Task.CompletedTask;
     }
 
-    protected abstract Task<TData?> Read(Stream stream, CancellationToken cancellationToken);
-    protected abstract Task Write(TData value, Stream outputStream, CancellationToken cancellationToken);
+    protected abstract Task<TData?> Read(string filePath, Stream stream, CancellationToken cancellationToken);
+    protected abstract Task Write(string filePath, Stream outputStream, TData value, CancellationToken cancellationToken);
 
     async Task<TData?> LoadFromFile(string filePath, CancellationToken cancellationToken)
     {
         await using FileStream stream = File.OpenRead(filePath);
-        return await Read(stream, cancellationToken);
+        return await Read(filePath, stream, cancellationToken);
     }
 
     string GetFilePath(string key, out string fileName)

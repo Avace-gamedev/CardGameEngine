@@ -24,9 +24,9 @@ public class CombatsController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
-    public ActionResult<CombatView> Get(Guid id, [Required] string playerName)
+    public async Task<ActionResult<CombatView>> Get(Guid id, [Required] string playerName)
     {
-        Combat combat = _combatService.RequireCombat(id);
+        Combat combat = await _combatService.RequireCombat(id);
         if (!PlayerInCombat(combat, playerName))
         {
             return NotFound();
@@ -36,9 +36,19 @@ public class CombatsController : ControllerBase
     }
 
     [HttpGet]
-    public IEnumerable<PlayerCombatView> GetCombatsOfPlayer([Required] string playerName)
+    public async IAsyncEnumerable<PlayerCombatView> GetCombatsOfPlayer([Required] string playerName)
     {
-        return _combatService.GetCombatsInvolvingPlayer(playerName).Select(c => c.PlayerView(c.LeftPlayerName == playerName ? CombatSide.Left : CombatSide.Right));
+        await foreach (Combat combat in _combatService.GetCombatsInvolvingPlayer(playerName))
+        {
+            if (combat.LeftPlayerName == playerName)
+            {
+                yield return combat.PlayerView(CombatSide.Left);
+            }
+            else
+            {
+                yield return combat.PlayerView(CombatSide.Right);
+            }
+        }
     }
 
     [HttpGet("in-preparation/{id:guid}")]
@@ -54,9 +64,12 @@ public class CombatsController : ControllerBase
     }
 
     [HttpGet("in-preparation")]
-    public IEnumerable<CombatInPreparationView> GetCombatsInPreparationOfPlayer([Required] string playerName)
+    public async IAsyncEnumerable<CombatInPreparationView> GetCombatsInPreparationOfPlayer([Required] string playerName)
     {
-        return _combatInPreparationService.GetCombatsInPreparationInvolvingPlayer(playerName).ToBlockingEnumerable().Select(c => c.View());
+        await foreach (CombatInPreparation combatInPreparation in _combatInPreparationService.GetCombatsInPreparationInvolvingPlayer(playerName))
+        {
+            yield return combatInPreparation.View();
+        }
     }
 
     [HttpPost]
@@ -174,15 +187,15 @@ public class CombatsController : ControllerBase
         );
 
         Combat combat = new(Guid.NewGuid(), inPreparation.LeftPlayerName, inPreparation.RightPlayerName, combatInstance);
-        _combatService.SaveCombat(combat);
+        await _combatService.SaveCombat(combat);
 
         return combat.View();
     }
 
-    [HttpPost("{id:guid}/{side}/play/{index:int}")]
-    public ActionResult PlayCard(Guid id, [Required] string playerName, int index)
+    [HttpPost("{id:guid}/play/{index:int}")]
+    public async Task<ActionResult> PlayCard(Guid id, [Required] string playerName, int index)
     {
-        Combat combat = _combatService.RequireCombat(id);
+        Combat combat = await _combatService.RequireCombat(id);
         if (!PlayerInCombat(combat, playerName, out CombatSide side))
         {
             return NotFound();
@@ -190,14 +203,14 @@ public class CombatsController : ControllerBase
 
         combat.Instance.PlayCardAt(side, index);
 
-        _combatService.SaveCombat(combat);
+        await _combatService.SaveCombat(combat);
         return NoContent();
     }
 
-    [HttpPost("{id:guid}/{side}/end-turn")]
-    public ActionResult EndTurn(Guid id, [Required] string playerName)
+    [HttpPost("{id:guid}/end-turn")]
+    public async Task<ActionResult> EndTurn(Guid id, [Required] string playerName)
     {
-        Combat combat = _combatService.RequireCombat(id);
+        Combat combat = await _combatService.RequireCombat(id);
         if (!PlayerInCombat(combat, playerName, out CombatSide side))
         {
             return NotFound();
@@ -205,7 +218,7 @@ public class CombatsController : ControllerBase
 
         combat.Instance.EndSideTurnAndStartNextOne(side);
 
-        _combatService.SaveCombat(combat);
+        await _combatService.SaveCombat(combat);
         return NoContent();
     }
 

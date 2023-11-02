@@ -13,7 +13,7 @@ import { IdentityService } from '../core/authentication/services/identity.servic
   styleUrls: ['./combat.component.css'],
 })
 export class CombatComponent implements OnInit {
-  private combat: PlayerCombatView | undefined;
+  protected combat: PlayerCombatView | undefined;
 
   constructor(
     private identityService: IdentityService,

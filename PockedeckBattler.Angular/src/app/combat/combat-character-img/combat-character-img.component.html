@@ -1,0 +1,18 @@
+<ng-container *ngIf="character">
+  <div class="pb-2 position-relative">
+    <app-character-img
+      [character]="character.character"
+      [size]="size"
+      [enablePopoverDetails]="true"
+      [popoverPlacement]="popoverPlacement"
+    ></app-character-img>
+
+    <app-health-bar
+      class="position-absolute start-0 end-0 bottom-0"
+      style="height: 0.5rem"
+      [value]="character.health"
+      [maxValue]="character.character.statistics.maxHealth"
+    >
+    </app-health-bar>
+  </div>
+</ng-container>

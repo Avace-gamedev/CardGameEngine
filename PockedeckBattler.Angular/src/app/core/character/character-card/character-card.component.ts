@@ -18,5 +18,5 @@ export class CharacterCardComponent {
   public enablePopoverDetails: boolean = false;
 
   @Input()
-  public popoverDetailsPlacement: Placement = 'left';
+  public popoverDetailsPlacement: Placement = 'auto';
 }

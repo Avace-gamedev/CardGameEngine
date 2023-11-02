@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Placement } from '@ng-bootstrap/ng-bootstrap';
 import { CharacterView } from '../../../api/pockedeck-battler-api-client';
 
 @Component({
@@ -11,10 +12,13 @@ export class CharacterImgComponent {
   public character: CharacterView | undefined;
 
   @Input()
-  public size: 'sm' | 'md' | 'lg' = 'md';
+  public size: CombatCharacterImageSize = 'md';
 
   @Input()
   public enablePopoverDetails: boolean = false;
+
+  @Input()
+  public popoverPlacement: Placement = 'auto';
 
   @Output()
   public dropped: EventEmitter<DragEvent> = new EventEmitter<DragEvent>();
@@ -32,6 +36,8 @@ export class CharacterImgComponent {
         return 50;
       case 'lg':
         return 100;
+      case 'xl':
+        return 150;
     }
   }
   protected get fontSizeClass(): string {
@@ -41,6 +47,8 @@ export class CharacterImgComponent {
       case 'md':
         return 'fs-4';
       case 'lg':
+        return 'fs-1';
+      case 'xl':
         return 'fs-1';
     }
   }
@@ -61,3 +69,5 @@ export class CharacterImgComponent {
     this.dropped.emit($event);
   }
 }
+
+export type CombatCharacterImageSize = 'sm' | 'md' | 'lg' | 'xl';

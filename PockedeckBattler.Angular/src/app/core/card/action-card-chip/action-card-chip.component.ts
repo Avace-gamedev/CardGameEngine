@@ -29,7 +29,7 @@ export class ActionCardChipComponent {
   public enablePopoverDetails: boolean = false;
 
   @Input()
-  public popoverDetailsPlacement: Placement = 'left';
+  public popoverDetailsPlacement: Placement = 'auto';
 
   protected bgColorCssVariable: string | undefined;
   protected textColorCssVariable: string | undefined;

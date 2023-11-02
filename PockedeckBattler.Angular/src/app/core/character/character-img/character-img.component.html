@@ -1,11 +1,14 @@
 <div class="d-flex align-items-center justify-content-center">
   <button
-    class="border border-1 d-flex align-items-center justify-content-center"
+    class="border border-1 d-flex align-items-center justify-content-center position-relative"
     [class.border-4]="characterBeingDragged"
     [ngStyle]="{ 'width.px': imgSize, 'height.px': imgSize }"
-    [ngbPopover]="character && enablePopoverDetails ? popover : null"
+    [ngbPopover]="
+      size === 'sm' && character && enablePopoverDetails ? popover : null
+    "
     container="body"
     triggers="mouseenter:mouseleave"
+    [placement]="popoverPlacement"
     (dragenter)="dragenter($event); $event.preventDefault()"
     (dragover)="$event.preventDefault()"
     (dragleave)="dragleave()"
@@ -26,6 +29,31 @@
     >
       {{ character.identity.displayName.substring(0, 2) }}
     </span>
+
+    <ng-container *ngIf="character && enablePopoverDetails">
+      <ng-container [ngSwitch]="size">
+        <ng-container *ngSwitchCase="'sm'"></ng-container>
+        <div
+          class="position-absolute top-0 end-0"
+          [ngbPopover]="popover"
+          container="body"
+          triggers="mouseenter:mouseleave"
+          *ngSwitchCase="'md'"
+        >
+          <i class="bi bi-info"></i>
+        </div>
+
+        <div
+          class="position-absolute top-0 end-0 pe-1"
+          [ngbPopover]="popover"
+          container="body"
+          triggers="mouseenter:mouseleave"
+          *ngSwitchDefault
+        >
+          <i class="bi bi-info-circle"></i>
+        </div>
+      </ng-container>
+    </ng-container>
   </button>
 </div>
 

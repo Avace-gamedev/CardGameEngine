@@ -1723,13 +1723,13 @@ export interface IBaseCombatView {
 export class PlayerCombatView extends BaseCombatView implements IPlayerCombatView {
     id!: string;
     player!: PlayerSideView;
-    combat!: CombatSideView;
+    opponent!: CombatSideView;
 
     constructor(data?: IPlayerCombatView) {
         super(data);
         if (!data) {
             this.player = new PlayerSideView();
-            this.combat = new CombatSideView();
+            this.opponent = new CombatSideView();
         }
     }
 
@@ -1738,7 +1738,7 @@ export class PlayerCombatView extends BaseCombatView implements IPlayerCombatVie
         if (_data) {
             this.id = _data["id"];
             this.player = _data["player"] ? PlayerSideView.fromJS(_data["player"]) : new PlayerSideView();
-            this.combat = _data["combat"] ? CombatSideView.fromJS(_data["combat"]) : new CombatSideView();
+            this.opponent = _data["opponent"] ? CombatSideView.fromJS(_data["opponent"]) : new CombatSideView();
         }
     }
 
@@ -1753,7 +1753,7 @@ export class PlayerCombatView extends BaseCombatView implements IPlayerCombatVie
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["player"] = this.player ? this.player.toJSON() : <any>undefined;
-        data["combat"] = this.combat ? this.combat.toJSON() : <any>undefined;
+        data["opponent"] = this.opponent ? this.opponent.toJSON() : <any>undefined;
         super.toJSON(data);
         return data;
     }
@@ -1762,7 +1762,7 @@ export class PlayerCombatView extends BaseCombatView implements IPlayerCombatVie
 export interface IPlayerCombatView extends IBaseCombatView {
     id: string;
     player: PlayerSideView;
-    combat: CombatSideView;
+    opponent: CombatSideView;
 }
 
 export abstract class BaseCombatSideView implements IBaseCombatSideView {

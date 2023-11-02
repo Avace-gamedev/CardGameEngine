@@ -1,1 +1,17 @@
-<p>combat works!</p>
+<div class="h-100 container-lg vstack" *ngIf="combat">
+  <div [ngStyle]="{ 'height.%': 15 }" class="bg-body-tertiary"></div>
+  <div [ngStyle]="{ 'height.%': 35 }" class="bg-secondary">
+    <app-combat-side
+      [frontCharacter]="combat.opponent.frontCharacter"
+      [backCharacter]="combat.opponent.backCharacter"
+      [invert]="true"
+    ></app-combat-side>
+  </div>
+  <div [ngStyle]="{ 'height.%': 35 }" class="bg-primary">
+    <app-combat-side
+      [frontCharacter]="combat.player.frontCharacter"
+      [backCharacter]="combat.player.backCharacter"
+    ></app-combat-side>
+  </div>
+  <div [ngStyle]="{ 'height.%': 15 }" class="bg-body-tertiary"></div>
+</div>

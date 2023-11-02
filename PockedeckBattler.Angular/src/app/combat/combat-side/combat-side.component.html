@@ -1,0 +1,16 @@
+<div class="h-100 container-fluid hstack" [class.flex-row-reverse]="invert">
+  <div
+    class="hstack w-50 justify-content-around"
+    [class.flex-row-reverse]="invert"
+  >
+    <app-combat-character-img
+      [character]="backCharacter"
+      size="xl"
+    ></app-combat-character-img>
+    <app-combat-character-img
+      [character]="frontCharacter"
+      size="xl"
+    ></app-combat-character-img>
+  </div>
+  <div class="w-50"></div>
+</div>

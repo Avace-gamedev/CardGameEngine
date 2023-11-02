@@ -36,6 +36,14 @@ export class CombatComponent implements OnInit {
       )
       .subscribe((combat) => (this.combat = combat));
 
+    this.signalrService
+      .listen<PlayerCombatView>(
+        'combats',
+        'CombatOver',
+        PlayerCombatView.fromJS,
+      )
+      .subscribe((combat) => (this.combat = combat));
+
     this.activatedRoute.paramMap
       .pipe(
         switchMap((paramMap) => {

@@ -60,7 +60,8 @@ public static class PlayerCombatViewMappingExtensions
         )
         {
             Ongoing = combat.Instance.Ongoing,
-            Over = combat.Instance.Over
+            Over = combat.Instance.Over,
+            Winner = combat.Instance.Winner
         };
     }
 }

@@ -11,14 +11,76 @@
       (click)="select(combat)"
       *ngFor="let combat of combatsInPreparation"
     >
-      {{ combat.id }} (in preparation)
+      <ng-container
+        *ngTemplateOutlet="
+          combatInPreparationEntry;
+          context: { $implicit: combat }
+        "
+      >
+      </ng-container>
     </a>
-    <a
-      class="list-group-item list-group-item-action"
-      (click)="select(combat)"
-      *ngFor="let combat of combats"
-    >
-      {{ combat.id }}
-    </a>
+    <ng-container *ngFor="let combat of combats">
+      <a
+        class="list-group-item list-group-item-action"
+        (click)="select(combat)"
+        *ngIf="!combat.over"
+      >
+        <ng-container
+          *ngTemplateOutlet="combatEntry; context: { $implicit: combat }"
+        >
+        </ng-container>
+      </a>
+    </ng-container>
+  </div>
+
+  <div class="mt-5">
+    <h2>History</h2>
+    <div class="list-group">
+      <ng-container *ngFor="let combat of combats">
+        <a
+          class="list-group-item list-group-item-action"
+          (click)="select(combat)"
+          *ngIf="combat.over"
+        >
+          <ng-container
+            *ngTemplateOutlet="combatEntry; context: { $implicit: combat }"
+          ></ng-container>
+        </a>
+      </ng-container>
+    </div>
   </div>
 </section>
+
+<ng-template #combatEntry let-combat>
+  <div class="hstack gap-2">
+    <i
+      class="bi bi-trophy-fill"
+      [ngbTooltip]="'You WON!'"
+      *ngIf="combat.over && combat.winner === combat.player.side"
+    ></i>
+
+    <i
+      class="bi bi-x"
+      [ngbTooltip]="'You LOST!'"
+      *ngIf="combat.over && combat.winner !== combat.player.side"
+    ></i>
+
+    {{ combat.player.playerName }} v. {{ combat.opponent.playerName }}
+
+    <div class="flex-fill"></div>
+
+    <small>{{ combat.id }}</small>
+  </div>
+</ng-template>
+
+<ng-template #combatInPreparationEntry let-combat>
+  <div class="hstack gap-2">
+    <i class="bi bi-hourglass-split" ngbTooltip="In preparation"></i>
+
+    {{ combat.leftPlayerName }} v. {{ combat.rightPlayerName ?? "???" }}
+
+    <div class="flex-fill"></div>
+
+    <small>{{ combat.id }}</small>
+  </div>
+</ng-template>

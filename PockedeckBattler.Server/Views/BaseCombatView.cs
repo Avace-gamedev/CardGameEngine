@@ -18,4 +18,5 @@ public class BaseCombatView
     public int MaxAp { get; }
     public CombatSide CurrentSide { get; }
     public CombatSideTurnPhase CurrentPhase { get; }
+    public CombatSide Winner { get; init; }
 }

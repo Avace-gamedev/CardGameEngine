@@ -113,7 +113,7 @@ public class CombatsController : ControllerBase
     }
 
     [HttpPost("{id:guid}/start")]
-    public async Task<ActionResult<CombatView>> StartCombat(Guid id, [Required] string playerName)
+    public async Task<ActionResult<Guid>> StartCombat(Guid id, [Required] string playerName)
     {
         CombatInPreparation inPreparation = await _combatInPreparationService.RequireCombatInPreparation(id);
         if (!PlayerInCombat(inPreparation, playerName))
@@ -158,12 +158,12 @@ public class CombatsController : ControllerBase
             new CombatOptions()
         );
 
-        CombatWithMetadata combat = new(Guid.NewGuid(), inPreparation.LeftPlayerName, inPreparation.RightPlayerName, combatInstance, inPreparation);
+        CombatWithMetadata combat = new(inPreparation.Id, inPreparation.LeftPlayerName, inPreparation.RightPlayerName, combatInstance, inPreparation);
         await _combatService.SaveCombat(combat);
 
         await _combatInPreparationService.DeleteCombatInPreparation(inPreparation);
 
-        return combat.View();
+        return combat.Id;
     }
 
     [HttpGet]

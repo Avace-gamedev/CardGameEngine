@@ -5,15 +5,15 @@ import {
   CombatInPreparationView,
   CombatsService,
   UpdateCombatInPreparationRequest,
-} from '../../../api/pockedeck-battler-api-client';
-import { IdentityService } from '../../../core/authentication/services/identity.service';
+} from '../../../../api/pockedeck-battler-api-client';
+import { IdentityService } from '../../../../core/authentication/services/identity.service';
 
 @Component({
-  selector: 'app-combat-creation-side',
-  templateUrl: './combat-creation-side.component.html',
-  styleUrls: ['./combat-creation-side.component.css'],
+  selector: 'app-combat-configure-side',
+  templateUrl: './combat-configure-side.component.html',
+  styleUrls: ['./combat-configure-side.component.css'],
 })
-export class CombatCreationSideComponent {
+export class CombatConfigureSideComponent {
   @Input()
   get name(): string | undefined {
     return this._name;

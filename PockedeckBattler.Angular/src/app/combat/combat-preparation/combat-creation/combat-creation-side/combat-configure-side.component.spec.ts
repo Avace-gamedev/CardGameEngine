@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CombatCreationSideComponent } from './combat-creation-side.component';
+import { CombatConfigureSideComponent } from './combat-configure-side.component';
 
 describe('CombatCreationSideComponent', () => {
-  let component: CombatCreationSideComponent;
-  let fixture: ComponentFixture<CombatCreationSideComponent>;
+  let component: CombatConfigureSideComponent;
+  let fixture: ComponentFixture<CombatConfigureSideComponent>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [CombatCreationSideComponent]
+      declarations: [CombatConfigureSideComponent],
     });
-    fixture = TestBed.createComponent(CombatCreationSideComponent);
+    fixture = TestBed.createComponent(CombatConfigureSideComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

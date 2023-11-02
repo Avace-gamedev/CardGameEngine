@@ -1,7 +1,7 @@
 import { APP_BASE_HREF } from '@angular/common';
 import { Component, Inject, Input } from '@angular/core';
-import { CombatInPreparationView } from '../../../api/pockedeck-battler-api-client';
-import '../../../core/extensions/string-extensions';
+import { CombatInPreparationView } from '../../../../api/pockedeck-battler-api-client';
+import '../../../../core/extensions/string-extensions';
 
 @Component({
   selector: 'app-combat-empty-side',
@@ -29,7 +29,7 @@ export class CombatEmptySideComponent {
 
   private updateUrl() {
     this.url = new URL(
-      'combat/join/' + this._combat?.id ?? '???',
+      'combat/preparation/join/' + this._combat?.id ?? '???',
       new URL(this.baseHref, window.location.origin),
     ).href;
   }

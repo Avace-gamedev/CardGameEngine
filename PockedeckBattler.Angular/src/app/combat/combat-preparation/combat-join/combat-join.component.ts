@@ -4,8 +4,8 @@ import { catchError, from, of, switchMap } from 'rxjs';
 import {
   CombatsService,
   UpdateCombatInPreparationRequest,
-} from '../../api/pockedeck-battler-api-client';
-import { IdentityService } from '../../core/authentication/services/identity.service';
+} from '../../../api/pockedeck-battler-api-client';
+import { IdentityService } from '../../../core/authentication/services/identity.service';
 
 @Component({
   templateUrl: './combat-join.component.html',

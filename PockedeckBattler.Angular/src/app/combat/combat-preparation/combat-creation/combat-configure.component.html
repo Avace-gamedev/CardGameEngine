@@ -5,22 +5,22 @@
 
   <div class="row flex-fill overflow-y-auto">
     <div class="col-lg">
-      <app-combat-creation-side
+      <app-combat-configure-side
         [combat]="combat"
         [name]="combat.leftPlayerName"
         [characters]="characters"
         [invertSlotPositions]="true"
         [readonly]="side !== CombatSide.Left"
-      ></app-combat-creation-side>
+      ></app-combat-configure-side>
     </div>
     <div class="col-lg">
-      <app-combat-creation-side
+      <app-combat-configure-side
         [combat]="combat"
         [name]="combat.rightPlayerName"
         [characters]="characters"
         [readonly]="side !== CombatSide.Right"
         *ngIf="combat.rightPlayerName"
-      ></app-combat-creation-side>
+      ></app-combat-configure-side>
       <app-combat-empty-side [combat]="combat" *ngIf="!combat.rightPlayerName">
       </app-combat-empty-side>
     </div>

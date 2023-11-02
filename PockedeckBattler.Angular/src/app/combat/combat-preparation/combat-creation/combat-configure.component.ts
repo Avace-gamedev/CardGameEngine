@@ -7,15 +7,15 @@ import {
   CombatInPreparationView,
   CombatSide,
   CombatsService,
-} from '../../api/pockedeck-battler-api-client';
-import '../../common-pages/not-found/redirect';
-import { IdentityService } from '../../core/authentication/services/identity.service';
+} from '../../../api/pockedeck-battler-api-client';
+import '../../../common-pages/not-found/redirect';
+import { IdentityService } from '../../../core/authentication/services/identity.service';
 
 @Component({
-  templateUrl: './combat-creation.component.html',
-  styleUrls: ['./combat-creation.component.css'],
+  templateUrl: './combat-configure.component.html',
+  styleUrls: ['./combat-configure.component.css'],
 })
-export class CombatCreationComponent implements OnInit {
+export class CombatConfigureComponent implements OnInit {
   protected characters: CharacterView[] = [];
   protected combat: CombatInPreparationView | undefined;
   protected side: CombatSide | undefined;
@@ -77,5 +77,5 @@ declare module '@angular/router' {
 Router.prototype.toCombatConfiguration = function (
   id: string,
 ): Promise<boolean> {
-  return this.navigate(['/', 'combat', 'creation', id]);
+  return this.navigate(['/', 'combat', 'preparation', 'configure', id]);
 };

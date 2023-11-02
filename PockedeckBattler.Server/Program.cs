@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using NSwag;
@@ -11,7 +12,7 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddCors();
-builder.Services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.Converters.Add(new StringEnumConverter(new CamelCaseNamingStrategy())));
+builder.Services.AddControllers().AddNewtonsoftJson(options => ConfigureNewtonsoft(options.SerializerSettings));
 builder.Services.AddSwaggerDocument(
     config =>
     {
@@ -29,7 +30,7 @@ builder.Services.AddSwaggerDocument(
         };
     }
 );
-builder.Services.AddSignalR();
+builder.Services.AddSignalR().AddNewtonsoftJsonProtocol(options => ConfigureNewtonsoft(options.PayloadSerializerSettings));
 builder.Services.AddMediatR(options => { options.RegisterServicesFromAssemblyContaining<Program>(); });
 
 builder.Services.AddSingleton<IHubConnections, HubConnectionsInMemory>();
@@ -56,4 +57,17 @@ app.MapControllers();
 
 app.MapHub<CombatsHub>("/signalr/combats");
 
+ILogger<Program>? log = app.Services.GetService<ILogger<Program>>();
+
+log?.LogInformation("App is starting");
+
 app.Run();
+
+log?.LogInformation("App is exiting");
+
+return;
+
+void ConfigureNewtonsoft(JsonSerializerSettings settings)
+{
+    settings.Converters.Add(new StringEnumConverter(new CamelCaseNamingStrategy()));
+}

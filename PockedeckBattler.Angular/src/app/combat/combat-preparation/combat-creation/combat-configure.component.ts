@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { catchError, from, map, switchMap, throwError } from 'rxjs';
 import {
   CharactersService,
@@ -8,9 +9,12 @@ import {
   CombatSide,
   CombatsService,
 } from '../../../api/pockedeck-battler-api-client';
+import { SignalRService } from '../../../api/signal-r/signal-r.service';
 import '../../../common-pages/not-found/redirect';
 import { IdentityService } from '../../../core/authentication/services/identity.service';
+import { ModalsService } from '../../../core/modals/modals.service';
 
+@UntilDestroy()
 @Component({
   templateUrl: './combat-configure.component.html',
   styleUrls: ['./combat-configure.component.css'],
@@ -21,15 +25,36 @@ export class CombatConfigureComponent implements OnInit {
   protected side: CombatSide | undefined;
 
   constructor(
+    private signalRService: SignalRService,
     private identityService: IdentityService,
     private combatsService: CombatsService,
     private charactersService: CharactersService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
+    private modalsService: ModalsService,
   ) {}
 
   ngOnInit() {
     const identity = this.identityService.getIdentity();
+
+    this.signalRService
+      .listen<CombatInPreparationView>(
+        'combats',
+        'CombatInPreparationChanged',
+        CombatInPreparationView.fromJS,
+      )
+      .pipe(untilDestroyed(this))
+      .subscribe((msg) => console.log(msg));
+
+    this.signalRService
+      .listen<CombatInPreparationView>(
+        'combats',
+        'CombatInPreparationDeleted',
+        CombatInPreparationView.fromJS,
+      )
+      .pipe(untilDestroyed(this))
+      .subscribe((combat) => this.onDeleted(combat));
+
     this.activatedRoute.paramMap
       .pipe(
         switchMap((params) => {
@@ -87,6 +112,20 @@ export class CombatConfigureComponent implements OnInit {
     this.combatsService
       .leaveCombatInPreparation(this.combat.id, name)
       .subscribe(() => this.router.toCombatSelection());
+  }
+
+  private onDeleted(combat: CombatInPreparationView) {
+    if (combat.leftPlayerName === this.identityService.getIdentity()) {
+      return;
+    }
+
+    console.log(combat, this.identityService.getIdentity());
+
+    this.modalsService
+      .alert('Combat has been deleted by ' + combat.leftPlayerName)
+      .subscribe(() => {
+        this.router.toCombatSelection().then();
+      });
   }
 
   protected readonly CombatSide = CombatSide;

@@ -16,6 +16,7 @@
         <PackageReference Include="MediatR" Version="12.1.1"/>
         <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.13"/>
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.13"/>
+        <PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson" Version="7.0.13"/>
         <PackageReference Include="NSwag.AspNetCore" Version="13.20.0"/>
     </ItemGroup>
 

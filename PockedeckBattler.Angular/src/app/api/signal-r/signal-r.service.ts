@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import { HubConnection } from '@microsoft/signalr';
-import { filter, finalize, map, Observable, Subject } from 'rxjs';
+import { finalize, map, Observable, Subject } from 'rxjs';
 import { IdentityService } from '../../core/authentication/services/identity.service';
 import { API_BASE_URL } from '../pockedeck-battler-api-client';
 
@@ -26,9 +26,7 @@ export class SignalRService {
       this.methods[hub][method] = new Subject<any[]>();
 
       const connection = this.connect(hub);
-      connection.on(method, (...args: any[]) =>
-        this.methods[hub][method].next(args),
-      );
+      connection.on(method, (arg: any) => this.methods[hub][method].next(arg));
     }
 
     return this.methods[hub][method];
@@ -36,8 +34,7 @@ export class SignalRService {
 
   public listen<T>(hub: string, method: string, parser: (arg: any) => T) {
     return this.listenRaw(hub, method).pipe(
-      filter((...args: any[]) => args && args.length > 0),
-      map((...args: any[]) => parser(args[0])),
+      map((arg) => parser(arg)),
       finalize(() => this.destroy(hub, method)),
     );
   }

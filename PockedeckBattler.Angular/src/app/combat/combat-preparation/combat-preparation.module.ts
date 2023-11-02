@@ -8,11 +8,9 @@ import { CombatEmptySideComponent } from './combat-creation/combat-empty-side/co
 import { CombatJoinComponent } from './combat-join/combat-join.component';
 
 import { CombatPreparationRoutingModule } from './combat-preparation-routing.module';
-import { CombatPreparationComponent } from './combat-preparation.component';
 
 @NgModule({
   declarations: [
-    CombatPreparationComponent,
     CombatConfigureComponent,
     CombatConfigureSideComponent,
     CombatEmptySideComponent,

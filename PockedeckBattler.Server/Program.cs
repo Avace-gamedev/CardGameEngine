@@ -36,7 +36,7 @@ builder.Services.AddMediatR(options => { options.RegisterServicesFromAssemblyCon
 
 builder.Services.AddSingleton<IHubConnections, HubConnectionsInMemory>();
 
-builder.Services.AddSingleton<IStore<Combat>, CombatFileStore>();
+builder.Services.AddSingleton<IStore<CombatWithMetadata>, CombatFileStore>();
 builder.Services.AddSingleton<ICombatService, CombatService>();
 
 builder.Services.AddSingleton<IStore<CombatInPreparation>, CombatInPreparationFileStore>();

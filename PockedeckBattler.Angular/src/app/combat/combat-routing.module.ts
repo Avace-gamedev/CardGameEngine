@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { CombatSelectionComponent } from './combat-selection/combat-selection.component';
+import { CombatComponent } from './combat.component';
 
 const routes: Routes = [
   {
@@ -18,6 +19,10 @@ const routes: Routes = [
   {
     path: 'selection',
     component: CombatSelectionComponent,
+  },
+  {
+    path: ':id',
+    component: CombatComponent,
   },
 ];
 

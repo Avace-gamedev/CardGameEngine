@@ -14,7 +14,7 @@ import { SignalRService } from '../../../api/signal-r/signal-r.service';
 import '../../../common-pages/not-found/redirect';
 import { IdentityService } from '../../../core/authentication/services/identity.service';
 import { ModalsService } from '../../../core/modals/modals.service';
-import { CombatSideConfiguration } from './combat-creation-side/combat-configure-side.component';
+import { CombatSideConfiguration } from './combat-configure-side/combat-configure-side.component';
 
 @UntilDestroy()
 @Component({
@@ -92,7 +92,20 @@ export class CombatConfigureComponent implements OnInit {
       .subscribe();
   }
 
-  protected update(side: CombatSide, configuration: CombatSideConfiguration) {
+  protected start() {
+    if (!this.combat) {
+      return;
+    }
+
+    this.combatsService
+      .startCombat(this.combat.id, this.identityService.getIdentity())
+      .subscribe(() => this.router.toCombat(this.combat!.id).then());
+  }
+
+  protected sendUpdate(
+    side: CombatSide,
+    configuration: CombatSideConfiguration,
+  ) {
     if (!this.combat) {
       return;
     }

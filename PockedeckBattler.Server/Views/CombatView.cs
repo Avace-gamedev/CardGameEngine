@@ -29,7 +29,7 @@ public class CombatView : BaseCombatView
 
 public static class CombatViewMappingExtensions
 {
-    public static CombatView View(this Combat store)
+    public static CombatView View(this CombatWithMetadata store)
     {
         return new CombatView(
             store.Id,

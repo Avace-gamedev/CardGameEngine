@@ -69,7 +69,10 @@ public abstract class FileStore<TData> : IStore<TData>
         }
         catch
         {
-            File.Move(backupFilePath, filePath);
+            if (File.Exists(backupFilePath))
+            {
+                File.Move(backupFilePath, filePath);
+            }
         }
         finally
         {

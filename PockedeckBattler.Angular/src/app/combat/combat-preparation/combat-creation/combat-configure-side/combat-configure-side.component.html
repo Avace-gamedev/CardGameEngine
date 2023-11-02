@@ -1,8 +1,8 @@
 <div class="h-100 vstack">
-  <h3 class="text-center">
+  <h3 class="text-center" [ngStyle]="{ 'minHeight.em': 1.5 }">
     {{ name ?? "???" }}
     <button
-      class="btn btn-outline-secondary"
+      class="btn btn-outline-secondary btn-sm"
       ngbTooltip="Leave"
       (click)="leave.emit()"
       *ngIf="!readonly"
@@ -39,10 +39,11 @@
     <h3 class="text-center">
       Team
       <button
-        class="btn btn-outline-secondary"
+        class="btn btn-outline-secondary btn-sm"
         ngbTooltip="Swap"
         [disabled]="disabled"
         (click)="swap()"
+        *ngIf="!readonly"
       >
         <i class="bi bi-arrow-left-right"></i>
       </button>
@@ -78,19 +79,18 @@
       Front
       <button
         type="button"
-        class="btn-close p-0"
+        class="btn-close p-0 btn-sm"
         [ngStyle]="{ 'width.em': 0.75, 'height.em': 0.75 }"
         ngbTooltip="Clear"
         aria-label="Close"
         [disabled]="disabled"
         (click)="unselect('front')"
-        *ngIf="frontCharacter"
+        *ngIf="frontCharacter && !readonly"
       ></button>
     </h4>
     <app-character-img
       [character]="frontCharacter"
       size="lg"
-      [enablePopoverDetails]="true"
       (dropped)="dropCharacter($event, 'front')"
     ></app-character-img>
     <app-character-card
@@ -109,13 +109,13 @@
       Back
       <button
         type="button"
-        class="btn-close p-0"
+        class="btn-close p-0 btn-sm"
         [ngStyle]="{ 'width.em': 0.75, 'height.em': 0.75 }"
         ngbTooltip="Clear"
         aria-label="Close"
         [disabled]="disabled"
         (click)="unselect('back')"
-        *ngIf="backCharacter"
+        *ngIf="backCharacter && !readonly"
       ></button>
     </h4>
     <app-character-img

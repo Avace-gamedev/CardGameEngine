@@ -11,7 +11,7 @@
         [characters]="characters"
         [invertSlotPositions]="true"
         [readonly]="side !== CombatSide.Left"
-        (update)="update(CombatSide.Left, $event)"
+        (update)="sendUpdate(CombatSide.Left, $event)"
         (leave)="leave(CombatSide.Left)"
       ></app-combat-configure-side>
     </div>
@@ -21,7 +21,7 @@
         [name]="combat.rightPlayerName"
         [characters]="characters"
         [readonly]="side !== CombatSide.Right"
-        (update)="update(CombatSide.Right, $event)"
+        (update)="sendUpdate(CombatSide.Right, $event)"
         (leave)="leave(CombatSide.Right)"
         *ngIf="combat.rightPlayerName"
       ></app-combat-configure-side>
@@ -36,6 +36,7 @@
     class="btn btn-primary"
     [class.disabled]="!combat || !combat.leftReady || !combat.rightReady"
     [disabled]="!combat || !combat.leftReady || !combat.rightReady"
+    (click)="start()"
   >
     Start
   </button>

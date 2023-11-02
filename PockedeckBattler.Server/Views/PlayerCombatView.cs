@@ -29,33 +29,33 @@ public class PlayerCombatView : BaseCombatView
 
 public static class PlayerCombatViewMappingExtensions
 {
-    public static PlayerCombatView PlayerView(this Combat combat, CombatSide side)
+    public static PlayerCombatView PlayerView(this CombatWithMetadata combatWithMetadata, CombatSide side)
     {
         string sidePlayerName = side switch
         {
-            CombatSide.Left => combat.LeftPlayerName,
-            CombatSide.Right => combat.RightPlayerName,
+            CombatSide.Left => combatWithMetadata.LeftPlayerName,
+            CombatSide.Right => combatWithMetadata.RightPlayerName,
             _ => throw new ArgumentOutOfRangeException(nameof(side), side, null)
         };
 
         string otherSidePlayerName = side switch
         {
-            CombatSide.Left => combat.RightPlayerName,
-            CombatSide.Right => combat.LeftPlayerName,
+            CombatSide.Left => combatWithMetadata.RightPlayerName,
+            CombatSide.Right => combatWithMetadata.LeftPlayerName,
             _ => throw new ArgumentOutOfRangeException(nameof(side), side, null)
         };
 
         return new PlayerCombatView(
-            combat.Id,
-            combat.Instance.GetSide(side).PlayerView(sidePlayerName),
-            combat.Instance.GetSide(side.OtherSide()).View(otherSidePlayerName),
-            combat.Instance.Turn,
-            combat.Instance.Side,
-            combat.Instance.Phase
+            combatWithMetadata.Id,
+            combatWithMetadata.Instance.GetSide(side).PlayerView(sidePlayerName),
+            combatWithMetadata.Instance.GetSide(side.OtherSide()).View(otherSidePlayerName),
+            combatWithMetadata.Instance.Turn,
+            combatWithMetadata.Instance.Side,
+            combatWithMetadata.Instance.Phase
         )
         {
-            Ongoing = combat.Instance.Ongoing,
-            Over = combat.Instance.Over
+            Ongoing = combatWithMetadata.Instance.Ongoing,
+            Over = combatWithMetadata.Instance.Over
         };
     }
 }

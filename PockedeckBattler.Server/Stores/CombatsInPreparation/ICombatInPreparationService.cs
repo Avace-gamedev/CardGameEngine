@@ -5,7 +5,7 @@ public interface ICombatInPreparationService
     IAsyncEnumerable<CombatInPreparation> GetCombatsInPreparationInvolvingPlayer(string player, CancellationToken cancellationToken = default);
     Task<CombatInPreparation?> GetCombatInPreparation(Guid guid, CancellationToken cancellationToken = default);
     Task SaveCombatInPreparation(CombatInPreparation combatInPreparation, CancellationToken cancellationToken = default);
-    Task DeleteCombatInPreparation(Guid id, CancellationToken cancellationToken = default);
+    Task DeleteCombatInPreparation(CombatInPreparation id, CancellationToken cancellationToken = default);
 }
 
 public static class CombatInPreparationStoreExtensions

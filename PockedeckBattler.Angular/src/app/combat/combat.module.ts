@@ -7,9 +7,10 @@ import { CombatPreparationModule } from './combat-preparation/combat-preparation
 
 import { CombatRoutingModule } from './combat-routing.module';
 import { CombatSelectionComponent } from './combat-selection/combat-selection.component';
+import { CombatComponent } from './combat.component';
 
 @NgModule({
-  declarations: [CombatSelectionComponent],
+  declarations: [CombatSelectionComponent, CombatComponent],
   imports: [
     CommonModule,
     CoreModule,

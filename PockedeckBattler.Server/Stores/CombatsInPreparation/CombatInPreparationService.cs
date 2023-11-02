@@ -51,17 +51,17 @@ public class CombatInPreparationService : ICombatInPreparationService
         }
     }
 
-    public async Task DeleteCombatInPreparation(Guid id, CancellationToken cancellationToken = default)
+    public async Task DeleteCombatInPreparation(CombatInPreparation combatInPreparation, CancellationToken cancellationToken = default)
     {
-        string key = GetKey(id);
-        CombatInPreparation? combatInPreparation = await _store.Load(key, cancellationToken);
-        if (combatInPreparation == null)
+        string key = GetKey(combatInPreparation.Id);
+        CombatInPreparation? actualCombatInPreparation = await _store.Load(key, cancellationToken);
+        if (actualCombatInPreparation == null)
         {
             return;
         }
 
         await _store.Delete(key, cancellationToken);
-        await _mediator.Publish(new CombatInPreparationDeleted(combatInPreparation), cancellationToken);
+        await _mediator.Publish(new CombatInPreparationDeleted(actualCombatInPreparation), cancellationToken);
     }
 
     static string GetKey(Guid guid)

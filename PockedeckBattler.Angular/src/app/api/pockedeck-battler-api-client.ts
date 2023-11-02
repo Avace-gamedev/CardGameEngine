@@ -143,16 +143,16 @@ export class CharactersService implements ICharactersService {
 }
 
 export interface ICombatsService {
-    get(id: string, playerName?: string | undefined): Observable<CombatView>;
-    getCombatsOfPlayer(playerName?: string | undefined): Observable<PlayerCombatView[]>;
-    createCombat(playerName?: string | undefined): Observable<CombatInPreparationView>;
     getCombatInPreparation(id: string, playerName?: string | undefined): Observable<CombatInPreparationView>;
     updateCombatInPreparation(id: string, request: UpdateCombatInPreparationRequest): Observable<void>;
     getCombatsInPreparationOfPlayer(playerName?: string | undefined): Observable<CombatInPreparationView[]>;
+    createCombat(playerName?: string | undefined): Observable<CombatInPreparationView>;
+    getCombatsOfPlayer(playerName?: string | undefined): Observable<PlayerCombatView[]>;
     leaveCombatInPreparation(id: string, playerName?: string | undefined): Observable<FileResponse | null>;
-    startCombat(id: string, combatId?: string | undefined, playerName?: string | undefined): Observable<CombatView>;
-    playCard(id: string, index: number, side: string, playerName?: string | undefined): Observable<FileResponse | null>;
-    endTurn(id: string, side: string, playerName?: string | undefined): Observable<FileResponse | null>;
+    startCombat(id: string, playerName?: string | undefined): Observable<CombatView>;
+    getCombat(id: string, playerName?: string | undefined): Observable<PlayerCombatView>;
+    playCard(id: string, index: number, playerName?: string | undefined): Observable<FileResponse | null>;
+    endTurn(id: string, playerName?: string | undefined): Observable<FileResponse | null>;
 }
 
 @Injectable({
@@ -166,172 +166,6 @@ export class CombatsService implements ICombatsService {
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
         this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "http://localhost:5295";
-    }
-
-    get(id: string, playerName?: string | undefined): Observable<CombatView> {
-        let url_ = this.baseUrl + "/combats/{id}?";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
-        if (playerName === null)
-            throw new Error("The parameter 'playerName' cannot be null.");
-        else if (playerName !== undefined)
-            url_ += "playerName=" + encodeURIComponent("" + playerName) + "&";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGet(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGet(response_ as any);
-                } catch (e) {
-                    return _observableThrow(e) as any as Observable<CombatView>;
-                }
-            } else
-                return _observableThrow(response_) as any as Observable<CombatView>;
-        }));
-    }
-
-    protected processGet(response: HttpResponseBase): Observable<CombatView> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (response as any).error instanceof Blob ? (response as any).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = CombatView.fromJS(resultData200);
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf(null as any);
-    }
-
-    getCombatsOfPlayer(playerName?: string | undefined): Observable<PlayerCombatView[]> {
-        let url_ = this.baseUrl + "/combats?";
-        if (playerName === null)
-            throw new Error("The parameter 'playerName' cannot be null.");
-        else if (playerName !== undefined)
-            url_ += "playerName=" + encodeURIComponent("" + playerName) + "&";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetCombatsOfPlayer(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetCombatsOfPlayer(response_ as any);
-                } catch (e) {
-                    return _observableThrow(e) as any as Observable<PlayerCombatView[]>;
-                }
-            } else
-                return _observableThrow(response_) as any as Observable<PlayerCombatView[]>;
-        }));
-    }
-
-    protected processGetCombatsOfPlayer(response: HttpResponseBase): Observable<PlayerCombatView[]> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (response as any).error instanceof Blob ? (response as any).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (Array.isArray(resultData200)) {
-                result200 = [] as any;
-                for (let item of resultData200)
-                    result200!.push(PlayerCombatView.fromJS(item));
-            }
-            else {
-                result200 = <any>null;
-            }
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf(null as any);
-    }
-
-    createCombat(playerName?: string | undefined): Observable<CombatInPreparationView> {
-        let url_ = this.baseUrl + "/combats?";
-        if (playerName === null)
-            throw new Error("The parameter 'playerName' cannot be null.");
-        else if (playerName !== undefined)
-            url_ += "playerName=" + encodeURIComponent("" + playerName) + "&";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCreateCombat(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processCreateCombat(response_ as any);
-                } catch (e) {
-                    return _observableThrow(e) as any as Observable<CombatInPreparationView>;
-                }
-            } else
-                return _observableThrow(response_) as any as Observable<CombatInPreparationView>;
-        }));
-    }
-
-    protected processCreateCombat(response: HttpResponseBase): Observable<CombatInPreparationView> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (response as any).error instanceof Blob ? (response as any).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = CombatInPreparationView.fromJS(resultData200);
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf(null as any);
     }
 
     getCombatInPreparation(id: string, playerName?: string | undefined): Observable<CombatInPreparationView> {
@@ -499,6 +333,117 @@ export class CombatsService implements ICombatsService {
         return _observableOf(null as any);
     }
 
+    createCombat(playerName?: string | undefined): Observable<CombatInPreparationView> {
+        let url_ = this.baseUrl + "/combats?";
+        if (playerName === null)
+            throw new Error("The parameter 'playerName' cannot be null.");
+        else if (playerName !== undefined)
+            url_ += "playerName=" + encodeURIComponent("" + playerName) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateCombat(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateCombat(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<CombatInPreparationView>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<CombatInPreparationView>;
+        }));
+    }
+
+    protected processCreateCombat(response: HttpResponseBase): Observable<CombatInPreparationView> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = CombatInPreparationView.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    getCombatsOfPlayer(playerName?: string | undefined): Observable<PlayerCombatView[]> {
+        let url_ = this.baseUrl + "/combats?";
+        if (playerName === null)
+            throw new Error("The parameter 'playerName' cannot be null.");
+        else if (playerName !== undefined)
+            url_ += "playerName=" + encodeURIComponent("" + playerName) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetCombatsOfPlayer(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetCombatsOfPlayer(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<PlayerCombatView[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<PlayerCombatView[]>;
+        }));
+    }
+
+    protected processGetCombatsOfPlayer(response: HttpResponseBase): Observable<PlayerCombatView[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(PlayerCombatView.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
     leaveCombatInPreparation(id: string, playerName?: string | undefined): Observable<FileResponse | null> {
         let url_ = this.baseUrl + "/combats/in-preparation/{id}/leave?";
         if (id === undefined || id === null)
@@ -558,15 +503,11 @@ export class CombatsService implements ICombatsService {
         return _observableOf(null as any);
     }
 
-    startCombat(id: string, combatId?: string | undefined, playerName?: string | undefined): Observable<CombatView> {
+    startCombat(id: string, playerName?: string | undefined): Observable<CombatView> {
         let url_ = this.baseUrl + "/combats/{id}/start?";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
-        if (combatId === null)
-            throw new Error("The parameter 'combatId' cannot be null.");
-        else if (combatId !== undefined)
-            url_ += "combatId=" + encodeURIComponent("" + combatId) + "&";
         if (playerName === null)
             throw new Error("The parameter 'playerName' cannot be null.");
         else if (playerName !== undefined)
@@ -617,17 +558,69 @@ export class CombatsService implements ICombatsService {
         return _observableOf(null as any);
     }
 
-    playCard(id: string, index: number, side: string, playerName?: string | undefined): Observable<FileResponse | null> {
-        let url_ = this.baseUrl + "/combats/{id}/{side}/play/{index}?";
+    getCombat(id: string, playerName?: string | undefined): Observable<PlayerCombatView> {
+        let url_ = this.baseUrl + "/combats/{id}?";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        if (playerName === null)
+            throw new Error("The parameter 'playerName' cannot be null.");
+        else if (playerName !== undefined)
+            url_ += "playerName=" + encodeURIComponent("" + playerName) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetCombat(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetCombat(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<PlayerCombatView>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<PlayerCombatView>;
+        }));
+    }
+
+    protected processGetCombat(response: HttpResponseBase): Observable<PlayerCombatView> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = PlayerCombatView.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    playCard(id: string, index: number, playerName?: string | undefined): Observable<FileResponse | null> {
+        let url_ = this.baseUrl + "/combats/{id}/play/{index}?";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         if (index === undefined || index === null)
             throw new Error("The parameter 'index' must be defined.");
         url_ = url_.replace("{index}", encodeURIComponent("" + index));
-        if (side === undefined || side === null)
-            throw new Error("The parameter 'side' must be defined.");
-        url_ = url_.replace("{side}", encodeURIComponent("" + side));
         if (playerName === null)
             throw new Error("The parameter 'playerName' cannot be null.");
         else if (playerName !== undefined)
@@ -682,14 +675,11 @@ export class CombatsService implements ICombatsService {
         return _observableOf(null as any);
     }
 
-    endTurn(id: string, side: string, playerName?: string | undefined): Observable<FileResponse | null> {
-        let url_ = this.baseUrl + "/combats/{id}/{side}/end-turn?";
+    endTurn(id: string, playerName?: string | undefined): Observable<FileResponse | null> {
+        let url_ = this.baseUrl + "/combats/{id}/end-turn?";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
-        if (side === undefined || side === null)
-            throw new Error("The parameter 'side' must be defined.");
-        url_ = url_.replace("{side}", encodeURIComponent("" + side));
         if (playerName === null)
             throw new Error("The parameter 'playerName' cannot be null.");
         else if (playerName !== undefined)
@@ -1561,6 +1551,122 @@ export interface IRandomEffectEntryView {
     probability: number;
 }
 
+export class CombatInPreparationView implements ICombatInPreparationView {
+    id!: string;
+    leftPlayerName!: string;
+    leftFrontCharacter?: string | undefined;
+    leftBackCharacter?: string | undefined;
+    leftReady!: boolean;
+    rightPlayerName?: string | undefined;
+    rightFrontCharacter?: string | undefined;
+    rightBackCharacter?: string | undefined;
+    rightReady!: boolean;
+
+    constructor(data?: ICombatInPreparationView) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.leftPlayerName = _data["leftPlayerName"];
+            this.leftFrontCharacter = _data["leftFrontCharacter"];
+            this.leftBackCharacter = _data["leftBackCharacter"];
+            this.leftReady = _data["leftReady"];
+            this.rightPlayerName = _data["rightPlayerName"];
+            this.rightFrontCharacter = _data["rightFrontCharacter"];
+            this.rightBackCharacter = _data["rightBackCharacter"];
+            this.rightReady = _data["rightReady"];
+        }
+    }
+
+    static fromJS(data: any): CombatInPreparationView {
+        data = typeof data === 'object' ? data : {};
+        let result = new CombatInPreparationView();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["leftPlayerName"] = this.leftPlayerName;
+        data["leftFrontCharacter"] = this.leftFrontCharacter;
+        data["leftBackCharacter"] = this.leftBackCharacter;
+        data["leftReady"] = this.leftReady;
+        data["rightPlayerName"] = this.rightPlayerName;
+        data["rightFrontCharacter"] = this.rightFrontCharacter;
+        data["rightBackCharacter"] = this.rightBackCharacter;
+        data["rightReady"] = this.rightReady;
+        return data;
+    }
+}
+
+export interface ICombatInPreparationView {
+    id: string;
+    leftPlayerName: string;
+    leftFrontCharacter?: string | undefined;
+    leftBackCharacter?: string | undefined;
+    leftReady: boolean;
+    rightPlayerName?: string | undefined;
+    rightFrontCharacter?: string | undefined;
+    rightBackCharacter?: string | undefined;
+    rightReady: boolean;
+}
+
+export class UpdateCombatInPreparationRequest implements IUpdateCombatInPreparationRequest {
+    playerName!: string;
+    ready!: boolean;
+    frontCharacter?: string | undefined;
+    backCharacter?: string | undefined;
+
+    constructor(data?: IUpdateCombatInPreparationRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.playerName = _data["playerName"];
+            this.ready = _data["ready"];
+            this.frontCharacter = _data["frontCharacter"];
+            this.backCharacter = _data["backCharacter"];
+        }
+    }
+
+    static fromJS(data: any): UpdateCombatInPreparationRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateCombatInPreparationRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["playerName"] = this.playerName;
+        data["ready"] = this.ready;
+        data["frontCharacter"] = this.frontCharacter;
+        data["backCharacter"] = this.backCharacter;
+        return data;
+    }
+}
+
+export interface IUpdateCombatInPreparationRequest {
+    playerName: string;
+    ready: boolean;
+    frontCharacter?: string | undefined;
+    backCharacter?: string | undefined;
+}
+
 export class BaseCombatView implements IBaseCombatView {
     ongoing!: boolean;
     over!: boolean;
@@ -2017,122 +2123,6 @@ export class CardInstanceWithModifiersView extends CardInstanceView implements I
 
 export interface ICardInstanceWithModifiersView extends ICardInstanceView {
     baseCard: ActionCardView;
-}
-
-export class CombatInPreparationView implements ICombatInPreparationView {
-    id!: string;
-    leftPlayerName!: string;
-    leftFrontCharacter?: string | undefined;
-    leftBackCharacter?: string | undefined;
-    leftReady!: boolean;
-    rightPlayerName?: string | undefined;
-    rightFrontCharacter?: string | undefined;
-    rightBackCharacter?: string | undefined;
-    rightReady!: boolean;
-
-    constructor(data?: ICombatInPreparationView) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.leftPlayerName = _data["leftPlayerName"];
-            this.leftFrontCharacter = _data["leftFrontCharacter"];
-            this.leftBackCharacter = _data["leftBackCharacter"];
-            this.leftReady = _data["leftReady"];
-            this.rightPlayerName = _data["rightPlayerName"];
-            this.rightFrontCharacter = _data["rightFrontCharacter"];
-            this.rightBackCharacter = _data["rightBackCharacter"];
-            this.rightReady = _data["rightReady"];
-        }
-    }
-
-    static fromJS(data: any): CombatInPreparationView {
-        data = typeof data === 'object' ? data : {};
-        let result = new CombatInPreparationView();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["leftPlayerName"] = this.leftPlayerName;
-        data["leftFrontCharacter"] = this.leftFrontCharacter;
-        data["leftBackCharacter"] = this.leftBackCharacter;
-        data["leftReady"] = this.leftReady;
-        data["rightPlayerName"] = this.rightPlayerName;
-        data["rightFrontCharacter"] = this.rightFrontCharacter;
-        data["rightBackCharacter"] = this.rightBackCharacter;
-        data["rightReady"] = this.rightReady;
-        return data;
-    }
-}
-
-export interface ICombatInPreparationView {
-    id: string;
-    leftPlayerName: string;
-    leftFrontCharacter?: string | undefined;
-    leftBackCharacter?: string | undefined;
-    leftReady: boolean;
-    rightPlayerName?: string | undefined;
-    rightFrontCharacter?: string | undefined;
-    rightBackCharacter?: string | undefined;
-    rightReady: boolean;
-}
-
-export class UpdateCombatInPreparationRequest implements IUpdateCombatInPreparationRequest {
-    playerName!: string;
-    ready!: boolean;
-    frontCharacter?: string | undefined;
-    backCharacter?: string | undefined;
-
-    constructor(data?: IUpdateCombatInPreparationRequest) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.playerName = _data["playerName"];
-            this.ready = _data["ready"];
-            this.frontCharacter = _data["frontCharacter"];
-            this.backCharacter = _data["backCharacter"];
-        }
-    }
-
-    static fromJS(data: any): UpdateCombatInPreparationRequest {
-        data = typeof data === 'object' ? data : {};
-        let result = new UpdateCombatInPreparationRequest();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["playerName"] = this.playerName;
-        data["ready"] = this.ready;
-        data["frontCharacter"] = this.frontCharacter;
-        data["backCharacter"] = this.backCharacter;
-        return data;
-    }
-}
-
-export interface IUpdateCombatInPreparationRequest {
-    playerName: string;
-    ready: boolean;
-    frontCharacter?: string | undefined;
-    backCharacter?: string | undefined;
 }
 
 export interface FileResponse {

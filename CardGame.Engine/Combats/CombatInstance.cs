@@ -404,6 +404,8 @@ public class CombatInstance
     {
         if (!Ongoing)
         {
+            AssertNotOver();
+
             throw new InvalidMoveException("Combat not started yet");
         }
     }

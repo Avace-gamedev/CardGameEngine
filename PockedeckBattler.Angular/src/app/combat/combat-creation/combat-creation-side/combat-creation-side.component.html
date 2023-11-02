@@ -55,6 +55,7 @@
     class="btn"
     [class.btn-outline-secondary]="!ready"
     [class.btn-secondary]="ready"
+    [disabled]="readonly"
     (click)="setReady(!ready)"
   >
     Ready

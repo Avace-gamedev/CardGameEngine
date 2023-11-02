@@ -6,9 +6,12 @@ import { authenticationGuard } from './core/authentication/services/authenticati
 
 const routes: Routes = [
   {
+    path: 'login',
+    component: LoginComponent,
+  },
+  {
     path: '',
-    canActivate: [authenticationGuard],
-
+    canActivate: [authenticationGuard('/login')],
     children: [
       {
         path: '',
@@ -29,15 +32,11 @@ const routes: Routes = [
         path: '404',
         component: NotFoundComponent,
       },
+      {
+        path: '**',
+        redirectTo: '404',
+      },
     ],
-  },
-  {
-    path: 'login',
-    component: LoginComponent,
-  },
-  {
-    path: '**',
-    redirectTo: '404',
   },
 ];
 

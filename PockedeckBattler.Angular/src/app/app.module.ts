@@ -1,3 +1,4 @@
+import { APP_BASE_HREF, PlatformLocation } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
@@ -20,7 +21,13 @@ import { CoreModule } from './core/core.module';
     FormsModule,
     AlertModule,
   ],
-  providers: [],
+  providers: [
+    {
+      provide: APP_BASE_HREF,
+      useFactory: (s: PlatformLocation) => s.getBaseHrefFromDOM(),
+      deps: [PlatformLocation],
+    },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

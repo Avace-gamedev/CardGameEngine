@@ -6,6 +6,7 @@
   <div class="row flex-fill overflow-y-auto">
     <div class="col-lg">
       <app-combat-creation-side
+        [combat]="combat"
         [name]="combat.leftPlayerName"
         [characters]="characters"
         [invertSlotPositions]="true"
@@ -14,12 +15,13 @@
     </div>
     <div class="col-lg">
       <app-combat-creation-side
+        [combat]="combat"
         [name]="combat.rightPlayerName"
         [characters]="characters"
         [readonly]="side !== CombatSide.Right"
         *ngIf="combat.rightPlayerName"
       ></app-combat-creation-side>
-      <app-combat-empty-side *ngIf="!combat.rightPlayerName">
+      <app-combat-empty-side [combat]="combat" *ngIf="!combat.rightPlayerName">
       </app-combat-empty-side>
     </div>
   </div>

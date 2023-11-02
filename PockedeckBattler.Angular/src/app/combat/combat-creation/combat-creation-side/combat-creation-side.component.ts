@@ -15,7 +15,14 @@ import { IdentityService } from '../../../core/authentication/services/identity.
 })
 export class CombatCreationSideComponent {
   @Input()
-  public name: string | undefined;
+  get name(): string | undefined {
+    return this._name;
+  }
+  set name(value: string | undefined) {
+    this._name = value;
+    this.update();
+  }
+  private _name: string | undefined;
 
   @Input()
   get combat(): CombatInPreparationView | undefined {
@@ -23,7 +30,7 @@ export class CombatCreationSideComponent {
   }
   set combat(value: CombatInPreparationView | undefined) {
     this._combat = value;
-    this.update(value);
+    this.update();
   }
   private _combat: CombatInPreparationView | undefined;
 
@@ -31,7 +38,14 @@ export class CombatCreationSideComponent {
   public readonly: boolean = false;
 
   @Input()
-  public characters: CharacterView[] = [];
+  get characters(): CharacterView[] {
+    return this._characters;
+  }
+  set characters(value: CharacterView[]) {
+    this._characters = value;
+    this.update();
+  }
+  private _characters: CharacterView[] = [];
 
   @Input()
   public invertSlotPositions: boolean = false;
@@ -143,7 +157,7 @@ export class CombatCreationSideComponent {
     }
 
     const characterName = data.substring(10);
-    const character = this.characters.find(
+    const character = this._characters.find(
       (c) => c.identity.name === characterName,
     );
 
@@ -168,9 +182,9 @@ export class CombatCreationSideComponent {
         .updateCombatInPreparation(
           this.combat.id,
           new UpdateCombatInPreparationRequest({
-            playerName: this.name ?? '',
+            playerName: this._name ?? '',
             frontCharacter: this.frontCharacter?.identity.name,
-            backCharacter: this.frontCharacter?.identity.name,
+            backCharacter: this.backCharacter?.identity.name,
             ready: this.ready,
           }),
         )
@@ -187,27 +201,30 @@ export class CombatCreationSideComponent {
     }
   }
 
-  private update(combat: CombatInPreparationView | undefined) {
-    if (!combat) {
+  private update() {
+    if (!this._combat || !this._name) {
+      this.frontCharacter = undefined;
+      this.backCharacter = undefined;
+      this.ready = false;
       return;
     }
 
-    if (this.name == combat.leftPlayerName) {
-      this.frontCharacter = this.characters.find(
-        (c) => c.identity.name === combat.leftFrontCharacter,
+    if (this._name == this._combat.leftPlayerName) {
+      this.frontCharacter = this._characters.find(
+        (c) => c.identity.name === this._combat?.leftFrontCharacter,
       );
-      this.backCharacter = this.characters.find(
-        (c) => c.identity.name === combat.leftBackCharacter,
+      this.backCharacter = this._characters.find(
+        (c) => c.identity.name === this._combat?.leftBackCharacter,
       );
-      this.ready = combat.leftReady;
-    } else if (this.name == combat.rightPlayerName) {
-      this.frontCharacter = this.characters.find(
-        (c) => c.identity.name === combat.rightFrontCharacter,
+      this.ready = this._combat.leftReady;
+    } else if (this._name == this._combat.rightPlayerName) {
+      this.frontCharacter = this._characters.find(
+        (c) => c.identity.name === this._combat?.rightFrontCharacter,
       );
-      this.backCharacter = this.characters.find(
-        (c) => c.identity.name === combat.rightBackCharacter,
+      this.backCharacter = this._characters.find(
+        (c) => c.identity.name === this._combat?.rightBackCharacter,
       );
-      this.ready = combat.rightReady;
+      this.ready = this._combat.rightReady;
     }
   }
 }

@@ -1877,6 +1877,8 @@ export interface IPlayerSideView extends ICombatSideView {
 }
 
 export class CardInstanceView implements ICardInstanceView {
+    card!: ActionCardView;
+    character!: string;
 
     constructor(data?: ICardInstanceView) {
         if (data) {
@@ -1885,9 +1887,16 @@ export class CardInstanceView implements ICardInstanceView {
                     (<any>this)[property] = (<any>data)[property];
             }
         }
+        if (!data) {
+            this.card = new ActionCardView();
+        }
     }
 
     init(_data?: any) {
+        if (_data) {
+            this.card = _data["card"] ? ActionCardView.fromJS(_data["card"]) : new ActionCardView();
+            this.character = _data["character"];
+        }
     }
 
     static fromJS(data: any): CardInstanceView {
@@ -1899,11 +1908,15 @@ export class CardInstanceView implements ICardInstanceView {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["card"] = this.card ? this.card.toJSON() : <any>undefined;
+        data["character"] = this.character;
         return data;
     }
 }
 
 export interface ICardInstanceView {
+    card: ActionCardView;
+    character: string;
 }
 
 export class CardInstanceWithModifiersView extends CardInstanceView implements ICardInstanceWithModifiersView {
@@ -1951,6 +1964,7 @@ export enum CombatSide {
 export class CharacterCombatView implements ICharacterCombatView {
     character!: CharacterView;
     health!: number;
+    shield!: number;
     passiveEffects!: PassiveEffectInstanceView[];
     modifiers!: StatsModifier;
 
@@ -1972,6 +1986,7 @@ export class CharacterCombatView implements ICharacterCombatView {
         if (_data) {
             this.character = _data["character"] ? CharacterView.fromJS(_data["character"]) : new CharacterView();
             this.health = _data["health"];
+            this.shield = _data["shield"];
             if (Array.isArray(_data["passiveEffects"])) {
                 this.passiveEffects = [] as any;
                 for (let item of _data["passiveEffects"])
@@ -1992,6 +2007,7 @@ export class CharacterCombatView implements ICharacterCombatView {
         data = typeof data === 'object' ? data : {};
         data["character"] = this.character ? this.character.toJSON() : <any>undefined;
         data["health"] = this.health;
+        data["shield"] = this.shield;
         if (Array.isArray(this.passiveEffects)) {
             data["passiveEffects"] = [];
             for (let item of this.passiveEffects)
@@ -2005,6 +2021,7 @@ export class CharacterCombatView implements ICharacterCombatView {
 export interface ICharacterCombatView {
     character: CharacterView;
     health: number;
+    shield: number;
     passiveEffects: PassiveEffectInstanceView[];
     modifiers: StatsModifier;
 }

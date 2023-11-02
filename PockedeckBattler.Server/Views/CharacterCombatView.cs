@@ -6,10 +6,11 @@ namespace PockedeckBattler.Server.Views;
 
 public class CharacterCombatView
 {
-    public CharacterCombatView(CharacterView character, int health, StatsModifier modifiers, PassiveEffectInstanceView[] passiveEffects)
+    public CharacterCombatView(CharacterView character, int health, int shield, StatsModifier modifiers, PassiveEffectInstanceView[] passiveEffects)
     {
         Character = character;
         Health = health;
+        Shield = shield;
         Modifiers = modifiers;
         PassiveEffects = passiveEffects;
     }
@@ -18,6 +19,8 @@ public class CharacterCombatView
     public CharacterView Character { get; }
 
     public int Health { get; }
+
+    public int Shield { get; }
 
     [Required]
     public PassiveEffectInstanceView[] PassiveEffects { get; }
@@ -33,6 +36,7 @@ public static class CharacterCombatViewMappingExtensions
         return new CharacterCombatView(
             character.Character.View(),
             character.Health,
+            character.Shield,
             character.StatsModifier,
             character.PassiveEffects.Select(e => e.View()).ToArray()
         );

@@ -12,9 +12,9 @@ public class CardInstanceView
     }
 
     [Required]
-    ActionCardView Card { get; }
+    public ActionCardView Card { get; }
 
-    string Character { get; }
+    public string Character { get; }
 }
 
 public static class CardInstanceViewMappingExtensions

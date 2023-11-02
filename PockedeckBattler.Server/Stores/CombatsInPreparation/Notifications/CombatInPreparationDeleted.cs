@@ -2,7 +2,7 @@
 
 public class CombatInPreparationDeleted : CombatInPreparationNotification
 {
-    public CombatInPreparationDeleted(StoredCombatInPreparation combat) : base(combat)
+    public CombatInPreparationDeleted(CombatInPreparation combat) : base(combat)
     {
     }
 }

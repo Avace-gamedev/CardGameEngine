@@ -24,7 +24,7 @@ public class CombatInPreparationView
 
 public static class CombatInPreparationViewMappingExtensions
 {
-    public static CombatInPreparationView View(this StoredCombatInPreparation combat)
+    public static CombatInPreparationView View(this CombatInPreparation combat)
     {
         return new CombatInPreparationView(combat.Id, combat.LeftPlayerName)
         {

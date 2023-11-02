@@ -2,7 +2,7 @@
 
 public class CombatInPreparationCreated : CombatInPreparationNotification
 {
-    public CombatInPreparationCreated(StoredCombatInPreparation combat) : base(combat)
+    public CombatInPreparationCreated(CombatInPreparation combat) : base(combat)
     {
     }
 }

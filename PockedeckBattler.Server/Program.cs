@@ -4,6 +4,7 @@ using Newtonsoft.Json.Serialization;
 using NSwag;
 using PockedeckBattler.Server.SignalR;
 using PockedeckBattler.Server.SignalR.Combats;
+using PockedeckBattler.Server.Stores;
 using PockedeckBattler.Server.Stores.Combats;
 using PockedeckBattler.Server.Stores.CombatsInPreparation;
 
@@ -35,8 +36,10 @@ builder.Services.AddMediatR(options => { options.RegisterServicesFromAssemblyCon
 
 builder.Services.AddSingleton<IHubConnections, HubConnectionsInMemory>();
 
-builder.Services.AddSingleton<ICombatsStore, CombatsStoreInMemory>();
-builder.Services.AddSingleton<ICombatsInPreparationStore, CombatsInPreparationStoreInMemory>();
+builder.Services.AddSingleton<ICombatService, CombatsMemoryStore>();
+
+builder.Services.AddSingleton<IStore<CombatInPreparation>, CombatInPreparationFileStore>();
+builder.Services.AddSingleton<ICombatInPreparationService, CombatInPreparationService>();
 
 WebApplication app = builder.Build();
 

@@ -2,18 +2,18 @@
 
 namespace PockedeckBattler.Server.Stores.Combats;
 
-public class StoredCombat
+public class Combat
 {
-    public StoredCombat(Guid id, string leftPlayerName, string rightPlayerName, CombatInstance combat)
+    public Combat(Guid id, string leftPlayerName, string rightPlayerName, CombatInstance instance)
     {
         Id = id;
         LeftPlayerName = leftPlayerName;
         RightPlayerName = rightPlayerName;
-        Combat = combat;
+        Instance = instance;
     }
 
     public Guid Id { get; }
     public string LeftPlayerName { get; }
     public string RightPlayerName { get; }
-    public CombatInstance Combat { get; }
+    public CombatInstance Instance { get; }
 }

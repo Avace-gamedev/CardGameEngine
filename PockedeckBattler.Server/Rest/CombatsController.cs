@@ -14,19 +14,19 @@ namespace PockedeckBattler.Server.Rest;
 [Route("combats")]
 public class CombatsController : ControllerBase
 {
-    readonly ICombatsInPreparationStore _combatsInPreparationStore;
-    readonly ICombatsStore _combatsStore;
+    readonly ICombatInPreparationService _combatInPreparationService;
+    readonly ICombatService _combatService;
 
-    public CombatsController(ICombatsStore combatsStore, ICombatsInPreparationStore combatsInPreparationStore)
+    public CombatsController(ICombatService combatService, ICombatInPreparationService combatInPreparationService)
     {
-        _combatsStore = combatsStore;
-        _combatsInPreparationStore = combatsInPreparationStore;
+        _combatService = combatService;
+        _combatInPreparationService = combatInPreparationService;
     }
 
     [HttpGet("{id:guid}")]
     public ActionResult<CombatView> Get(Guid id, [Required] string playerName)
     {
-        StoredCombat combat = _combatsStore.RequireCombat(id);
+        Combat combat = _combatService.RequireCombat(id);
         if (!PlayerInCombat(combat, playerName))
         {
             return NotFound();
@@ -38,13 +38,13 @@ public class CombatsController : ControllerBase
     [HttpGet]
     public IEnumerable<PlayerCombatView> GetCombatsOfPlayer([Required] string playerName)
     {
-        return _combatsStore.GetCombatsInvolvingPlayer(playerName).Select(c => c.PlayerView(c.LeftPlayerName == playerName ? CombatSide.Left : CombatSide.Right));
+        return _combatService.GetCombatsInvolvingPlayer(playerName).Select(c => c.PlayerView(c.LeftPlayerName == playerName ? CombatSide.Left : CombatSide.Right));
     }
 
     [HttpGet("in-preparation/{id:guid}")]
-    public ActionResult<CombatInPreparationView> GetCombatInPreparation(Guid id, [Required] string playerName)
+    public async Task<ActionResult<CombatInPreparationView>> GetCombatInPreparation(Guid id, [Required] string playerName)
     {
-        StoredCombatInPreparation combat = _combatsInPreparationStore.RequireCombatInPreparation(id);
+        CombatInPreparation combat = await _combatInPreparationService.RequireCombatInPreparation(id);
         if (!PlayerInCombat(combat, playerName))
         {
             return NotFound();
@@ -56,14 +56,14 @@ public class CombatsController : ControllerBase
     [HttpGet("in-preparation")]
     public IEnumerable<CombatInPreparationView> GetCombatsInPreparationOfPlayer([Required] string playerName)
     {
-        return _combatsInPreparationStore.GetCombatsInPreparationInvolvingPlayer(playerName).Select(c => c.View());
+        return _combatInPreparationService.GetCombatsInPreparationInvolvingPlayer(playerName).ToBlockingEnumerable().Select(c => c.View());
     }
 
     [HttpPost]
     public async Task<CombatInPreparationView> CreateCombat([Required] string playerName)
     {
-        StoredCombatInPreparation combatInPreparation = new(Guid.NewGuid(), playerName);
-        await _combatsInPreparationStore.SaveCombatInPreparation(combatInPreparation);
+        CombatInPreparation combatInPreparation = new(Guid.NewGuid(), playerName);
+        await _combatInPreparationService.SaveCombatInPreparation(combatInPreparation);
 
         return combatInPreparation.View();
     }
@@ -76,7 +76,7 @@ public class CombatsController : ControllerBase
             throw new Exception("Player name cannot be empty");
         }
 
-        StoredCombatInPreparation combatInPreparation = _combatsInPreparationStore.RequireCombatInPreparation(id);
+        CombatInPreparation combatInPreparation = await _combatInPreparationService.RequireCombatInPreparation(id);
 
         if (request.PlayerName == combatInPreparation.LeftPlayerName)
         {
@@ -96,13 +96,13 @@ public class CombatsController : ControllerBase
             throw new Exception($"Player {request.PlayerName} is not part of combat {id}");
         }
 
-        await _combatsInPreparationStore.SaveCombatInPreparation(combatInPreparation);
+        await _combatInPreparationService.SaveCombatInPreparation(combatInPreparation);
     }
 
     [HttpPost("in-preparation/{id:guid}/leave")]
     public async Task<ActionResult> LeaveCombatInPreparation(Guid id, [Required] string playerName)
     {
-        StoredCombatInPreparation combat = _combatsInPreparationStore.RequireCombatInPreparation(id);
+        CombatInPreparation combat = await _combatInPreparationService.RequireCombatInPreparation(id);
         if (!PlayerInCombat(combat, playerName))
         {
             return NotFound();
@@ -110,14 +110,14 @@ public class CombatsController : ControllerBase
 
         if (playerName == combat.LeftPlayerName)
         {
-            await _combatsInPreparationStore.DeleteCombatInPreparation(id);
+            await _combatInPreparationService.DeleteCombatInPreparation(id);
         }
         else if (playerName == combat.RightPlayerName)
         {
             combat.RightPlayerName = null;
             combat.RightFrontCharacter = null;
             combat.RightBackCharacter = null;
-            await _combatsInPreparationStore.SaveCombatInPreparation(combat);
+            await _combatInPreparationService.SaveCombatInPreparation(combat);
         }
         else
         {
@@ -128,9 +128,9 @@ public class CombatsController : ControllerBase
     }
 
     [HttpPost("{id:guid}/start")]
-    public ActionResult<CombatView> StartCombat(Guid combatId, [Required] string playerName)
+    public async Task<ActionResult<CombatView>> StartCombat(Guid combatId, [Required] string playerName)
     {
-        StoredCombatInPreparation inPreparation = _combatsInPreparationStore.RequireCombatInPreparation(combatId);
+        CombatInPreparation inPreparation = await _combatInPreparationService.RequireCombatInPreparation(combatId);
         if (!PlayerInCombat(inPreparation, playerName))
         {
             return NotFound();
@@ -173,8 +173,8 @@ public class CombatsController : ControllerBase
             new CombatOptions()
         );
 
-        StoredCombat combat = new(Guid.NewGuid(), inPreparation.LeftPlayerName, inPreparation.RightPlayerName, combatInstance);
-        _combatsStore.SaveCombat(combat);
+        Combat combat = new(Guid.NewGuid(), inPreparation.LeftPlayerName, inPreparation.RightPlayerName, combatInstance);
+        _combatService.SaveCombat(combat);
 
         return combat.View();
     }
@@ -182,49 +182,49 @@ public class CombatsController : ControllerBase
     [HttpPost("{id:guid}/{side}/play/{index:int}")]
     public ActionResult PlayCard(Guid id, [Required] string playerName, int index)
     {
-        StoredCombat combat = _combatsStore.RequireCombat(id);
+        Combat combat = _combatService.RequireCombat(id);
         if (!PlayerInCombat(combat, playerName, out CombatSide side))
         {
             return NotFound();
         }
 
-        combat.Combat.PlayCardAt(side, index);
+        combat.Instance.PlayCardAt(side, index);
 
-        _combatsStore.SaveCombat(combat);
+        _combatService.SaveCombat(combat);
         return NoContent();
     }
 
     [HttpPost("{id:guid}/{side}/end-turn")]
     public ActionResult EndTurn(Guid id, [Required] string playerName)
     {
-        StoredCombat combat = _combatsStore.RequireCombat(id);
+        Combat combat = _combatService.RequireCombat(id);
         if (!PlayerInCombat(combat, playerName, out CombatSide side))
         {
             return NotFound();
         }
 
-        combat.Combat.EndSideTurnAndStartNextOne(side);
+        combat.Instance.EndSideTurnAndStartNextOne(side);
 
-        _combatsStore.SaveCombat(combat);
+        _combatService.SaveCombat(combat);
         return NoContent();
     }
 
-    static bool PlayerInCombat(StoredCombat combat, [Required] string playerName)
+    static bool PlayerInCombat(Combat combat, [Required] string playerName)
     {
         return PlayerInCombat(combat, playerName, out _);
     }
 
-    static bool PlayerInCombat(StoredCombat combat, [Required] string playerName, out CombatSide side)
+    static bool PlayerInCombat(Combat combat, [Required] string playerName, out CombatSide side)
     {
         return PlayerInCombat(playerName, combat.LeftPlayerName, combat.RightPlayerName, out side);
     }
 
-    static bool PlayerInCombat(StoredCombatInPreparation combat, [Required] string playerName)
+    static bool PlayerInCombat(CombatInPreparation combat, [Required] string playerName)
     {
         return PlayerInCombat(combat, playerName, out _);
     }
 
-    static bool PlayerInCombat(StoredCombatInPreparation combat, [Required] string playerName, out CombatSide side)
+    static bool PlayerInCombat(CombatInPreparation combat, [Required] string playerName, out CombatSide side)
     {
         return PlayerInCombat(playerName, combat.LeftPlayerName, combat.RightPlayerName, out side);
     }

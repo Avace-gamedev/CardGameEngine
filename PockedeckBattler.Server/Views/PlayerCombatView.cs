@@ -29,7 +29,7 @@ public class PlayerCombatView : BaseCombatView
 
 public static class PlayerCombatViewMappingExtensions
 {
-    public static PlayerCombatView PlayerView(this StoredCombat combat, CombatSide side)
+    public static PlayerCombatView PlayerView(this Combat combat, CombatSide side)
     {
         string sidePlayerName = side switch
         {
@@ -47,15 +47,15 @@ public static class PlayerCombatViewMappingExtensions
 
         return new PlayerCombatView(
             combat.Id,
-            combat.Combat.GetSide(side).PlayerView(sidePlayerName),
-            combat.Combat.GetSide(side.OtherSide()).View(otherSidePlayerName),
-            combat.Combat.Turn,
-            combat.Combat.Side,
-            combat.Combat.Phase
+            combat.Instance.GetSide(side).PlayerView(sidePlayerName),
+            combat.Instance.GetSide(side.OtherSide()).View(otherSidePlayerName),
+            combat.Instance.Turn,
+            combat.Instance.Side,
+            combat.Instance.Phase
         )
         {
-            Ongoing = combat.Combat.Ongoing,
-            Over = combat.Combat.Over
+            Ongoing = combat.Instance.Ongoing,
+            Over = combat.Instance.Over
         };
     }
 }

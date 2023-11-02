@@ -1,8 +1,8 @@
 ﻿namespace PockedeckBattler.Server.Stores.CombatsInPreparation;
 
-public class StoredCombatInPreparation
+public class CombatInPreparation
 {
-    public StoredCombatInPreparation(Guid id, string leftPlayerName)
+    public CombatInPreparation(Guid id, string leftPlayerName)
     {
         Id = id;
         LeftPlayerName = leftPlayerName;

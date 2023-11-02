@@ -57,7 +57,7 @@ public class PublishCombatInPreparationNotificationToSignalRClients
         }
     }
 
-    bool HasTargets(StoredCombatInPreparation combat, out IEnumerable<string> connectionIds)
+    bool HasTargets(CombatInPreparation combat, out IEnumerable<string> connectionIds)
     {
         IEnumerable<string> players = new[] { combat.LeftPlayerName, combat.RightPlayerName }.Where(name => name != null).Select(name => name!);
         connectionIds = players.Select(name => _connections.GetConnection(name)).Where(name => name != null).Select(name => name!).ToArray();

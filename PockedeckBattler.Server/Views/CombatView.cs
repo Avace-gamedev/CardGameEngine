@@ -29,19 +29,19 @@ public class CombatView : BaseCombatView
 
 public static class CombatViewMappingExtensions
 {
-    public static CombatView View(this StoredCombat store)
+    public static CombatView View(this Combat store)
     {
         return new CombatView(
             store.Id,
-            store.Combat.LeftSide.View(store.LeftPlayerName),
-            store.Combat.RightSide.View(store.RightPlayerName),
-            store.Combat.Turn,
-            store.Combat.Side,
-            store.Combat.Phase
+            store.Instance.LeftSide.View(store.LeftPlayerName),
+            store.Instance.RightSide.View(store.RightPlayerName),
+            store.Instance.Turn,
+            store.Instance.Side,
+            store.Instance.Phase
         )
         {
-            Ongoing = store.Combat.Ongoing,
-            Over = store.Combat.Over
+            Ongoing = store.Instance.Ongoing,
+            Over = store.Instance.Over
         };
     }
 }

@@ -20,13 +20,21 @@ public abstract class CombatAi
 
         PlayCards();
 
-        Combat.EndSideTurnAndStartNextOne(Side);
+        if (Combat.Ongoing)
+        {
+            Combat.EndSideTurnAndStartNextOne(Side);
+        }
     }
 
     protected abstract void PlayCards();
 
     protected IEnumerable<int> PlayableCards()
     {
+        if (!Combat.Ongoing)
+        {
+            return Enumerable.Empty<int>();
+        }
+
         CombatInstance.CombatSideInstance side = Combat.GetSide(Side);
         return side.Hand.Select((card, index) => new { Card = card, Index = index }).Where(x => x.Card.ApCost <= side.Ap).Select(x => x.Index);
     }

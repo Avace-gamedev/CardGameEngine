@@ -290,7 +290,7 @@ public class CombatInstance
             }
             finally
             {
-                if (Side == side)
+                if (Ongoing && Side == side)
                 {
                     EndSideTurnAndStartNextOne(side);
                 }
@@ -400,8 +400,11 @@ public class CombatInstance
 
         internal void RemoveDeadCreatures()
         {
-            if (Back != null && Back.IsDead)
+            if (Back is { IsDead: true })
             {
+                _hand.RemoveAll(c => c.Character.Character.Identity.Name == Back.Character.Identity.Name);
+                _deck.RemoveAll(c => c.Character.Character.Identity.Name == Back.Character.Identity.Name);
+
                 Back = null;
             }
 
@@ -412,6 +415,9 @@ public class CombatInstance
                     // Side has lost
                     return;
                 }
+
+                _hand.RemoveAll(c => c.Character.Character.Identity.Name == Front.Character.Identity.Name);
+                _deck.RemoveAll(c => c.Character.Character.Identity.Name == Front.Character.Identity.Name);
 
                 Front = Back;
                 Back = null;
@@ -445,7 +451,7 @@ public class CombatInstance
 
         void DrawHand()
         {
-            int nCards = Combat.Options.HandSize;
+            int nCards = Back == null ? Combat.Options.HandSizeWithOneCharacter : Combat.Options.HandSizeWithBothCharacters;
             while (_hand.Count < nCards)
             {
                 if (!DrawCard())

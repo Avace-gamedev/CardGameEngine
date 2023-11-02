@@ -30,7 +30,7 @@ public class SimpleCombatTest
         _combat = new CombatInstance(
             new[] { _leftCharacter },
             new[] { _rightCharacter },
-            new CombatOptions { HandSize = 2, StartingAp = 4, StartingSide = CombatSide.Left }
+            new CombatOptions { HandSizeWithBothCharacters = 2, StartingAp = 4, StartingSide = CombatSide.Left }
         );
     }
 

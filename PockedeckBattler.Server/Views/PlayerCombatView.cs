@@ -6,11 +6,15 @@ namespace PockedeckBattler.Server.Views;
 
 public class PlayerCombatView : BaseCombatView
 {
-    public PlayerCombatView(Guid id, PlayerSideView player, CombatSideView opponent, int turn, CombatSide currentSide, CombatSideTurnPhase currentPhase) : base(
-        turn,
-        currentSide,
-        currentPhase
-    )
+    public PlayerCombatView(
+        Guid id,
+        PlayerSideView player,
+        CombatSideView opponent,
+        int turn,
+        int maxAp,
+        CombatSide currentSide,
+        CombatSideTurnPhase currentPhase
+    ) : base(turn, maxAp, currentSide, currentPhase)
     {
         Id = id;
         Player = player;
@@ -29,33 +33,34 @@ public class PlayerCombatView : BaseCombatView
 
 public static class PlayerCombatViewMappingExtensions
 {
-    public static PlayerCombatView PlayerView(this CombatWithMetadata combatWithMetadata, CombatSide side)
+    public static PlayerCombatView PlayerView(this CombatWithMetadata combat, CombatSide side)
     {
         string sidePlayerName = side switch
         {
-            CombatSide.Left => combatWithMetadata.LeftPlayerName,
-            CombatSide.Right => combatWithMetadata.RightPlayerName,
+            CombatSide.Left => combat.LeftPlayerName,
+            CombatSide.Right => combat.RightPlayerName,
             _ => throw new ArgumentOutOfRangeException(nameof(side), side, null)
         };
 
         string otherSidePlayerName = side switch
         {
-            CombatSide.Left => combatWithMetadata.RightPlayerName,
-            CombatSide.Right => combatWithMetadata.LeftPlayerName,
+            CombatSide.Left => combat.RightPlayerName,
+            CombatSide.Right => combat.LeftPlayerName,
             _ => throw new ArgumentOutOfRangeException(nameof(side), side, null)
         };
 
         return new PlayerCombatView(
-            combatWithMetadata.Id,
-            combatWithMetadata.Instance.GetSide(side).PlayerView(sidePlayerName),
-            combatWithMetadata.Instance.GetSide(side.OtherSide()).View(otherSidePlayerName),
-            combatWithMetadata.Instance.Turn,
-            combatWithMetadata.Instance.Side,
-            combatWithMetadata.Instance.Phase
+            combat.Id,
+            combat.Instance.GetSide(side).PlayerView(sidePlayerName),
+            combat.Instance.GetSide(side.OtherSide()).View(otherSidePlayerName),
+            combat.Instance.Turn,
+            combat.Instance.MaxAp,
+            combat.Instance.Side,
+            combat.Instance.Phase
         )
         {
-            Ongoing = combatWithMetadata.Instance.Ongoing,
-            Over = combatWithMetadata.Instance.Over
+            Ongoing = combat.Instance.Ongoing,
+            Over = combat.Instance.Over
         };
     }
 }

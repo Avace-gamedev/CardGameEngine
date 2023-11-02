@@ -1,16 +1,57 @@
-<div class="h-100 container-fluid hstack" [class.flex-row-reverse]="invert">
-  <div
-    class="hstack w-50 justify-content-around"
-    [class.flex-row-reverse]="invert"
-  >
-    <app-combat-character-img
-      [character]="backCharacter"
-      size="xl"
-    ></app-combat-character-img>
-    <app-combat-character-img
-      [character]="frontCharacter"
-      size="xl"
-    ></app-combat-character-img>
+<ng-container *ngIf="combat && side">
+  <div class="h-100 container-fluid hstack" [class.flex-row-reverse]="invert">
+    <div
+      class="hstack w-50 justify-content-around"
+      [class.flex-row-reverse]="invert"
+    >
+      <div class="position-relative">
+        <app-combat-character-img
+          [character]="side.backCharacter"
+          size="xl"
+        ></app-combat-character-img>
+        <span
+          class="position-absolute start-0 end-0 text-center text-secondary text-opacity-50 user-select-none"
+          style="bottom: 0.5rem"
+        >
+          Back
+        </span>
+      </div>
+      <div class="position-relative">
+        <app-combat-character-img
+          [character]="side.frontCharacter"
+          size="xl"
+        ></app-combat-character-img>
+        <span
+          class="position-absolute start-0 end-0 text-center text-secondary text-opacity-50 user-select-none"
+          style="bottom: 0.5rem"
+        >
+          Front
+        </span>
+      </div>
+    </div>
+    <div
+      class="w-50 vstack justify-content-end"
+      [class.flex-column-reverse]="invert"
+    >
+      <div
+        class="hstack m-4 gap-4 align-items-center justify-content-end"
+        [class.flex-row-reverse]="invert"
+      >
+        <div class="hstack gap-2">
+          <app-action-points></app-action-points>
+          <div class="me-2">{{ side.ap }}/{{ combat.maxAp }}</div>
+          <div class="hstack">
+            <i
+              class="bi bi-diamond-fill"
+              [class.text-secondary]="ap === 'empty'"
+              [class.text-primary]="'filled'"
+              *ngFor="let ap of aps"
+            >
+            </i>
+          </div>
+        </div>
+        <i class="text-truncate fw-bold fs-3">{{ side.playerName }}</i>
+      </div>
+    </div>
   </div>
-  <div class="w-50"></div>
-</div>
+</ng-container>

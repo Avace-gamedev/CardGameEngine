@@ -31,19 +31,19 @@ export class ActionCardTargetLineComponent {
         this.targetString = 'other ally';
         break;
       case ActionCardTarget.FrontOpponent:
-        this.targetString = 'first enemy';
+        this.targetString = 'front enemy';
         break;
       case ActionCardTarget.BackOpponent:
-        this.targetString = 'last enemy';
+        this.targetString = 'back enemy';
         break;
       case ActionCardTarget.AllOpponents:
         this.targetString = 'all enemies';
         break;
       case ActionCardTarget.FrontAlly:
-        this.targetString = 'first ally';
+        this.targetString = 'front ally';
         break;
       case ActionCardTarget.BackAlly:
-        this.targetString = 'last ally';
+        this.targetString = 'back ally';
         break;
       case ActionCardTarget.AllAllies:
         this.targetString = 'all allies';

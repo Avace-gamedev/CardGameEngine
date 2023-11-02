@@ -49,6 +49,7 @@ public class CombatInstance
     public bool Ongoing { get; private set; }
     public bool Over { get; private set; }
     public int Turn { get; private set; }
+    public int MaxAp { get; private set; }
     public CombatSide Side { get; private set; }
     public CombatSideTurnPhase Phase { get; private set; }
     public CombatSide Winner { get; private set; }
@@ -58,14 +59,13 @@ public class CombatInstance
         AssertNotStarted();
         AssertNotOver();
 
-        Turn = 1;
         Ongoing = true;
-        Side = Options.StartingSide;
         Phase = CombatSideTurnPhase.None;
 
         LeftSide.OnStart();
         RightSide.OnStart();
 
+        StartTurn(1);
         StartSideTurn();
     }
 
@@ -75,6 +75,11 @@ public class CombatInstance
         AssertSideCanPlay(side);
 
         EndSideTurn();
+
+        if (Side == CombatSide.None)
+        {
+            StartTurn(Turn + 1);
+        }
 
         if (Over)
         {
@@ -133,6 +138,13 @@ public class CombatInstance
         return combatSide.Both;
     }
 
+    void StartTurn(int i)
+    {
+        Turn = i;
+        Side = Options.StartingSide;
+        MaxAp = Math.Min(Options.StartingAp + Turn - 1, Options.MaxAp);
+    }
+
     void StartSideTurn()
     {
         AssertOngoing();
@@ -172,12 +184,6 @@ public class CombatInstance
 
         Phase = CombatSideTurnPhase.None;
         Side = NextSide();
-
-        if (Side == CombatSide.None)
-        {
-            Turn++;
-            Side = Options.StartingSide;
-        }
     }
 
     CombatSide NextSide()
@@ -230,6 +236,7 @@ public class CombatInstance
     {
         readonly List<ActionCardInstance> _deck;
         readonly List<ActionCardInstance> _hand;
+        int _ap;
 
         public CombatSideInstance(CombatInstance combat, CombatSide side, CharacterCombatState front, CharacterCombatState? back = null)
         {
@@ -238,7 +245,7 @@ public class CombatInstance
             Front = front;
             Back = back;
 
-            Ap = 0;
+            _ap = 0;
 
             _hand = new List<ActionCardInstance>();
 
@@ -259,7 +266,7 @@ public class CombatInstance
         public CharacterCombatState? Back { get; private set; }
         public IEnumerable<CharacterCombatState> Both => new[] { Front, Back }.Where(c => c != null).Select(c => c!);
 
-        public int Ap { get; private set; }
+        public int Ap => Combat.Side == Side ? _ap : Combat.MaxAp;
 
         public IReadOnlyList<ActionCardInstance> Hand => _hand;
         public IReadOnlyList<ActionCardInstance> Deck => _deck;
@@ -269,7 +276,6 @@ public class CombatInstance
 
         internal void OnStart()
         {
-            RestoreAps();
             DrawHand();
         }
 
@@ -281,7 +287,6 @@ public class CombatInstance
 
         internal void EndTurn()
         {
-            RestoreAps();
             DrawHand();
         }
 
@@ -364,12 +369,12 @@ public class CombatInstance
                 throw new InvalidMoveException("Not enough Ap");
             }
 
-            Ap -= ap;
+            _ap -= ap;
         }
 
         void RestoreAps()
         {
-            Ap = Math.Min(Combat.Options.StartingAp + Combat.Turn - 1, Combat.Options.MaxAp);
+            _ap = Combat.MaxAp;
         }
 
         void DrawHand()

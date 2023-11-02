@@ -1,17 +1,15 @@
 <ng-container *ngIf="combat">
   <div class="h-100 w-100 container-fluid hstack p-4">
-    <div class="hstack gap-2 flex-wrap">
+    <div class="flex-fill hstack justify-content-center gap-2">
       <button
         class="btn m-0 p-0"
-        style="height: 100%; width: 150px"
+        style="height: 100%; width: 175px"
         (click)="play.emit(i)"
         *ngFor="let card of combat.player.hand; let i = index"
       >
         <app-action-card [card]="card.baseCard" size="sm"> </app-action-card>
       </button>
     </div>
-
-    <div class="flex-fill"></div>
 
     <button
       class="btn p-4"

@@ -1672,6 +1672,7 @@ export class BaseCombatView implements IBaseCombatView {
     ongoing!: boolean;
     over!: boolean;
     turn!: number;
+    maxAp!: number;
     currentSide!: CombatSide;
     currentPhase!: CombatSideTurnPhase;
 
@@ -1689,6 +1690,7 @@ export class BaseCombatView implements IBaseCombatView {
             this.ongoing = _data["ongoing"];
             this.over = _data["over"];
             this.turn = _data["turn"];
+            this.maxAp = _data["maxAp"];
             this.currentSide = _data["currentSide"];
             this.currentPhase = _data["currentPhase"];
         }
@@ -1706,6 +1708,7 @@ export class BaseCombatView implements IBaseCombatView {
         data["ongoing"] = this.ongoing;
         data["over"] = this.over;
         data["turn"] = this.turn;
+        data["maxAp"] = this.maxAp;
         data["currentSide"] = this.currentSide;
         data["currentPhase"] = this.currentPhase;
         return data;
@@ -1716,6 +1719,7 @@ export interface IBaseCombatView {
     ongoing: boolean;
     over: boolean;
     turn: number;
+    maxAp: number;
     currentSide: CombatSide;
     currentPhase: CombatSideTurnPhase;
 }
@@ -1765,13 +1769,16 @@ export interface IPlayerCombatView extends IBaseCombatView {
     opponent: CombatSideView;
 }
 
-export abstract class BaseCombatSideView implements IBaseCombatSideView {
+export class CombatSideView implements ICombatSideView {
+    playerName!: string;
     side!: CombatSide;
+    ap!: number;
+    handSize!: number;
     deckSize!: number;
     frontCharacter!: CharacterCombatView;
     backCharacter?: CharacterCombatView | undefined;
 
-    constructor(data?: IBaseCombatSideView) {
+    constructor(data?: ICombatSideView) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -1785,21 +1792,29 @@ export abstract class BaseCombatSideView implements IBaseCombatSideView {
 
     init(_data?: any) {
         if (_data) {
+            this.playerName = _data["playerName"];
             this.side = _data["side"];
+            this.ap = _data["ap"];
+            this.handSize = _data["handSize"];
             this.deckSize = _data["deckSize"];
             this.frontCharacter = _data["frontCharacter"] ? CharacterCombatView.fromJS(_data["frontCharacter"]) : new CharacterCombatView();
             this.backCharacter = _data["backCharacter"] ? CharacterCombatView.fromJS(_data["backCharacter"]) : <any>undefined;
         }
     }
 
-    static fromJS(data: any): BaseCombatSideView {
+    static fromJS(data: any): CombatSideView {
         data = typeof data === 'object' ? data : {};
-        throw new Error("The abstract class 'BaseCombatSideView' cannot be instantiated.");
+        let result = new CombatSideView();
+        result.init(data);
+        return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["playerName"] = this.playerName;
         data["side"] = this.side;
+        data["ap"] = this.ap;
+        data["handSize"] = this.handSize;
         data["deckSize"] = this.deckSize;
         data["frontCharacter"] = this.frontCharacter ? this.frontCharacter.toJSON() : <any>undefined;
         data["backCharacter"] = this.backCharacter ? this.backCharacter.toJSON() : <any>undefined;
@@ -1807,15 +1822,17 @@ export abstract class BaseCombatSideView implements IBaseCombatSideView {
     }
 }
 
-export interface IBaseCombatSideView {
+export interface ICombatSideView {
+    playerName: string;
     side: CombatSide;
+    ap: number;
+    handSize: number;
     deckSize: number;
     frontCharacter: CharacterCombatView;
     backCharacter?: CharacterCombatView | undefined;
 }
 
-export class PlayerSideView extends BaseCombatSideView implements IPlayerSideView {
-    playerName!: string;
+export class PlayerSideView extends CombatSideView implements IPlayerSideView {
     hand!: CardInstanceWithModifiersView[];
 
     constructor(data?: IPlayerSideView) {
@@ -1828,7 +1845,6 @@ export class PlayerSideView extends BaseCombatSideView implements IPlayerSideVie
     override init(_data?: any) {
         super.init(_data);
         if (_data) {
-            this.playerName = _data["playerName"];
             if (Array.isArray(_data["hand"])) {
                 this.hand = [] as any;
                 for (let item of _data["hand"])
@@ -1846,7 +1862,6 @@ export class PlayerSideView extends BaseCombatSideView implements IPlayerSideVie
 
     override toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["playerName"] = this.playerName;
         if (Array.isArray(this.hand)) {
             data["hand"] = [];
             for (let item of this.hand)
@@ -1857,8 +1872,7 @@ export class PlayerSideView extends BaseCombatSideView implements IPlayerSideVie
     }
 }
 
-export interface IPlayerSideView extends IBaseCombatSideView {
-    playerName: string;
+export interface IPlayerSideView extends ICombatSideView {
     hand: CardInstanceWithModifiersView[];
 }
 
@@ -2044,33 +2058,6 @@ export interface IPassiveEffectInstanceView {
     effect: PassiveEffectView;
     source: string;
     remainingDuration: number;
-}
-
-export class CombatSideView extends BaseCombatSideView implements ICombatSideView {
-
-    constructor(data?: ICombatSideView) {
-        super(data);
-    }
-
-    override init(_data?: any) {
-        super.init(_data);
-    }
-
-    static override fromJS(data: any): CombatSideView {
-        data = typeof data === 'object' ? data : {};
-        let result = new CombatSideView();
-        result.init(data);
-        return result;
-    }
-
-    override toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        super.toJSON(data);
-        return data;
-    }
-}
-
-export interface ICombatSideView extends IBaseCombatSideView {
 }
 
 export enum CombatSideTurnPhase {

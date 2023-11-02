@@ -1,6 +1,16 @@
 <div class="w-100 h-100 bg-dark position-relative">
   <div
     class="position-absolute start-0 top-0 bottom-0"
-    [ngStyle]="{ 'width.%': percent, backgroundColor: 'var(--health-color)' }"
+    [ngStyle]="{
+      'width.%': healthPercent,
+      backgroundColor: 'var(--health-color)'
+    }"
+  ></div>
+  <div
+    class="position-absolute start-0 top-0 bottom-0"
+    [ngStyle]="{
+      'width.%': shieldPercent,
+      backgroundColor: 'var(--shield-color)'
+    }"
   ></div>
 </div>

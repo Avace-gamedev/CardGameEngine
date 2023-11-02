@@ -26,19 +26,29 @@ export class HealthBarComponent {
   }
   private _maxValue: number = 0;
 
-  public get ratio(): number {
-    return this._ratio;
+  @Input()
+  get shield(): number {
+    return this._shield;
   }
-  private _ratio: number = 0;
+  set shield(value: number) {
+    this._shield = value;
+    this.update();
+  }
+  private _shield: number = 0;
 
-  protected percent: number = 0;
+  protected healthPercent: number = 0;
+  protected shieldPercent: number = 0;
 
   private update() {
     if (this._maxValue === 0) {
-      this._ratio = 0;
+      this.healthPercent = 0;
+      this.shieldPercent = 0;
     }
 
-    this._ratio = this._value / this._maxValue;
-    this.percent = this.ratio * 100;
+    const healthRatio = this._value / this._maxValue;
+    this.healthPercent = Math.max(0, Math.min(healthRatio, 1)) * 100;
+
+    const shieldRatio = this._shield / this._maxValue;
+    this.shieldPercent = Math.max(0, Math.min(shieldRatio, 1)) * 100;
   }
 }

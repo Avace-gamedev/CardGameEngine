@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { NgbAlert, NgbPopover, NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 import { CoreModule } from '../../core/core.module';
 import { CombatConfigureSideComponent } from './combat-configure/combat-configure-side/combat-configure-side.component';
@@ -23,6 +24,7 @@ import { CombatPreparationRoutingModule } from './combat-preparation-routing.mod
     NgbTooltip,
     NgbPopover,
     NgbAlert,
+    FormsModule,
   ],
 })
 export class CombatPreparationModule {}

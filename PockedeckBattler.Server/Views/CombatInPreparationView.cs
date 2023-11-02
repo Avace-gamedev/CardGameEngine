@@ -16,6 +16,7 @@ public class CombatInPreparationView
     public string? LeftBackCharacter { get; set; }
     public bool LeftReady { get; set; }
 
+    public bool RightPlayerIsAi { get; set; }
     public string? RightPlayerName { get; set; }
     public string? RightFrontCharacter { get; set; }
     public string? RightBackCharacter { get; set; }
@@ -31,6 +32,7 @@ public static class CombatInPreparationViewMappingExtensions
             LeftFrontCharacter = combat.LeftFrontCharacter,
             LeftBackCharacter = combat.LeftBackCharacter,
             LeftReady = combat.LeftReady,
+            RightPlayerIsAi = combat.RightPlayerIsAi,
             RightPlayerName = combat.RightPlayerName,
             RightFrontCharacter = combat.RightFrontCharacter,
             RightBackCharacter = combat.RightBackCharacter,

@@ -14,6 +14,7 @@ public class CombatInPreparation
     public string? LeftBackCharacter { get; set; }
     public bool LeftReady { get; set; }
 
+    public bool RightPlayerIsAi { get; set; }
     public string? RightPlayerName { get; set; }
     public string? RightFrontCharacter { get; set; }
     public string? RightBackCharacter { get; set; }

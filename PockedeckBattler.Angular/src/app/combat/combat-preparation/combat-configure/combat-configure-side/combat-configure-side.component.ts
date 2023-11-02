@@ -2,9 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import {
   CharacterView,
   CombatInPreparationView,
-  CombatsService,
 } from '../../../../api/pockedeck-battler-api-client';
-import { IdentityService } from '../../../../core/authentication/services/identity.service';
 
 @Component({
   selector: 'app-combat-configure-side',
@@ -43,6 +41,9 @@ export class CombatConfigureSideComponent {
   private _characters: CharacterView[] = [];
 
   @Input()
+  public enableNameEdition: boolean = false;
+
+  @Input()
   public readonly: boolean = false;
 
   @Input()
@@ -55,7 +56,6 @@ export class CombatConfigureSideComponent {
   @Output()
   public leave: EventEmitter<void> = new EventEmitter<void>();
 
-  protected refreshing: boolean = false;
   protected frontCharacter: CharacterView | undefined;
   protected backCharacter: CharacterView | undefined;
   protected ready: boolean = false;
@@ -63,11 +63,6 @@ export class CombatConfigureSideComponent {
   protected get disabled(): boolean {
     return this.readonly || this.ready;
   }
-
-  constructor(
-    private identityService: IdentityService,
-    private combatsService: CombatsService,
-  ) {}
 
   getAt(slot: 'front' | 'back'): CharacterView | undefined {
     switch (slot) {

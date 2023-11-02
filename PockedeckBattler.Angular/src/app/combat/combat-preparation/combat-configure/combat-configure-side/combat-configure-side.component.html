@@ -1,15 +1,34 @@
 <div class="h-100 vstack">
-  <h3 class="text-center" [ngStyle]="{ 'minHeight.em': 1.5 }">
-    {{ name ?? "???" }}
-    <button
-      class="btn btn-outline-secondary btn-sm"
-      ngbTooltip="Leave"
-      (click)="leave.emit()"
-      *ngIf="!readonly"
-    >
-      <i class="bi bi-door-open-fill"></i>
-    </button>
-  </h3>
+  <div
+    class="hstack justify-content-center gap-2"
+    [ngStyle]="{ 'minHeight.em': 1.5 }"
+  >
+    <ng-container *ngIf="!enableNameEdition">
+      <h3>{{ name ?? "???" }}</h3>
+      <button
+        class="btn btn-outline-secondary btn-sm"
+        ngbTooltip="Leave"
+        (click)="leave.emit()"
+        *ngIf="!readonly"
+      >
+        <i class="bi bi-door-open-fill"></i>
+      </button>
+    </ng-container>
+    <ng-container *ngIf="enableNameEdition">
+      <i class="bi bi-cpu" ngbTooltip="AI Player"></i>
+      <input
+        class="form-control form-control-lg"
+        [disabled]="readonly"
+        [(ngModel)]="name"
+      />
+      <button
+        class="btn-close btn-sm"
+        ngbTooltip="Remove AI"
+        (click)="leave.emit()"
+        *ngIf="!readonly"
+      ></button>
+    </ng-container>
+  </div>
   <h4 class="text-center">Select characters</h4>
 
   <div class="overflow-y-auto" style="max-height: 50vh">

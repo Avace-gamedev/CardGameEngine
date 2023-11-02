@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
-import { HubConnection } from '@microsoft/signalr';
+import { HubConnection, HubConnectionState } from '@microsoft/signalr';
 import { finalize, map, Observable, Subject } from 'rxjs';
 import { IdentityService } from '../../core/authentication/services/identity.service';
 import { API_BASE_URL } from '../pockedeck-battler-api-client';
@@ -40,7 +40,11 @@ export class SignalRService {
   }
 
   private connect(hub: string): HubConnection {
-    if (this.connections[hub]) {
+    if (
+      this.connections[hub] &&
+      (this.connections[hub].state === HubConnectionState.Connected ||
+        this.connections[hub].state === HubConnectionState.Connecting)
+    ) {
       return this.connections[hub];
     }
 
@@ -90,6 +94,7 @@ export class SignalRService {
     connection.stop().then();
 
     if (this.methods[hub]) {
+      delete this.connections[hub];
       delete this.methods[hub];
     }
   }

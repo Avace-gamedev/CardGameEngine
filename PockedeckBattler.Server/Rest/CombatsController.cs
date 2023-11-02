@@ -16,11 +16,13 @@ public class CombatsController : ControllerBase
 {
     readonly ICombatInPreparationService _combatInPreparationService;
     readonly ICombatService _combatService;
+    readonly ILogger<CombatsController> _logger;
 
-    public CombatsController(ICombatService combatService, ICombatInPreparationService combatInPreparationService)
+    public CombatsController(ICombatService combatService, ICombatInPreparationService combatInPreparationService, ILogger<CombatsController> logger)
     {
         _combatService = combatService;
         _combatInPreparationService = combatInPreparationService;
+        _logger = logger;
     }
 
     [HttpGet("in-preparation/{id:guid}")]
@@ -65,12 +67,18 @@ public class CombatsController : ControllerBase
 
         if (request.PlayerName == combatInPreparation.LeftPlayerName)
         {
+            if (request.IsAi == true)
+            {
+                _logger.LogWarning("Left player cannot be AI, value of IsAi will be ignored");
+            }
+
             combatInPreparation.LeftFrontCharacter = request.FrontCharacter;
             combatInPreparation.LeftBackCharacter = request.BackCharacter;
             combatInPreparation.LeftReady = request.Ready;
         }
         else if (request.PlayerName == combatInPreparation.RightPlayerName || combatInPreparation.RightPlayerName == null)
         {
+            combatInPreparation.RightPlayerIsAi = request.IsAi ?? false;
             combatInPreparation.RightPlayerName = request.PlayerName;
             combatInPreparation.RightFrontCharacter = request.FrontCharacter;
             combatInPreparation.RightBackCharacter = request.BackCharacter;

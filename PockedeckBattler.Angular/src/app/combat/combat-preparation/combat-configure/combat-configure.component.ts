@@ -113,17 +113,38 @@ export class CombatConfigureComponent implements OnInit {
     const identity = this.identityService.getIdentity();
 
     if (
-      (identity == this.combat.leftPlayerName && side !== CombatSide.Left) ||
-      (identity == this.combat.rightPlayerName && side !== CombatSide.Right) ||
-      configuration.playerName !== identity
+      !(this.combat.rightPlayerIsAi && side === CombatSide.Right) &&
+      ((identity == this.combat.leftPlayerName && side !== CombatSide.Left) ||
+        (identity == this.combat.rightPlayerName &&
+          side !== CombatSide.Right) ||
+        configuration.playerName !== identity)
     ) {
+      return;
+    }
+
+    const isAi = side === CombatSide.Right && this.combat.rightPlayerIsAi;
+
+    this.combatsService
+      .updateCombatInPreparation(
+        this.combat.id,
+        new UpdateCombatInPreparationRequest({ ...configuration, isAi }),
+      )
+      .subscribe();
+  }
+
+  protected setRightPlayerAi() {
+    if (!this.combat) {
       return;
     }
 
     this.combatsService
       .updateCombatInPreparation(
         this.combat.id,
-        new UpdateCombatInPreparationRequest(configuration),
+        new UpdateCombatInPreparationRequest({
+          isAi: true,
+          playerName: 'Sancho',
+          ready: false,
+        }),
       )
       .subscribe();
   }

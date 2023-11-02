@@ -4,6 +4,8 @@ namespace PockedeckBattler.Server.Rest.Requests;
 
 public class UpdateCombatInPreparationRequest
 {
+    public bool? IsAi { get; set; }
+
     [Required]
     public string PlayerName { get; set; }
 

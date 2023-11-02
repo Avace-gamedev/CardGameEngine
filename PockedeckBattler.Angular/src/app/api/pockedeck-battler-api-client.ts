@@ -1558,6 +1558,7 @@ export class CombatInPreparationView implements ICombatInPreparationView {
     leftFrontCharacter?: string | undefined;
     leftBackCharacter?: string | undefined;
     leftReady!: boolean;
+    rightPlayerIsAi!: boolean;
     rightPlayerName?: string | undefined;
     rightFrontCharacter?: string | undefined;
     rightBackCharacter?: string | undefined;
@@ -1579,6 +1580,7 @@ export class CombatInPreparationView implements ICombatInPreparationView {
             this.leftFrontCharacter = _data["leftFrontCharacter"];
             this.leftBackCharacter = _data["leftBackCharacter"];
             this.leftReady = _data["leftReady"];
+            this.rightPlayerIsAi = _data["rightPlayerIsAi"];
             this.rightPlayerName = _data["rightPlayerName"];
             this.rightFrontCharacter = _data["rightFrontCharacter"];
             this.rightBackCharacter = _data["rightBackCharacter"];
@@ -1600,6 +1602,7 @@ export class CombatInPreparationView implements ICombatInPreparationView {
         data["leftFrontCharacter"] = this.leftFrontCharacter;
         data["leftBackCharacter"] = this.leftBackCharacter;
         data["leftReady"] = this.leftReady;
+        data["rightPlayerIsAi"] = this.rightPlayerIsAi;
         data["rightPlayerName"] = this.rightPlayerName;
         data["rightFrontCharacter"] = this.rightFrontCharacter;
         data["rightBackCharacter"] = this.rightBackCharacter;
@@ -1614,6 +1617,7 @@ export interface ICombatInPreparationView {
     leftFrontCharacter?: string | undefined;
     leftBackCharacter?: string | undefined;
     leftReady: boolean;
+    rightPlayerIsAi: boolean;
     rightPlayerName?: string | undefined;
     rightFrontCharacter?: string | undefined;
     rightBackCharacter?: string | undefined;
@@ -1621,6 +1625,7 @@ export interface ICombatInPreparationView {
 }
 
 export class UpdateCombatInPreparationRequest implements IUpdateCombatInPreparationRequest {
+    isAi?: boolean | undefined;
     playerName!: string;
     ready!: boolean;
     frontCharacter?: string | undefined;
@@ -1637,6 +1642,7 @@ export class UpdateCombatInPreparationRequest implements IUpdateCombatInPreparat
 
     init(_data?: any) {
         if (_data) {
+            this.isAi = _data["isAi"];
             this.playerName = _data["playerName"];
             this.ready = _data["ready"];
             this.frontCharacter = _data["frontCharacter"];
@@ -1653,6 +1659,7 @@ export class UpdateCombatInPreparationRequest implements IUpdateCombatInPreparat
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["isAi"] = this.isAi;
         data["playerName"] = this.playerName;
         data["ready"] = this.ready;
         data["frontCharacter"] = this.frontCharacter;
@@ -1662,6 +1669,7 @@ export class UpdateCombatInPreparationRequest implements IUpdateCombatInPreparat
 }
 
 export interface IUpdateCombatInPreparationRequest {
+    isAi?: boolean | undefined;
     playerName: string;
     ready: boolean;
     frontCharacter?: string | undefined;

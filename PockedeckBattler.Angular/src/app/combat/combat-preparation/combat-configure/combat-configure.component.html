@@ -20,12 +20,19 @@
         [combat]="combat"
         [name]="combat.rightPlayerName"
         [characters]="characters"
-        [readonly]="side !== CombatSide.Right"
+        [readonly]="side !== CombatSide.Right && !combat.rightPlayerIsAi"
+        [enableNameEdition]="
+          side !== CombatSide.Right && combat.rightPlayerIsAi
+        "
         (update)="sendUpdate(CombatSide.Right, $event)"
         (leave)="leave(CombatSide.Right)"
-        *ngIf="combat.rightPlayerName"
+        *ngIf="combat.rightPlayerName || combat.rightPlayerIsAi"
       ></app-combat-configure-side>
-      <app-combat-empty-side [combat]="combat" *ngIf="!combat.rightPlayerName">
+      <app-combat-empty-side
+        [combat]="combat"
+        *ngIf="!combat.rightPlayerName && !combat.rightPlayerIsAi"
+        (requestAi)="setRightPlayerAi()"
+      >
       </app-combat-empty-side>
     </div>
   </div>

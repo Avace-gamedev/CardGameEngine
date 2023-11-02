@@ -1,5 +1,5 @@
 import { APP_BASE_HREF } from '@angular/common';
-import { Component, Inject, Input } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, Output } from '@angular/core';
 import { CombatInPreparationView } from '../../../../api/pockedeck-battler-api-client';
 import '../../../../core/extensions/string-extensions';
 
@@ -18,6 +18,9 @@ export class CombatEmptySideComponent {
     this.updateUrl();
   }
   private _combat: CombatInPreparationView | undefined;
+
+  @Output()
+  public requestAi: EventEmitter<void> = new EventEmitter<void>();
 
   protected url: string = '???';
 

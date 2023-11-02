@@ -4,8 +4,20 @@
       <div class="container-fluid">
         <a href="/" class="navbar-brand">PockeDeck Battler</a>
         <div class="flex-fill"></div>
-        <div class="fs-4 fw-bold">
-          {{ playerName }}
+        <div
+          class="hstack gap-2"
+          *ngIf="identityService.identity$ | async; let identity"
+        >
+          <div class="fs-4 fw-bold">
+            {{ identity }}
+          </div>
+          <button
+            class="btn btn-outline-secondary"
+            ngbTooltip="Logout"
+            (click)="logout()"
+          >
+            <i class="bi bi-box-arrow-left"></i>
+          </button>
         </div>
       </div>
     </nav>

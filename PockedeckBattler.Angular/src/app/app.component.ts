@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { IdentityService } from './core/authentication/services/identity.service';
 
 @Component({
@@ -6,14 +6,11 @@ import { IdentityService } from './core/authentication/services/identity.service
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })
-export class AppComponent implements OnInit {
-  protected playerName: string | undefined;
+export class AppComponent {
+  constructor(protected identityService: IdentityService) {}
 
-  constructor(private identityService: IdentityService) {}
-
-  ngOnInit() {
-    this.playerName = this.identityService.isAuthenticated()
-      ? this.identityService.getIdentity()
-      : undefined;
+  protected logout() {
+    this.identityService.clearIdentity();
+    location.reload();
   }
 }

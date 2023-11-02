@@ -2,7 +2,7 @@
 
 namespace PockedeckBattler.Server.Stores;
 
-public abstract class JsonFileStore<TData> : FileStore<TData>
+public class JsonFileStore<TData> : FileStore<TData>
 {
     readonly ILogger<JsonFileStore<TData>> _logger;
     readonly JsonSerializerSettings _settings;
@@ -24,16 +24,10 @@ public abstract class JsonFileStore<TData> : FileStore<TData>
         JsonSerializer serializer = JsonSerializer.CreateDefault(_settings);
         TData? value = serializer.Deserialize<TData>(jsonReader);
 
-        if (value == null)
-        {
-            _logger.LogWarning("Could not load value from file {filePath}", filePath);
-            return Task.FromResult(default(TData?));
-        }
-
-        if (!Validate(value))
+        if (value != null && !Validate(value))
         {
             _logger.LogWarning("Validation failed on value loaded from file {filePath}", filePath);
-            return Task.FromResult(default(TData?));
+            return Task.FromResult((TData?)default);
         }
 
         return Task.FromResult(value);
@@ -51,5 +45,8 @@ public abstract class JsonFileStore<TData> : FileStore<TData>
         return Task.CompletedTask;
     }
 
-    protected abstract bool Validate(TData value);
+    protected virtual bool Validate(TData value)
+    {
+        return true;
+    }
 }

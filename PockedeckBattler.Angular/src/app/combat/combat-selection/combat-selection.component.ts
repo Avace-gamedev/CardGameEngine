@@ -71,3 +71,13 @@ export class CombatSelectionComponent implements OnInit {
     );
   }
 }
+
+declare module '@angular/router' {
+  interface Router {
+    toCombatSelection(): Promise<boolean>;
+  }
+}
+
+Router.prototype.toCombatSelection = function (): Promise<boolean> {
+  return this.navigate(['/', 'combat', 'selection']);
+};

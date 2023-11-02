@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { finalize, switchMap } from 'rxjs';
 import {
   CharacterView,
@@ -35,9 +35,6 @@ export class CombatConfigureSideComponent {
   private _combat: CombatInPreparationView | undefined;
 
   @Input()
-  public readonly: boolean = false;
-
-  @Input()
   get characters(): CharacterView[] {
     return this._characters;
   }
@@ -48,7 +45,13 @@ export class CombatConfigureSideComponent {
   private _characters: CharacterView[] = [];
 
   @Input()
+  public readonly: boolean = false;
+
+  @Input()
   public invertSlotPositions: boolean = false;
+
+  @Output()
+  public leave: EventEmitter<void> = new EventEmitter<void>();
 
   protected refreshing: boolean = false;
   protected frontCharacter: CharacterView | undefined;

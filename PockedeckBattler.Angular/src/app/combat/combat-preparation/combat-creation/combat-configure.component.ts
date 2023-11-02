@@ -65,6 +65,30 @@ export class CombatConfigureComponent implements OnInit {
       .subscribe();
   }
 
+  protected leave(side: CombatSide) {
+    if (!this.combat) {
+      return;
+    }
+
+    let name: string | undefined;
+    switch (side) {
+      case CombatSide.Left:
+        name = this.combat?.leftPlayerName;
+        break;
+      case CombatSide.Right:
+        name = this.combat?.rightPlayerName;
+        break;
+    }
+
+    if (!name) {
+      return;
+    }
+
+    this.combatsService
+      .leaveCombatInPreparation(this.combat.id, name)
+      .subscribe(() => this.router.toCombatSelection());
+  }
+
   protected readonly CombatSide = CombatSide;
 }
 

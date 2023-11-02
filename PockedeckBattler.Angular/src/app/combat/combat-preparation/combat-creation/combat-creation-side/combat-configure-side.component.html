@@ -1,5 +1,15 @@
 <div class="h-100 vstack">
-  <h3 class="text-center">{{ name ?? "???" }}</h3>
+  <h3 class="text-center">
+    {{ name ?? "???" }}
+    <button
+      class="btn btn-outline-secondary"
+      ngbTooltip="Leave"
+      (click)="leave.emit()"
+      *ngIf="!readonly"
+    >
+      <i class="bi bi-door-open-fill"></i>
+    </button>
+  </h3>
   <h4 class="text-center">Select characters</h4>
 
   <div class="overflow-y-auto" style="max-height: 50vh">

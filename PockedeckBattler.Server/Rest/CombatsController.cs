@@ -117,13 +117,13 @@ public class CombatsController : ControllerBase
             combat.RightPlayerName = null;
             combat.RightFrontCharacter = null;
             combat.RightBackCharacter = null;
+            await _combatsInPreparationStore.SaveCombatInPreparation(combat);
         }
         else
         {
             throw new Exception($"Player {playerName} is not part of combat {id}");
         }
 
-        await _combatsInPreparationStore.SaveCombatInPreparation(combat);
         return NoContent();
     }
 

@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { CombatConfigureComponent } from './combat-creation/combat-configure.component';
+import { CombatConfigureComponent } from './combat-configure/combat-configure.component';
 import { CombatJoinComponent } from './combat-join/combat-join.component';
 
 const routes: Routes = [

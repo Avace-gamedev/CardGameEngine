@@ -1683,6 +1683,7 @@ export class BaseCombatView implements IBaseCombatView {
     maxAp!: number;
     currentSide!: CombatSide;
     currentPhase!: CombatSideTurnPhase;
+    winner!: CombatSide;
 
     constructor(data?: IBaseCombatView) {
         if (data) {
@@ -1701,6 +1702,7 @@ export class BaseCombatView implements IBaseCombatView {
             this.maxAp = _data["maxAp"];
             this.currentSide = _data["currentSide"];
             this.currentPhase = _data["currentPhase"];
+            this.winner = _data["winner"];
         }
     }
 
@@ -1719,6 +1721,7 @@ export class BaseCombatView implements IBaseCombatView {
         data["maxAp"] = this.maxAp;
         data["currentSide"] = this.currentSide;
         data["currentPhase"] = this.currentPhase;
+        data["winner"] = this.winner;
         return data;
     }
 }
@@ -1730,6 +1733,7 @@ export interface IBaseCombatView {
     maxAp: number;
     currentSide: CombatSide;
     currentPhase: CombatSideTurnPhase;
+    winner: CombatSide;
 }
 
 export class PlayerCombatView extends BaseCombatView implements IPlayerCombatView {
@@ -1779,6 +1783,7 @@ export interface IPlayerCombatView extends IBaseCombatView {
 
 export class CombatSideView implements ICombatSideView {
     playerName!: string;
+    isAi!: boolean;
     side!: CombatSide;
     ap!: number;
     handSize!: number;
@@ -1801,6 +1806,7 @@ export class CombatSideView implements ICombatSideView {
     init(_data?: any) {
         if (_data) {
             this.playerName = _data["playerName"];
+            this.isAi = _data["isAi"];
             this.side = _data["side"];
             this.ap = _data["ap"];
             this.handSize = _data["handSize"];
@@ -1820,6 +1826,7 @@ export class CombatSideView implements ICombatSideView {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["playerName"] = this.playerName;
+        data["isAi"] = this.isAi;
         data["side"] = this.side;
         data["ap"] = this.ap;
         data["handSize"] = this.handSize;
@@ -1832,6 +1839,7 @@ export class CombatSideView implements ICombatSideView {
 
 export interface ICombatSideView {
     playerName: string;
+    isAi: boolean;
     side: CombatSide;
     ap: number;
     handSize: number;

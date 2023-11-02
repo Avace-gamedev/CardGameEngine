@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using PockedeckBattler.Server.Middlewares.Exceptions;
 
-namespace PockedeckBattler.Server.Rest.Exceptions;
+namespace PockedeckBattler.Server.Rest.Combats.Exceptions;
 
 public class InvalidCombatConfigurationException : Exception, IWebApiException
 {

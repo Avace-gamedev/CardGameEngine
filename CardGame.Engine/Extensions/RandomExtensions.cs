@@ -2,13 +2,19 @@
 
 public static class RandomExtensions
 {
-    public static void Shuffle<T>(this Random rng, IList<T> array)
+    public static void Shuffle<T>(this Random rng, IList<T> list)
     {
-        int n = array.Count;
+        int n = list.Count;
         while (n > 1)
         {
             int k = rng.Next(n--);
-            (array[n], array[k]) = (array[k], array[n]);
+            (list[n], list[k]) = (list[k], list[n]);
         }
+    }
+
+    public static T Sample<T>(this Random rng, IReadOnlyList<T> list)
+    {
+        int randomIndex = rng.Next(0, list.Count);
+        return list[randomIndex];
     }
 }

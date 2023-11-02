@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, filter, from, map, of, switchMap } from 'rxjs';
 import {
+  CombatSide,
   CombatsService,
   PlayerCombatView,
 } from '../api/pockedeck-battler-api-client';
@@ -30,7 +31,7 @@ export class CombatComponent implements OnInit {
     this.signalrService
       .listen<PlayerCombatView>(
         'combats',
-        'CombatChanged',
+        'CombatUpdated',
         PlayerCombatView.fromJS,
       )
       .subscribe((combat) => (this.combat = combat));
@@ -75,6 +76,8 @@ export class CombatComponent implements OnInit {
       .endTurn(this.combat.id, this.identityService.getIdentity())
       .subscribe();
   }
+
+  protected readonly CombatSide = CombatSide;
 }
 
 declare module '@angular/router' {

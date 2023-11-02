@@ -3,6 +3,7 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using NSwag;
 using PockedeckBattler.Server.Middlewares.Exceptions;
+using PockedeckBattler.Server.Rest.Combats;
 using PockedeckBattler.Server.Rest.Exceptions;
 using PockedeckBattler.Server.SignalR;
 using PockedeckBattler.Server.SignalR.Combats;
@@ -47,7 +48,7 @@ builder.Services.AddSingleton<IHubConnections, HubConnectionsInMemory>();
 builder.Services.AddSingleton<IHubConnections, HubConnectionsInMemory>();
 
 builder.Services.AddSingleton<IStore<CombatWithMetadata>, MemoryStore<CombatWithMetadata>>();
-builder.Services.AddSingleton<ICombatService, CombatService>();
+builder.Services.AddSingleton<ICombatService, CombatsService>();
 
 builder.Services.AddSingleton<IStore<CombatInPreparation>, CombatInPreparationFileStore>();
 builder.Services.AddSingleton<ICombatInPreparationService, CombatInPreparationService>();

@@ -17,6 +17,8 @@ public class CombatSideView
     [Required]
     public string PlayerName { get; }
 
+    public bool IsAi { get; init; }
+
     public CombatSide Side { get; }
     public int Ap { get; }
     public int HandSize { get; init; }
@@ -34,6 +36,10 @@ public static class CombatSideViewMappingExtensions
     {
         return new CombatSideView(playerName, side.Side, side.Ap, side.Front.View(), side.Back?.View())
         {
+            IsAi = side.Side switch
+            {
+                CombatSide.Left => side.Combat.LeftIsAi, CombatSide.Right => side.Combat.RightIsAi, _ => false
+            },
             HandSize = side.Hand.Count,
             DeckSize = side.Deck.Count
         };

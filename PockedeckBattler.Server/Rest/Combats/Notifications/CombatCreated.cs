@@ -1,4 +1,6 @@
-﻿namespace PockedeckBattler.Server.Stores.Combats.Notifications;
+﻿using PockedeckBattler.Server.Stores.Combats;
+
+namespace PockedeckBattler.Server.Rest.Combats.Notifications;
 
 public class CombatCreated : CombatNotification
 {

@@ -1,6 +1,7 @@
 ﻿using MediatR;
+using PockedeckBattler.Server.Stores.Combats;
 
-namespace PockedeckBattler.Server.Stores.Combats.Notifications;
+namespace PockedeckBattler.Server.Rest.Combats.Notifications;
 
 public abstract class CombatNotification : INotification
 {

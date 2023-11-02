@@ -2,12 +2,13 @@
 using CardGame.Engine.Combats;
 using MediatR;
 using Microsoft.AspNetCore.SignalR;
-using PockedeckBattler.Server.Stores.Combats.Notifications;
+using PockedeckBattler.Server.Rest.Combats.Notifications;
 using PockedeckBattler.Server.Views;
 
 namespace PockedeckBattler.Server.SignalR.Combats.Notifications;
 
-public class PublishCombatNotificationToSignalRClients : INotificationHandler<CombatCreated>, INotificationHandler<CombatSaved>
+public class PublishCombatNotificationToSignalRClients
+    : INotificationHandler<CombatCreated>, INotificationHandler<CombatStarted>, INotificationHandler<CombatUpdated>, INotificationHandler<CombatOver>
 {
     readonly IHubConnections _connections;
     readonly IHubContext<CombatsHub, ICombatsHubClient> _hub;
@@ -31,16 +32,44 @@ public class PublishCombatNotificationToSignalRClients : INotificationHandler<Co
         }
     }
 
-    public async Task Handle(CombatSaved notification, CancellationToken cancellationToken)
+
+    public async Task Handle(CombatOver notification, CancellationToken cancellationToken)
     {
         if (IsConnected(notification.Combat.LeftPlayerName, out string? leftId))
         {
-            await _hub.Clients.Client(leftId).CombatChanged(notification.Combat.PlayerView(CombatSide.Left));
+            await _hub.Clients.Client(leftId).CombatOver(notification.Combat.PlayerView(CombatSide.Left));
         }
 
         if (IsConnected(notification.Combat.RightPlayerName, out string? rightId))
         {
-            await _hub.Clients.Client(rightId).CombatChanged(notification.Combat.PlayerView(CombatSide.Right));
+            await _hub.Clients.Client(rightId).CombatOver(notification.Combat.PlayerView(CombatSide.Right));
+        }
+    }
+
+    public async Task Handle(CombatStarted notification, CancellationToken cancellationToken)
+    {
+        if (IsConnected(notification.Combat.LeftPlayerName, out string? leftId))
+        {
+            await _hub.Clients.Client(leftId).CombatStarted(notification.Combat.PlayerView(CombatSide.Left));
+        }
+
+        if (IsConnected(notification.Combat.RightPlayerName, out string? rightId))
+        {
+            await _hub.Clients.Client(rightId).CombatStarted(notification.Combat.PlayerView(CombatSide.Right));
+        }
+    }
+
+
+    public async Task Handle(CombatUpdated notification, CancellationToken cancellationToken)
+    {
+        if (IsConnected(notification.Combat.LeftPlayerName, out string? leftId))
+        {
+            await _hub.Clients.Client(leftId).CombatUpdated(notification.Combat.PlayerView(CombatSide.Left));
+        }
+
+        if (IsConnected(notification.Combat.RightPlayerName, out string? rightId))
+        {
+            await _hub.Clients.Client(rightId).CombatUpdated(notification.Combat.PlayerView(CombatSide.Right));
         }
     }
 

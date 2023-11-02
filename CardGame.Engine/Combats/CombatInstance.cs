@@ -1,4 +1,5 @@
 ﻿using CardGame.Engine.Characters;
+using CardGame.Engine.Combats.Ai;
 using CardGame.Engine.Combats.Exceptions;
 using CardGame.Engine.Combats.Resolve;
 using CardGame.Engine.Extensions;
@@ -7,6 +8,9 @@ namespace CardGame.Engine.Combats;
 
 public class CombatInstance
 {
+    readonly CombatAi? _leftAi;
+    readonly CombatAi? _rightAi;
+
     public CombatInstance(IReadOnlyList<Character> leftCharacters, IReadOnlyList<Character> rightCharacters, CombatOptions options)
     {
         if (leftCharacters.Count == 0)
@@ -31,6 +35,16 @@ public class CombatInstance
         LeftSide = new CombatSideInstance(this, CombatSide.Left, frontLeft, backLeft);
         RightSide = new CombatSideInstance(this, CombatSide.Right, frontRight, backRight);
 
+        if (options.LeftSideAi != null)
+        {
+            _leftAi = CombatAiFactory.CreateInstance(this, CombatSide.Left, options.LeftSideAi);
+        }
+
+        if (options.RightSideAi != null)
+        {
+            _rightAi = CombatAiFactory.CreateInstance(this, CombatSide.Right, options.RightSideAi);
+        }
+
         Ongoing = false;
         Over = false;
 
@@ -53,6 +67,12 @@ public class CombatInstance
     public CombatSide Side { get; private set; }
     public CombatSideTurnPhase Phase { get; private set; }
     public CombatSide Winner { get; private set; }
+    public bool LeftIsAi => _leftAi != null;
+    public bool RightIsAi => _rightAi != null;
+
+    public event EventHandler? Started;
+    public event EventHandler? Updated;
+    public event EventHandler? Ended;
 
     public void Start()
     {
@@ -65,8 +85,12 @@ public class CombatInstance
         LeftSide.OnStart();
         RightSide.OnStart();
 
+        Started?.Invoke(this, EventArgs.Empty);
+
         StartTurn(1);
         StartSideTurn();
+
+        Updated?.Invoke(this, EventArgs.Empty);
     }
 
     public void EndSideTurnAndStartNextOne(CombatSide side)
@@ -95,6 +119,8 @@ public class CombatInstance
         AssertSideCanPlay(side);
 
         CurrentSide.PlayCardAt(index);
+
+        Updated?.Invoke(this, EventArgs.Empty);
 
         CheckWinCondition();
     }
@@ -143,6 +169,8 @@ public class CombatInstance
         Turn = i;
         Side = Options.StartingSide;
         MaxAp = Math.Min(Options.StartingAp + Turn - 1, Options.MaxAp);
+
+        Updated?.Invoke(this, EventArgs.Empty);
     }
 
     void StartSideTurn()
@@ -165,6 +193,12 @@ public class CombatInstance
         Phase = CombatSideTurnPhase.Play;
 
         CurrentSide.StartTurn();
+
+        Updated?.Invoke(this, EventArgs.Empty);
+
+        RunAiIfNecessary();
+
+        Updated?.Invoke(this, EventArgs.Empty);
     }
 
     void EndSideTurn()
@@ -175,6 +209,8 @@ public class CombatInstance
 
         EndOfTurnResolver.Resolve(this);
 
+        Updated?.Invoke(this, EventArgs.Empty);
+
         if (CheckWinCondition())
         {
             return;
@@ -184,6 +220,8 @@ public class CombatInstance
 
         Phase = CombatSideTurnPhase.None;
         Side = NextSide();
+
+        Updated?.Invoke(this, EventArgs.Empty);
     }
 
     CombatSide NextSide()
@@ -230,6 +268,34 @@ public class CombatInstance
         Ongoing = false;
         Over = true;
         Winner = winner;
+
+        Ended?.Invoke(this, EventArgs.Empty);
+    }
+
+    void RunAiIfNecessary()
+    {
+        CombatAi? ai = Side switch
+        {
+            CombatSide.Left => _leftAi,
+            CombatSide.Right => _rightAi,
+            _ => null
+        };
+
+        if (ai != null)
+        {
+            CombatSide side = Side;
+            try
+            {
+                ai.PlayTurn();
+            }
+            finally
+            {
+                if (Side == side)
+                {
+                    EndSideTurnAndStartNextOne(side);
+                }
+            }
+        }
     }
 
     public class CombatSideInstance

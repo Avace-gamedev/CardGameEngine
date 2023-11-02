@@ -4,7 +4,7 @@
       class="hstack w-50 justify-content-around"
       [class.flex-row-reverse]="invert"
     >
-      <div class="position-relative">
+      <div class="position-relative" *ngIf="side.backCharacter">
         <app-combat-character-img
           [character]="side.backCharacter"
           size="xl"
@@ -16,7 +16,7 @@
           Back
         </span>
       </div>
-      <div class="position-relative">
+      <div class="position-relative" *ngIf="side.frontCharacter">
         <app-combat-character-img
           [character]="side.frontCharacter"
           size="xl"
@@ -50,7 +50,10 @@
             </i>
           </div>
         </div>
-        <i class="text-truncate fw-bold fs-3">{{ side.playerName }}</i>
+        <div class="hstack gap-2">
+          <i class="text-truncate fw-bold fs-3">{{ side.playerName }}</i>
+          <i class="bi bi-cpu" ngbTooltip="AI Player" *ngIf="side.isAi"></i>
+        </div>
       </div>
     </div>
   </div>

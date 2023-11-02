@@ -1,26 +1,24 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using CardGame.Engine.Characters;
 using CardGame.Engine.Combats;
 using Microsoft.AspNetCore.Mvc;
-using PockedeckBattler.Server.GameContent.Characters;
-using PockedeckBattler.Server.Rest.Requests;
+using PockedeckBattler.Server.Rest.Combats.Requests;
 using PockedeckBattler.Server.Stores.Combats;
 using PockedeckBattler.Server.Stores.CombatsInPreparation;
 using PockedeckBattler.Server.Views;
 
-namespace PockedeckBattler.Server.Rest;
+namespace PockedeckBattler.Server.Rest.Combats;
 
 [ApiController]
 [Route("combats")]
 public class CombatsController : ControllerBase
 {
     readonly ICombatInPreparationService _combatInPreparationService;
-    readonly ICombatService _combatService;
+    readonly ICombatService _combatsService;
     readonly ILogger<CombatsController> _logger;
 
-    public CombatsController(ICombatService combatService, ICombatInPreparationService combatInPreparationService, ILogger<CombatsController> logger)
+    public CombatsController(ICombatService combatsService, ICombatInPreparationService combatInPreparationService, ILogger<CombatsController> logger)
     {
-        _combatService = combatService;
+        _combatsService = combatsService;
         _combatInPreparationService = combatInPreparationService;
         _logger = logger;
     }
@@ -129,46 +127,7 @@ public class CombatsController : ControllerBase
             return NotFound();
         }
 
-        if (inPreparation.LeftFrontCharacter == null && inPreparation.LeftBackCharacter == null)
-        {
-            return BadRequest("Left side doesn't have any character");
-        }
-
-        if (inPreparation.RightPlayerName == null)
-        {
-            return BadRequest("Right side not configured");
-        }
-
-        if (inPreparation.RightFrontCharacter == null && inPreparation.RightBackCharacter == null)
-        {
-            return BadRequest("Right side doesn't have any character");
-        }
-
-        if (!inPreparation.LeftReady)
-        {
-            return BadRequest("Left side not ready");
-        }
-
-        if (!inPreparation.RightReady)
-        {
-            return BadRequest("Right side not ready");
-        }
-
-        Character? leftFrontCharacter = inPreparation.LeftFrontCharacter == null ? null : Characters.RequireByName(inPreparation.LeftFrontCharacter);
-        Character? leftBackCharacter = inPreparation.LeftBackCharacter == null ? null : Characters.RequireByName(inPreparation.LeftBackCharacter);
-
-        Character? rightFrontCharacter = inPreparation.RightFrontCharacter == null ? null : Characters.RequireByName(inPreparation.RightFrontCharacter);
-        Character? rightBackCharacter = inPreparation.RightBackCharacter == null ? null : Characters.RequireByName(inPreparation.RightBackCharacter);
-
-        CombatInstance combatInstance = new(
-            new[] { leftFrontCharacter, leftBackCharacter }.Where(c => c != null).Select(c => c!).ToArray(),
-            new[] { rightFrontCharacter, rightBackCharacter }.Where(c => c != null).Select(c => c!).ToArray(),
-            new CombatOptions()
-        );
-        combatInstance.Start();
-
-        CombatWithMetadata combat = new(inPreparation.Id, inPreparation.LeftPlayerName, inPreparation.RightPlayerName, combatInstance, inPreparation);
-        await _combatService.SaveCombat(combat);
+        CombatWithMetadata combat = await _combatsService.CreateCombat(inPreparation);
 
         await _combatInPreparationService.DeleteCombatInPreparation(inPreparation);
 
@@ -178,7 +137,7 @@ public class CombatsController : ControllerBase
     [HttpGet]
     public async IAsyncEnumerable<PlayerCombatView> GetCombatsOfPlayer([Required] string playerName)
     {
-        await foreach (CombatWithMetadata combat in _combatService.GetCombatsInvolvingPlayer(playerName))
+        await foreach (CombatWithMetadata combat in _combatsService.GetCombatsInvolvingPlayer(playerName))
         {
             if (combat.LeftPlayerName == playerName)
             {
@@ -194,7 +153,7 @@ public class CombatsController : ControllerBase
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<PlayerCombatView>> GetCombat(Guid id, [Required] string playerName)
     {
-        CombatWithMetadata? combat = await _combatService.GetCombat(id);
+        CombatWithMetadata? combat = await _combatsService.GetCombat(id);
         if (combat == null)
         {
             return NotFound();
@@ -211,7 +170,7 @@ public class CombatsController : ControllerBase
     [HttpPost("{id:guid}/play/{index:int}")]
     public async Task<ActionResult> PlayCard(Guid id, [Required] string playerName, int index)
     {
-        CombatWithMetadata combat = await _combatService.RequireCombat(id);
+        CombatWithMetadata combat = await _combatsService.RequireCombat(id);
         if (!PlayerInCombat(combat, playerName, out CombatSide side))
         {
             return NotFound();
@@ -219,14 +178,14 @@ public class CombatsController : ControllerBase
 
         combat.Instance.PlayCardAt(side, index);
 
-        await _combatService.SaveCombat(combat);
+        await _combatsService.SaveCombat(combat);
         return NoContent();
     }
 
     [HttpPost("{id:guid}/end-turn")]
     public async Task<ActionResult> EndTurn(Guid id, [Required] string playerName)
     {
-        CombatWithMetadata combat = await _combatService.RequireCombat(id);
+        CombatWithMetadata combat = await _combatsService.RequireCombat(id);
         if (!PlayerInCombat(combat, playerName, out CombatSide side))
         {
             return NotFound();
@@ -234,7 +193,7 @@ public class CombatsController : ControllerBase
 
         combat.Instance.EndSideTurnAndStartNextOne(side);
 
-        await _combatService.SaveCombat(combat);
+        await _combatsService.SaveCombat(combat);
         return NoContent();
     }
 

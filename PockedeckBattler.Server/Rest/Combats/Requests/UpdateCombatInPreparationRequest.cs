@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace PockedeckBattler.Server.Rest.Requests;
+namespace PockedeckBattler.Server.Rest.Combats.Requests;
 
 public class UpdateCombatInPreparationRequest
 {

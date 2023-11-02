@@ -1,11 +1,14 @@
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using NSwag;
+using PockedeckBattler.Server.SignalR;
+using PockedeckBattler.Server.SignalR.Combats;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+builder.Services.AddCors();
 builder.Services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.Converters.Add(new StringEnumConverter(new CamelCaseNamingStrategy())));
 builder.Services.AddSwaggerDocument(
     config =>
@@ -24,7 +27,9 @@ builder.Services.AddSwaggerDocument(
         };
     }
 );
-builder.Services.AddCors();
+builder.Services.AddSignalR();
+
+builder.Services.AddSingleton<IHubConnections, HubConnectionsInMemory>();
 
 WebApplication app = builder.Build();
 
@@ -34,7 +39,7 @@ if (app.Environment.IsDevelopment())
     app.UseOpenApi();
     app.UseSwaggerUi3();
 
-    app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+    app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin().DisallowCredentials());
 }
 
 app.UseHttpsRedirection();
@@ -42,5 +47,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHub<CombatsHub>("/signalr/combats");
 
 app.Run();

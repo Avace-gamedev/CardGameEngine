@@ -16,10 +16,19 @@ export class CombatPreparationComponent implements OnInit {
     this.signalRService
       .listen<CombatInPreparationView>(
         'combats',
-        'CombatInPreparationChange',
+        'CombatInPreparationChanged',
         CombatInPreparationView.fromJS,
       )
       .pipe(untilDestroyed(this))
       .subscribe((msg) => console.log(msg));
+
+    this.signalRService
+      .listen<CombatInPreparationView>(
+        'combats',
+        'CombatInPreparationDeleted',
+        CombatInPreparationView.fromJS,
+      )
+      .pipe(untilDestroyed(this))
+      .subscribe(() => console.log('combat deleted'));
   }
 }

@@ -15,7 +15,8 @@ public class HubConnectionsInMemory : IHubConnections
 
     public void Register(string playerName, string connectionId)
     {
-        Unregister(playerName);
+        UnregisterPlayer(playerName);
+        UnregisterConnection(connectionId);
 
         _playerNameToConnection[playerName] = connectionId;
         _connectionToPlayerName[connectionId] = playerName;
@@ -33,7 +34,7 @@ public class HubConnectionsInMemory : IHubConnections
         return _playerNameToConnection.GetValueOrDefault(playerName);
     }
 
-    public void Unregister(string playerName)
+    public void UnregisterPlayer(string playerName)
     {
         if (!_playerNameToConnection.TryGetValue(playerName, out string? oldConnectionId))
         {
@@ -44,5 +45,18 @@ public class HubConnectionsInMemory : IHubConnections
         _connectionToPlayerName.Remove(oldConnectionId, out _);
 
         _logger.LogInformation("Player {name} has been unregistered", playerName);
+    }
+
+    public void UnregisterConnection(string connectionId)
+    {
+        if (!_connectionToPlayerName.TryGetValue(connectionId, out string? oldPlayerName))
+        {
+            return;
+        }
+
+        _playerNameToConnection.Remove(oldPlayerName, out _);
+        _connectionToPlayerName.Remove(connectionId, out _);
+
+        _logger.LogInformation("Player {name} has been unregistered", oldPlayerName);
     }
 }

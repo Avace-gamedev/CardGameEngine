@@ -44,7 +44,7 @@ export class SignalRService {
 
   private connect(hub: string): HubConnection {
     if (this.connections[hub]) {
-      return this.connections['hub'];
+      return this.connections[hub];
     }
 
     const url = new URL('signalr/' + hub, this.apiBaseUrl);
@@ -56,7 +56,10 @@ export class SignalRService {
     connection
       .start()
       .then(() =>
-        connection.send('GetIdentity', this.identityService.getIdentity()),
+        connection.invoke(
+          'DeclareIdentity',
+          this.identityService.getIdentity(),
+        ),
       );
 
     this.connections[hub] = connection;

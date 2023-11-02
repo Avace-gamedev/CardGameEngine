@@ -9,11 +9,17 @@ public abstract class BaseHub<T> : Hub<T> where T: class, IHubClient
     protected BaseHub(IHubConnections connections)
     {
         _connections = connections;
-
     }
 
-    public override async Task OnConnectedAsync()
+    public override Task OnDisconnectedAsync(Exception? exception)
     {
-        await base.OnConnectedAsync();
+        _connections.UnregisterConnection(Context.ConnectionId);
+
+        return base.OnDisconnectedAsync(exception);
+    }
+
+    public void DeclareIdentity(string playerName)
+    {
+        _connections.Register(playerName, Context.ConnectionId);
     }
 }

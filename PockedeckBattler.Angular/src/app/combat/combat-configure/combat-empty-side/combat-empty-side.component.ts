@@ -1,7 +1,7 @@
 import { APP_BASE_HREF } from '@angular/common';
 import { Component, EventEmitter, Inject, Input, Output } from '@angular/core';
-import { CombatInPreparationView } from '../../../../api/pockedeck-battler-api-client';
-import '../../../../core/extensions/string-extensions';
+import { CombatInPreparationView } from '../../../api/pockedeck-battler-api-client';
+import '../../../core/extensions/string-extensions';
 
 @Component({
   selector: 'app-combat-empty-side',

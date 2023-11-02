@@ -1,5 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { CombatConfigureComponent } from './combat-configure/combat-configure.component';
+import { CombatJoinComponent } from './combat-join/combat-join.component';
 import { CombatSelectionComponent } from './combat-selection/combat-selection.component';
 import { CombatComponent } from './combat.component';
 
@@ -10,11 +12,12 @@ const routes: Routes = [
     redirectTo: 'selection',
   },
   {
-    path: 'preparation',
-    loadChildren: () =>
-      import('./combat-preparation/combat-preparation.module').then(
-        (m) => m.CombatPreparationModule,
-      ),
+    path: 'configure/:id',
+    component: CombatConfigureComponent,
+  },
+  {
+    path: 'join/:id',
+    component: CombatJoinComponent,
   },
   {
     path: 'selection',

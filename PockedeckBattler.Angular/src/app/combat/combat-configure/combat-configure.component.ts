@@ -9,11 +9,10 @@ import {
   CombatSide,
   CombatsService,
   UpdateCombatInPreparationRequest,
-} from '../../../api/pockedeck-battler-api-client';
-import { SignalRService } from '../../../api/signal-r/signal-r.service';
-import '../../../common-pages/not-found/redirect';
-import { IdentityService } from '../../../core/authentication/services/identity.service';
-import { ModalsService } from '../../../core/modals/modals.service';
+} from '../../api/pockedeck-battler-api-client';
+import { SignalRService } from '../../api/signal-r/signal-r.service';
+import { IdentityService } from '../../core/authentication/services/identity.service';
+import { ModalsService } from '../../core/modals/modals.service';
 import { CombatSideConfiguration } from './combat-configure-side/combat-configure-side.component';
 
 @UntilDestroy()
@@ -200,5 +199,5 @@ declare module '@angular/router' {
 Router.prototype.toCombatConfiguration = function (
   id: string,
 ): Promise<boolean> {
-  return this.navigate(['/', 'combat', 'preparation', 'configure', id]);
+  return this.navigate(['/', 'combat', 'configure', id]);
 };

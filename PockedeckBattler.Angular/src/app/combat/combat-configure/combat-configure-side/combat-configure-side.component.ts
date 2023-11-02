@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import {
   CharacterView,
   CombatInPreparationView,
-} from '../../../../api/pockedeck-battler-api-client';
+} from '../../../api/pockedeck-battler-api-client';
 
 @Component({
   selector: 'app-combat-configure-side',

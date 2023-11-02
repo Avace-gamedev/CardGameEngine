@@ -5,7 +5,10 @@ import { NgbAlert, NgbPopover, NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 import { CoreCommonModule } from '../core/core-common/core-common.module';
 import { CoreModule } from '../core/core.module';
 import { CombatCharacterImgComponent } from './combat-character-img/combat-character-img.component';
-import { CombatPreparationModule } from './combat-preparation/combat-preparation.module';
+import { CombatConfigureSideComponent } from './combat-configure/combat-configure-side/combat-configure-side.component';
+import { CombatConfigureComponent } from './combat-configure/combat-configure.component';
+import { CombatEmptySideComponent } from './combat-configure/combat-empty-side/combat-empty-side.component';
+import { CombatJoinComponent } from './combat-join/combat-join.component';
 
 import { CombatRoutingModule } from './combat-routing.module';
 import { CombatSelectionComponent } from './combat-selection/combat-selection.component';
@@ -18,6 +21,10 @@ import { PlayerSideElementsComponent } from './player-side-elements/player-side-
 @NgModule({
   declarations: [
     CombatSelectionComponent,
+    CombatConfigureComponent,
+    CombatConfigureSideComponent,
+    CombatEmptySideComponent,
+    CombatJoinComponent,
     CombatComponent,
     CombatSideCommonElementsComponent,
     CombatCharacterImgComponent,
@@ -28,7 +35,6 @@ import { PlayerSideElementsComponent } from './player-side-elements/player-side-
     CommonModule,
     CoreModule,
     CombatRoutingModule,
-    CombatPreparationModule,
     FormsModule,
     NgbTooltip,
     CoreModule,

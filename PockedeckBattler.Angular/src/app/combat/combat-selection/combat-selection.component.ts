@@ -47,6 +47,8 @@ export class CombatSelectionComponent implements OnInit {
   protected select(combat: CombatInPreparationView | PlayerCombatView) {
     if (combat instanceof CombatInPreparationView) {
       this.router.toCombatConfiguration(combat.id).then();
+    } else {
+      this.router.toCombat(combat.id).then();
     }
   }
 

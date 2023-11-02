@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { of, switchMap } from 'rxjs';
+import { catchError, filter, from, map, of, switchMap } from 'rxjs';
 import {
   CombatsService,
-  CombatView,
+  PlayerCombatView,
 } from '../api/pockedeck-battler-api-client';
 import { IdentityService } from '../core/authentication/services/identity.service';
 
@@ -13,7 +13,7 @@ import { IdentityService } from '../core/authentication/services/identity.servic
   styleUrls: ['./combat.component.css'],
 })
 export class CombatComponent implements OnInit {
-  private combat: CombatView | undefined;
+  private combat: PlayerCombatView | undefined;
 
   constructor(
     private identityService: IdentityService,
@@ -25,17 +25,25 @@ export class CombatComponent implements OnInit {
   ngOnInit() {
     const identity = this.identityService.getIdentity();
 
-    this.activatedRoute.paramMap.pipe(
-      switchMap((paramMap) => {
-        const id = paramMap.get('id');
-        if (id == null) {
-          this.router.to404().then();
-          return of(void 0);
-        }
+    this.activatedRoute.paramMap
+      .pipe(
+        switchMap((paramMap) => {
+          const id = paramMap.get('id');
+          if (id == null) {
+            this.router.to404().then();
+            return of(void 0);
+          }
 
-        return this.combatsService.getCombat(id, identity);
-      }),
-    );
+          return this.combatsService.getCombat(id, identity);
+        }),
+        catchError((err) => {
+          console.error(err);
+          return from(this.router.to404().then((r) => undefined));
+        }),
+        filter(Boolean),
+        map((combat) => (this.combat = combat)),
+      )
+      .subscribe();
   }
 }
 

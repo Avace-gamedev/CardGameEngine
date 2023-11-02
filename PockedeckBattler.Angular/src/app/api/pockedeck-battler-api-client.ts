@@ -149,7 +149,7 @@ export interface ICombatsService {
     createCombat(playerName?: string | undefined): Observable<CombatInPreparationView>;
     getCombatsOfPlayer(playerName?: string | undefined): Observable<PlayerCombatView[]>;
     leaveCombatInPreparation(id: string, playerName?: string | undefined): Observable<FileResponse | null>;
-    startCombat(id: string, playerName?: string | undefined): Observable<CombatView>;
+    startCombat(id: string, playerName?: string | undefined): Observable<string>;
     getCombat(id: string, playerName?: string | undefined): Observable<PlayerCombatView>;
     playCard(id: string, index: number, playerName?: string | undefined): Observable<FileResponse | null>;
     endTurn(id: string, playerName?: string | undefined): Observable<FileResponse | null>;
@@ -503,7 +503,7 @@ export class CombatsService implements ICombatsService {
         return _observableOf(null as any);
     }
 
-    startCombat(id: string, playerName?: string | undefined): Observable<CombatView> {
+    startCombat(id: string, playerName?: string | undefined): Observable<string> {
         let url_ = this.baseUrl + "/combats/{id}/start?";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -529,14 +529,14 @@ export class CombatsService implements ICombatsService {
                 try {
                     return this.processStartCombat(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<CombatView>;
+                    return _observableThrow(e) as any as Observable<string>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<CombatView>;
+                return _observableThrow(response_) as any as Observable<string>;
         }));
     }
 
-    protected processStartCombat(response: HttpResponseBase): Observable<CombatView> {
+    protected processStartCombat(response: HttpResponseBase): Observable<string> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -547,7 +547,8 @@ export class CombatsService implements ICombatsService {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = CombatView.fromJS(resultData200);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -1719,16 +1720,16 @@ export interface IBaseCombatView {
     currentPhase: CombatSideTurnPhase;
 }
 
-export class CombatView extends BaseCombatView implements ICombatView {
+export class PlayerCombatView extends BaseCombatView implements IPlayerCombatView {
     id!: string;
-    leftSide!: CombatSideView;
-    rightSide!: CombatSideView;
+    player!: PlayerSideView;
+    combat!: CombatSideView;
 
-    constructor(data?: ICombatView) {
+    constructor(data?: IPlayerCombatView) {
         super(data);
         if (!data) {
-            this.leftSide = new CombatSideView();
-            this.rightSide = new CombatSideView();
+            this.player = new PlayerSideView();
+            this.combat = new CombatSideView();
         }
     }
 
@@ -1736,14 +1737,14 @@ export class CombatView extends BaseCombatView implements ICombatView {
         super.init(_data);
         if (_data) {
             this.id = _data["id"];
-            this.leftSide = _data["leftSide"] ? CombatSideView.fromJS(_data["leftSide"]) : new CombatSideView();
-            this.rightSide = _data["rightSide"] ? CombatSideView.fromJS(_data["rightSide"]) : new CombatSideView();
+            this.player = _data["player"] ? PlayerSideView.fromJS(_data["player"]) : new PlayerSideView();
+            this.combat = _data["combat"] ? CombatSideView.fromJS(_data["combat"]) : new CombatSideView();
         }
     }
 
-    static override fromJS(data: any): CombatView {
+    static override fromJS(data: any): PlayerCombatView {
         data = typeof data === 'object' ? data : {};
-        let result = new CombatView();
+        let result = new PlayerCombatView();
         result.init(data);
         return result;
     }
@@ -1751,17 +1752,17 @@ export class CombatView extends BaseCombatView implements ICombatView {
     override toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        data["leftSide"] = this.leftSide ? this.leftSide.toJSON() : <any>undefined;
-        data["rightSide"] = this.rightSide ? this.rightSide.toJSON() : <any>undefined;
+        data["player"] = this.player ? this.player.toJSON() : <any>undefined;
+        data["combat"] = this.combat ? this.combat.toJSON() : <any>undefined;
         super.toJSON(data);
         return data;
     }
 }
 
-export interface ICombatView extends IBaseCombatView {
+export interface IPlayerCombatView extends IBaseCombatView {
     id: string;
-    leftSide: CombatSideView;
-    rightSide: CombatSideView;
+    player: PlayerSideView;
+    combat: CombatSideView;
 }
 
 export abstract class BaseCombatSideView implements IBaseCombatSideView {
@@ -1813,31 +1814,118 @@ export interface IBaseCombatSideView {
     backCharacter?: CharacterCombatView | undefined;
 }
 
-export class CombatSideView extends BaseCombatSideView implements ICombatSideView {
+export class PlayerSideView extends BaseCombatSideView implements IPlayerSideView {
+    playerName!: string;
+    hand!: CardInstanceWithModifiersView[];
 
-    constructor(data?: ICombatSideView) {
+    constructor(data?: IPlayerSideView) {
         super(data);
+        if (!data) {
+            this.hand = [];
+        }
     }
 
     override init(_data?: any) {
         super.init(_data);
+        if (_data) {
+            this.playerName = _data["playerName"];
+            if (Array.isArray(_data["hand"])) {
+                this.hand = [] as any;
+                for (let item of _data["hand"])
+                    this.hand!.push(CardInstanceWithModifiersView.fromJS(item));
+            }
+        }
     }
 
-    static override fromJS(data: any): CombatSideView {
+    static override fromJS(data: any): PlayerSideView {
         data = typeof data === 'object' ? data : {};
-        let result = new CombatSideView();
+        let result = new PlayerSideView();
         result.init(data);
         return result;
     }
 
     override toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["playerName"] = this.playerName;
+        if (Array.isArray(this.hand)) {
+            data["hand"] = [];
+            for (let item of this.hand)
+                data["hand"].push(item.toJSON());
+        }
         super.toJSON(data);
         return data;
     }
 }
 
-export interface ICombatSideView extends IBaseCombatSideView {
+export interface IPlayerSideView extends IBaseCombatSideView {
+    playerName: string;
+    hand: CardInstanceWithModifiersView[];
+}
+
+export class CardInstanceView implements ICardInstanceView {
+
+    constructor(data?: ICardInstanceView) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+    }
+
+    static fromJS(data: any): CardInstanceView {
+        data = typeof data === 'object' ? data : {};
+        let result = new CardInstanceView();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        return data;
+    }
+}
+
+export interface ICardInstanceView {
+}
+
+export class CardInstanceWithModifiersView extends CardInstanceView implements ICardInstanceWithModifiersView {
+    baseCard!: ActionCardView;
+
+    constructor(data?: ICardInstanceWithModifiersView) {
+        super(data);
+        if (!data) {
+            this.baseCard = new ActionCardView();
+        }
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.baseCard = _data["baseCard"] ? ActionCardView.fromJS(_data["baseCard"]) : new ActionCardView();
+        }
+    }
+
+    static override fromJS(data: any): CardInstanceWithModifiersView {
+        data = typeof data === 'object' ? data : {};
+        let result = new CardInstanceWithModifiersView();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["baseCard"] = this.baseCard ? this.baseCard.toJSON() : <any>undefined;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface ICardInstanceWithModifiersView extends ICardInstanceView {
+    baseCard: ActionCardView;
 }
 
 export enum CombatSide {
@@ -1958,171 +2046,39 @@ export interface IPassiveEffectInstanceView {
     remainingDuration: number;
 }
 
+export class CombatSideView extends BaseCombatSideView implements ICombatSideView {
+
+    constructor(data?: ICombatSideView) {
+        super(data);
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+    }
+
+    static override fromJS(data: any): CombatSideView {
+        data = typeof data === 'object' ? data : {};
+        let result = new CombatSideView();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface ICombatSideView extends IBaseCombatSideView {
+}
+
 export enum CombatSideTurnPhase {
     None = "none",
     StartOfTurn = "startOfTurn",
     Draw = "draw",
     Play = "play",
     EndOfTurn = "endOfTurn",
-}
-
-export class PlayerCombatView extends BaseCombatView implements IPlayerCombatView {
-    id!: string;
-    player!: PlayerSideView;
-    combat!: CombatSideView;
-
-    constructor(data?: IPlayerCombatView) {
-        super(data);
-        if (!data) {
-            this.player = new PlayerSideView();
-            this.combat = new CombatSideView();
-        }
-    }
-
-    override init(_data?: any) {
-        super.init(_data);
-        if (_data) {
-            this.id = _data["id"];
-            this.player = _data["player"] ? PlayerSideView.fromJS(_data["player"]) : new PlayerSideView();
-            this.combat = _data["combat"] ? CombatSideView.fromJS(_data["combat"]) : new CombatSideView();
-        }
-    }
-
-    static override fromJS(data: any): PlayerCombatView {
-        data = typeof data === 'object' ? data : {};
-        let result = new PlayerCombatView();
-        result.init(data);
-        return result;
-    }
-
-    override toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["player"] = this.player ? this.player.toJSON() : <any>undefined;
-        data["combat"] = this.combat ? this.combat.toJSON() : <any>undefined;
-        super.toJSON(data);
-        return data;
-    }
-}
-
-export interface IPlayerCombatView extends IBaseCombatView {
-    id: string;
-    player: PlayerSideView;
-    combat: CombatSideView;
-}
-
-export class PlayerSideView extends BaseCombatSideView implements IPlayerSideView {
-    playerName!: string;
-    hand!: CardInstanceWithModifiersView[];
-
-    constructor(data?: IPlayerSideView) {
-        super(data);
-        if (!data) {
-            this.hand = [];
-        }
-    }
-
-    override init(_data?: any) {
-        super.init(_data);
-        if (_data) {
-            this.playerName = _data["playerName"];
-            if (Array.isArray(_data["hand"])) {
-                this.hand = [] as any;
-                for (let item of _data["hand"])
-                    this.hand!.push(CardInstanceWithModifiersView.fromJS(item));
-            }
-        }
-    }
-
-    static override fromJS(data: any): PlayerSideView {
-        data = typeof data === 'object' ? data : {};
-        let result = new PlayerSideView();
-        result.init(data);
-        return result;
-    }
-
-    override toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["playerName"] = this.playerName;
-        if (Array.isArray(this.hand)) {
-            data["hand"] = [];
-            for (let item of this.hand)
-                data["hand"].push(item.toJSON());
-        }
-        super.toJSON(data);
-        return data;
-    }
-}
-
-export interface IPlayerSideView extends IBaseCombatSideView {
-    playerName: string;
-    hand: CardInstanceWithModifiersView[];
-}
-
-export class CardInstanceView implements ICardInstanceView {
-
-    constructor(data?: ICardInstanceView) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-    }
-
-    static fromJS(data: any): CardInstanceView {
-        data = typeof data === 'object' ? data : {};
-        let result = new CardInstanceView();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        return data;
-    }
-}
-
-export interface ICardInstanceView {
-}
-
-export class CardInstanceWithModifiersView extends CardInstanceView implements ICardInstanceWithModifiersView {
-    baseCard!: ActionCardView;
-
-    constructor(data?: ICardInstanceWithModifiersView) {
-        super(data);
-        if (!data) {
-            this.baseCard = new ActionCardView();
-        }
-    }
-
-    override init(_data?: any) {
-        super.init(_data);
-        if (_data) {
-            this.baseCard = _data["baseCard"] ? ActionCardView.fromJS(_data["baseCard"]) : new ActionCardView();
-        }
-    }
-
-    static override fromJS(data: any): CardInstanceWithModifiersView {
-        data = typeof data === 'object' ? data : {};
-        let result = new CardInstanceWithModifiersView();
-        result.init(data);
-        return result;
-    }
-
-    override toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["baseCard"] = this.baseCard ? this.baseCard.toJSON() : <any>undefined;
-        super.toJSON(data);
-        return data;
-    }
-}
-
-export interface ICardInstanceWithModifiersView extends ICardInstanceView {
-    baseCard: ActionCardView;
 }
 
 export interface FileResponse {

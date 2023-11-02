@@ -99,7 +99,7 @@ export class CombatConfigureComponent implements OnInit {
 
     this.combatsService
       .startCombat(this.combat.id, this.identityService.getIdentity())
-      .subscribe(() => this.router.toCombat(this.combat!.id).then());
+      .subscribe((combatId) => this.router.toCombat(combatId).then());
   }
 
   protected sendUpdate(

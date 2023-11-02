@@ -1,7 +1,8 @@
 <div
-  class="position-absolute w-25 p-4 top-0 bottom-0 end-0 vstack justify-content-end"
+  class="pe-none position-absolute w-25 p-4 top-0 bottom-0 end-0 vstack justify-content-end"
 >
   <app-self-closing-alert
+    class="pe-auto"
     [type]="alert.type"
     [delay]="5000"
     (closed)="alertsService.dismiss(alert)"
@@ -9,5 +10,9 @@
   >
     <strong *ngIf="alert.prefix">{{ alert.prefix }}</strong>
     {{ alert.message }}
+    <ng-container *ngIf="alert.details">
+      <br />
+      <small>{{ alert.details }}</small>
+    </ng-container>
   </app-self-closing-alert>
 </div>

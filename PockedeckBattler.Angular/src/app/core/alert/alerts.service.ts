@@ -17,32 +17,33 @@ export class AlertsService {
   }
   private alertSubject: Subject<Alert> = new Subject<Alert>();
 
-  public success(message: string) {
-    this.alert(AlertType.Success, message);
+  public success(message: string, details?: string) {
+    this.alert(AlertType.Success, message, details);
   }
 
-  public info(message: string) {
-    this.alert(AlertType.Info, message);
+  public info(message: string, details?: string) {
+    this.alert(AlertType.Info, message, details);
   }
 
-  public warning(message: string) {
-    this.alert(AlertType.Warning, message);
+  public warning(message: string, details?: string) {
+    this.alert(AlertType.Warning, message, details);
   }
 
-  public danger(message: string) {
-    this.alert(AlertType.Danger, message);
+  public danger(message: string, details?: string) {
+    this.alert(AlertType.Danger, message, details);
   }
 
   public dismiss(alert: Alert) {
     this._alerts = this.alerts.filter((a) => a.id != alert.id);
   }
 
-  private alert(type: AlertType, message: string) {
+  private alert(type: AlertType, message: string, details?: string) {
     const alert = {
       id: this.counter++,
       type,
       prefix: this.getPrefix(type),
       message,
+      details,
     };
     this._alerts.push(alert);
 
@@ -79,4 +80,5 @@ export interface Alert {
   readonly type: AlertType;
   readonly prefix?: string;
   readonly message: string;
+  readonly details?: string;
 }

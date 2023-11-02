@@ -28,7 +28,7 @@ export class SelfClosingAlertComponent implements OnInit {
   public closed: EventEmitter<void> = new EventEmitter<void>();
 
   ngOnInit() {
-    setTimeout(() => this.close(), this.delay);
+    //setTimeout(() => this.close(), this.delay);
   }
 
   private close() {

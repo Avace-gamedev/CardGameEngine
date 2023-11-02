@@ -12,6 +12,7 @@ import { CombatSelectionComponent } from './combat-selection/combat-selection.co
   declarations: [CombatSelectionComponent],
   imports: [
     CommonModule,
+    CoreModule,
     CombatRoutingModule,
     CombatPreparationModule,
     FormsModule,

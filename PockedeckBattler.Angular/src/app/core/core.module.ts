@@ -4,10 +4,18 @@ import { ApiModule } from '../api/api.module';
 import { CardModule } from './card/card.module';
 import { CharacterModule } from './character/character.module';
 import { EffectModule } from './effect/effect.module';
+import { ModalsModule } from './modals/modals.module';
 
 @NgModule({
   declarations: [],
-  imports: [CommonModule, ApiModule, CharacterModule, CardModule, EffectModule],
-  exports: [ApiModule, CharacterModule, CardModule, EffectModule],
+  imports: [
+    CommonModule,
+    ApiModule,
+    ModalsModule,
+    CharacterModule,
+    CardModule,
+    EffectModule,
+  ],
+  exports: [ApiModule, ModalsModule, CharacterModule, CardModule, EffectModule],
 })
 export class CoreModule {}

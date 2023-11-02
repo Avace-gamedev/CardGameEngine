@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { from, ignoreElements, Observable } from 'rxjs';
+import { catchError, from, Observable, of } from 'rxjs';
+import { AlertModalComponent } from './alert-modal/alert-modal.component';
 
 @Injectable({
   providedIn: 'root',
@@ -8,9 +9,26 @@ import { from, ignoreElements, Observable } from 'rxjs';
 export class ModalsService {
   constructor(private modalService: NgbModal) {}
 
-  public alert(content: string, title?: string): Observable<void> {
-    return from(this.modalService.open(content, {}).result).pipe(
-      ignoreElements(),
+  public alert(config: AlertModalConfig): Observable<void> {
+    const modalRef = this.modalService.open(AlertModalComponent, {
+      centered: true,
+    });
+
+    modalRef.componentInstance.title = config.title;
+    modalRef.componentInstance.content = config.content;
+    modalRef.componentInstance.closeLabel = config.closeLabel;
+
+    return from(modalRef.result).pipe(
+      catchError((_) => {
+        // dismissed
+        return of(void 0);
+      }),
     );
   }
+}
+
+export interface AlertModalConfig {
+  readonly title?: string;
+  readonly content: string;
+  readonly closeLabel?: string;
 }

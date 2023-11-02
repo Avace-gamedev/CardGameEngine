@@ -122,10 +122,11 @@ export class CombatConfigureComponent implements OnInit {
     console.log(combat, this.identityService.getIdentity());
 
     this.modalsService
-      .alert('Combat has been deleted by ' + combat.leftPlayerName)
-      .subscribe(() => {
-        this.router.toCombatSelection().then();
-      });
+      .alert({
+        content: 'This combat has been deleted by ' + combat.leftPlayerName,
+        closeLabel: 'Go back',
+      })
+      .subscribe(() => this.router.toCombatSelection().then());
   }
 
   protected readonly CombatSide = CombatSide;

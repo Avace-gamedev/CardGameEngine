@@ -8,11 +8,13 @@ import {
   CombatInPreparationView,
   CombatSide,
   CombatsService,
+  UpdateCombatInPreparationRequest,
 } from '../../../api/pockedeck-battler-api-client';
 import { SignalRService } from '../../../api/signal-r/signal-r.service';
 import '../../../common-pages/not-found/redirect';
 import { IdentityService } from '../../../core/authentication/services/identity.service';
 import { ModalsService } from '../../../core/modals/modals.service';
+import { CombatSideConfiguration } from './combat-creation-side/combat-configure-side.component';
 
 @UntilDestroy()
 @Component({
@@ -44,7 +46,7 @@ export class CombatConfigureComponent implements OnInit {
         CombatInPreparationView.fromJS,
       )
       .pipe(untilDestroyed(this))
-      .subscribe((msg) => console.log(msg));
+      .subscribe((combat) => (this.combat = combat));
 
     this.signalRService
       .listen<CombatInPreparationView>(
@@ -86,6 +88,29 @@ export class CombatConfigureComponent implements OnInit {
             .getAll()
             .pipe(map((characters) => (this.characters = characters))),
         ),
+      )
+      .subscribe();
+  }
+
+  protected update(side: CombatSide, configuration: CombatSideConfiguration) {
+    if (!this.combat) {
+      return;
+    }
+
+    const identity = this.identityService.getIdentity();
+
+    if (
+      (identity == this.combat.leftPlayerName && side !== CombatSide.Left) ||
+      (identity == this.combat.rightPlayerName && side !== CombatSide.Right) ||
+      configuration.playerName !== identity
+    ) {
+      return;
+    }
+
+    this.combatsService
+      .updateCombatInPreparation(
+        this.combat.id,
+        new UpdateCombatInPreparationRequest(configuration),
       )
       .subscribe();
   }

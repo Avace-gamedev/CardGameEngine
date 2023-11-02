@@ -21,7 +21,7 @@ public class HubConnectionsInMemory : IHubConnections
         _playerNameToConnection[playerName] = connectionId;
         _connectionToPlayerName[connectionId] = playerName;
 
-        _logger.LogInformation("Player {name} has been registered", playerName);
+        _logger.LogInformation("Player '{name}' has been registered", playerName);
     }
 
     public string? GetPlayer(string connectionId)
@@ -44,7 +44,7 @@ public class HubConnectionsInMemory : IHubConnections
         _playerNameToConnection.Remove(playerName, out _);
         _connectionToPlayerName.Remove(oldConnectionId, out _);
 
-        _logger.LogInformation("Player {name} has been unregistered", playerName);
+        _logger.LogInformation("Player '{name}' has been unregistered", playerName);
     }
 
     public void UnregisterConnection(string connectionId)

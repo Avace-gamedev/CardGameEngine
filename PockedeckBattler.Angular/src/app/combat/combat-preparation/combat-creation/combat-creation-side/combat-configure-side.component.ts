@@ -1,10 +1,8 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { finalize, switchMap } from 'rxjs';
 import {
   CharacterView,
   CombatInPreparationView,
   CombatsService,
-  UpdateCombatInPreparationRequest,
 } from '../../../../api/pockedeck-battler-api-client';
 import { IdentityService } from '../../../../core/authentication/services/identity.service';
 
@@ -20,7 +18,7 @@ export class CombatConfigureSideComponent {
   }
   set name(value: string | undefined) {
     this._name = value;
-    this.update();
+    this.doUpdateAfterChange();
   }
   private _name: string | undefined;
 
@@ -30,7 +28,7 @@ export class CombatConfigureSideComponent {
   }
   set combat(value: CombatInPreparationView | undefined) {
     this._combat = value;
-    this.update();
+    this.doUpdateAfterChange();
   }
   private _combat: CombatInPreparationView | undefined;
 
@@ -40,7 +38,7 @@ export class CombatConfigureSideComponent {
   }
   set characters(value: CharacterView[]) {
     this._characters = value;
-    this.update();
+    this.doUpdateAfterChange();
   }
   private _characters: CharacterView[] = [];
 
@@ -49,6 +47,10 @@ export class CombatConfigureSideComponent {
 
   @Input()
   public invertSlotPositions: boolean = false;
+
+  @Output()
+  public update: EventEmitter<CombatSideConfiguration> =
+    new EventEmitter<CombatSideConfiguration>();
 
   @Output()
   public leave: EventEmitter<void> = new EventEmitter<void>();
@@ -81,7 +83,7 @@ export class CombatConfigureSideComponent {
       const tmp = this.frontCharacter;
       this.frontCharacter = this.backCharacter;
       this.backCharacter = tmp;
-      this.sendUpdateRequestAndRefresh();
+      this.sendUpdate();
     }
   }
 
@@ -100,11 +102,11 @@ export class CombatConfigureSideComponent {
     switch (slot) {
       case 'front':
         this.frontCharacter = character;
-        this.sendUpdateRequestAndRefresh();
+        this.sendUpdate();
         break;
       case 'back':
         this.backCharacter = character;
-        this.sendUpdateRequestAndRefresh();
+        this.sendUpdate();
         break;
       default:
         if (
@@ -115,7 +117,7 @@ export class CombatConfigureSideComponent {
         } else if (!this.backCharacter) {
           this.backCharacter = character;
         }
-        this.sendUpdateRequestAndRefresh();
+        this.sendUpdate();
     }
   }
 
@@ -132,11 +134,11 @@ export class CombatConfigureSideComponent {
     switch (slot) {
       case 'front':
         this.frontCharacter = undefined;
-        this.sendUpdateRequestAndRefresh();
+        this.sendUpdate();
         break;
       case 'back':
         this.backCharacter = undefined;
-        this.sendUpdateRequestAndRefresh();
+        this.sendUpdate();
         break;
     }
   }
@@ -175,36 +177,19 @@ export class CombatConfigureSideComponent {
 
   protected setReady(ready: boolean) {
     this.ready = ready;
-    this.sendUpdateRequestAndRefresh();
+    this.sendUpdate();
   }
 
-  private sendUpdateRequestAndRefresh() {
-    if (this.combat) {
-      this.refreshing = true;
-      this.combatsService
-        .updateCombatInPreparation(
-          this.combat.id,
-          new UpdateCombatInPreparationRequest({
-            playerName: this._name ?? '',
-            frontCharacter: this.frontCharacter?.identity.name,
-            backCharacter: this.backCharacter?.identity.name,
-            ready: this.ready,
-          }),
-        )
-        .pipe(
-          switchMap(() =>
-            this.combatsService.getCombatInPreparation(
-              this.combat?.id ?? '',
-              this.identityService.getIdentity(),
-            ),
-          ),
-          finalize(() => (this.refreshing = false)),
-        )
-        .subscribe();
-    }
+  private sendUpdate() {
+    this.update.emit({
+      playerName: this._name ?? '',
+      frontCharacter: this.frontCharacter?.identity.name,
+      backCharacter: this.backCharacter?.identity.name,
+      ready: this.ready,
+    });
   }
 
-  private update() {
+  private doUpdateAfterChange() {
     if (!this._combat || !this._name) {
       this.frontCharacter = undefined;
       this.backCharacter = undefined;
@@ -230,4 +215,11 @@ export class CombatConfigureSideComponent {
       this.ready = this._combat.rightReady;
     }
   }
+}
+
+export interface CombatSideConfiguration {
+  readonly playerName: string;
+  readonly frontCharacter?: string;
+  readonly backCharacter?: string;
+  readonly ready: boolean;
 }

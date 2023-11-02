@@ -1,4 +1,4 @@
-﻿using PockedeckBattler.Server.Stores;
+﻿using PockedeckBattler.Server.Stores.CombatsInPreparation;
 
 namespace PockedeckBattler.Server.Views;
 

@@ -4,5 +4,7 @@ namespace PockedeckBattler.Server.SignalR.Combats;
 
 public interface ICombatsHubClient : IHubClient
 {
-    Task CombatInPreparationChange(CombatInPreparationView view);
+    Task CombatInPreparationCreated(CombatInPreparationView view);
+    Task CombatInPreparationChanged(CombatInPreparationView view);
+    Task CombatInPreparationDeleted(CombatInPreparationView view);
 }

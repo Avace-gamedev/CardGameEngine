@@ -4,7 +4,8 @@ using CardGame.Engine.Combats;
 using Microsoft.AspNetCore.Mvc;
 using PockedeckBattler.Server.GameContent.Characters;
 using PockedeckBattler.Server.Rest.Requests;
-using PockedeckBattler.Server.Stores;
+using PockedeckBattler.Server.Stores.Combats;
+using PockedeckBattler.Server.Stores.CombatsInPreparation;
 using PockedeckBattler.Server.Views;
 
 namespace PockedeckBattler.Server.Rest;
@@ -13,10 +14,19 @@ namespace PockedeckBattler.Server.Rest;
 [Route("combats")]
 public class CombatsController : ControllerBase
 {
+    readonly ICombatsInPreparationStore _combatsInPreparationStore;
+    readonly ICombatsStore _combatsStore;
+
+    public CombatsController(ICombatsStore combatsStore, ICombatsInPreparationStore combatsInPreparationStore)
+    {
+        _combatsStore = combatsStore;
+        _combatsInPreparationStore = combatsInPreparationStore;
+    }
+
     [HttpGet("{id:guid}")]
     public ActionResult<CombatView> Get(Guid id, [Required] string playerName)
     {
-        StoredCombat combat = CombatStore.RequireCombat(id);
+        StoredCombat combat = _combatsStore.RequireCombat(id);
         if (!PlayerInCombat(combat, playerName))
         {
             return NotFound();
@@ -28,13 +38,13 @@ public class CombatsController : ControllerBase
     [HttpGet]
     public IEnumerable<PlayerCombatView> GetCombatsOfPlayer([Required] string playerName)
     {
-        return CombatStore.GetCombatsInvolvingPlayer(playerName).Select(c => c.PlayerView(c.LeftPlayerName == playerName ? CombatSide.Left : CombatSide.Right));
+        return _combatsStore.GetCombatsInvolvingPlayer(playerName).Select(c => c.PlayerView(c.LeftPlayerName == playerName ? CombatSide.Left : CombatSide.Right));
     }
 
     [HttpGet("in-preparation/{id:guid}")]
     public ActionResult<CombatInPreparationView> GetCombatInPreparation(Guid id, [Required] string playerName)
     {
-        StoredCombatInPreparation combat = CombatStore.RequireCombatInPreparation(id);
+        StoredCombatInPreparation combat = _combatsInPreparationStore.RequireCombatInPreparation(id);
         if (!PlayerInCombat(combat, playerName))
         {
             return NotFound();
@@ -46,27 +56,27 @@ public class CombatsController : ControllerBase
     [HttpGet("in-preparation")]
     public IEnumerable<CombatInPreparationView> GetCombatsInPreparationOfPlayer([Required] string playerName)
     {
-        return CombatStore.GetCombatsInPreparationInvolvingPlayer(playerName).Select(c => c.View());
+        return _combatsInPreparationStore.GetCombatsInPreparationInvolvingPlayer(playerName).Select(c => c.View());
     }
 
     [HttpPost]
-    public CombatInPreparationView CreateCombat([Required] string playerName)
+    public async Task<CombatInPreparationView> CreateCombat([Required] string playerName)
     {
         StoredCombatInPreparation combatInPreparation = new(Guid.NewGuid(), playerName);
-        CombatStore.SaveCombatInPreparation(combatInPreparation);
+        await _combatsInPreparationStore.SaveCombatInPreparation(combatInPreparation);
 
         return combatInPreparation.View();
     }
 
     [HttpPost("in-preparation/{id:guid}")]
-    public void UpdateCombatInPreparation(Guid id, UpdateCombatInPreparationRequest request)
+    public async Task UpdateCombatInPreparation(Guid id, UpdateCombatInPreparationRequest request)
     {
         if (string.IsNullOrWhiteSpace(request.PlayerName))
         {
             throw new Exception("Player name cannot be empty");
         }
 
-        StoredCombatInPreparation combatInPreparation = CombatStore.RequireCombatInPreparation(id);
+        StoredCombatInPreparation combatInPreparation = _combatsInPreparationStore.RequireCombatInPreparation(id);
 
         if (request.PlayerName == combatInPreparation.LeftPlayerName)
         {
@@ -86,13 +96,13 @@ public class CombatsController : ControllerBase
             throw new Exception($"Player {request.PlayerName} is not part of combat {id}");
         }
 
-        CombatStore.SaveCombatInPreparation(combatInPreparation);
+        await _combatsInPreparationStore.SaveCombatInPreparation(combatInPreparation);
     }
 
     [HttpPost("in-preparation/{id:guid}/leave")]
-    public ActionResult LeaveCombatInPreparation(Guid id, [Required] string playerName)
+    public async Task<ActionResult> LeaveCombatInPreparation(Guid id, [Required] string playerName)
     {
-        StoredCombatInPreparation combat = CombatStore.RequireCombatInPreparation(id);
+        StoredCombatInPreparation combat = _combatsInPreparationStore.RequireCombatInPreparation(id);
         if (!PlayerInCombat(combat, playerName))
         {
             return NotFound();
@@ -100,7 +110,7 @@ public class CombatsController : ControllerBase
 
         if (playerName == combat.LeftPlayerName)
         {
-            CombatStore.DeleteCombatInPreparation(id);
+            await _combatsInPreparationStore.DeleteCombatInPreparation(id);
         }
         else if (playerName == combat.RightPlayerName)
         {
@@ -113,14 +123,14 @@ public class CombatsController : ControllerBase
             throw new Exception($"Player {playerName} is not part of combat {id}");
         }
 
-        CombatStore.SaveCombatInPreparation(combat);
+        await _combatsInPreparationStore.SaveCombatInPreparation(combat);
         return NoContent();
     }
 
     [HttpPost("{id:guid}/start")]
     public ActionResult<CombatView> StartCombat(Guid combatId, [Required] string playerName)
     {
-        StoredCombatInPreparation inPreparation = CombatStore.RequireCombatInPreparation(combatId);
+        StoredCombatInPreparation inPreparation = _combatsInPreparationStore.RequireCombatInPreparation(combatId);
         if (!PlayerInCombat(inPreparation, playerName))
         {
             return NotFound();
@@ -164,7 +174,7 @@ public class CombatsController : ControllerBase
         );
 
         StoredCombat combat = new(Guid.NewGuid(), inPreparation.LeftPlayerName, inPreparation.RightPlayerName, combatInstance);
-        CombatStore.SaveCombat(combat);
+        _combatsStore.SaveCombat(combat);
 
         return combat.View();
     }
@@ -172,7 +182,7 @@ public class CombatsController : ControllerBase
     [HttpPost("{id:guid}/{side}/play/{index:int}")]
     public ActionResult PlayCard(Guid id, [Required] string playerName, int index)
     {
-        StoredCombat combat = CombatStore.RequireCombat(id);
+        StoredCombat combat = _combatsStore.RequireCombat(id);
         if (!PlayerInCombat(combat, playerName, out CombatSide side))
         {
             return NotFound();
@@ -180,14 +190,14 @@ public class CombatsController : ControllerBase
 
         combat.Combat.PlayCardAt(side, index);
 
-        CombatStore.SaveCombat(combat);
+        _combatsStore.SaveCombat(combat);
         return NoContent();
     }
 
     [HttpPost("{id:guid}/{side}/end-turn")]
     public ActionResult EndTurn(Guid id, [Required] string playerName)
     {
-        StoredCombat combat = CombatStore.RequireCombat(id);
+        StoredCombat combat = _combatsStore.RequireCombat(id);
         if (!PlayerInCombat(combat, playerName, out CombatSide side))
         {
             return NotFound();
@@ -195,7 +205,7 @@ public class CombatsController : ControllerBase
 
         combat.Combat.EndSideTurnAndStartNextOne(side);
 
-        CombatStore.SaveCombat(combat);
+        _combatsStore.SaveCombat(combat);
         return NoContent();
     }
 

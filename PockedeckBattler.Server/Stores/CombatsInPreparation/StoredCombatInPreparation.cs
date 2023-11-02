@@ -1,4 +1,4 @@
-﻿namespace PockedeckBattler.Server.Stores;
+﻿namespace PockedeckBattler.Server.Stores.CombatsInPreparation;
 
 public class StoredCombatInPreparation
 {

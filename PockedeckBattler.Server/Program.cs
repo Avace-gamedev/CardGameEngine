@@ -3,6 +3,8 @@ using Newtonsoft.Json.Serialization;
 using NSwag;
 using PockedeckBattler.Server.SignalR;
 using PockedeckBattler.Server.SignalR.Combats;
+using PockedeckBattler.Server.Stores.Combats;
+using PockedeckBattler.Server.Stores.CombatsInPreparation;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -28,8 +30,12 @@ builder.Services.AddSwaggerDocument(
     }
 );
 builder.Services.AddSignalR();
+builder.Services.AddMediatR(options => { options.RegisterServicesFromAssemblyContaining<Program>(); });
 
 builder.Services.AddSingleton<IHubConnections, HubConnectionsInMemory>();
+
+builder.Services.AddSingleton<ICombatsStore, CombatsStoreInMemory>();
+builder.Services.AddSingleton<ICombatsInPreparationStore, CombatsInPreparationStoreInMemory>();
 
 WebApplication app = builder.Build();
 

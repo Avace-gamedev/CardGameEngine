@@ -1,4 +1,4 @@
-﻿namespace PockedeckBattler.Server.Stores;
+﻿namespace PockedeckBattler.Server.Rest.Exceptions;
 
 public class InvalidCombatConfigurationException : Exception
 {

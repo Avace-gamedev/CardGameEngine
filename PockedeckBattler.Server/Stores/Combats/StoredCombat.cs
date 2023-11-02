@@ -1,6 +1,6 @@
 ﻿using CardGame.Engine.Combats;
 
-namespace PockedeckBattler.Server.Stores;
+namespace PockedeckBattler.Server.Stores.Combats;
 
 public class StoredCombat
 {

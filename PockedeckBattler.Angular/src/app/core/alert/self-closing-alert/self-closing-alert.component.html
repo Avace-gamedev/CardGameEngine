@@ -1,0 +1,9 @@
+<ngb-alert
+  #alert
+  [type]="type"
+  [dismissible]="true"
+  [animation]="true"
+  (closed)="closed.emit()"
+>
+  <ng-content></ng-content>
+</ngb-alert>

@@ -7,6 +7,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './common-pages/login/login.component';
 import { NotFoundComponent } from './common-pages/not-found/not-found.component';
+import { AlertModule } from './core/alert/alert.module';
 import { CoreModule } from './core/core.module';
 
 @NgModule({
@@ -17,6 +18,7 @@ import { CoreModule } from './core/core.module';
     AppRoutingModule,
     NgbModule,
     FormsModule,
+    AlertModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

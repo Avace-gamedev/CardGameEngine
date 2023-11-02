@@ -1,0 +1,13 @@
+<div
+  class="position-absolute w-25 p-4 top-0 bottom-0 end-0 vstack justify-content-end"
+>
+  <app-self-closing-alert
+    [type]="alert.type"
+    [delay]="5000"
+    (closed)="alertsService.dismiss(alert)"
+    *ngFor="let alert of alertsService.alerts; trackBy: alertTrackByFn"
+  >
+    <strong *ngIf="alert.prefix">{{ alert.prefix }}</strong>
+    {{ alert.message }}
+  </app-self-closing-alert>
+</div>

@@ -17,4 +17,7 @@ export class CombatCharacterImgComponent {
 
   @Input()
   public popoverPlacement: Placement = 'auto';
+
+  @Input()
+  public footer: string | undefined;
 }

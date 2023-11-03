@@ -7,14 +7,9 @@
       <div class="position-relative" *ngIf="side.backCharacter">
         <app-combat-character-img
           [character]="side.backCharacter"
+          footer="Back"
           size="xl"
         ></app-combat-character-img>
-        <span
-          class="position-absolute start-0 end-0 text-center text-secondary text-opacity-50 user-select-none"
-          style="bottom: 0.5rem"
-        >
-          Back
-        </span>
 
         <div
           class="pe-none position-absolute top-0 bottom-0 start-0 end-0"
@@ -40,14 +35,9 @@
       <div class="position-relative" *ngIf="side.frontCharacter">
         <app-combat-character-img
           [character]="side.frontCharacter"
+          footer="Front"
           size="xl"
         ></app-combat-character-img>
-        <span
-          class="position-absolute start-0 end-0 text-center text-secondary text-opacity-50 user-select-none"
-          style="bottom: 0.5rem"
-        >
-          Front
-        </span>
         <div
           class="pe-none position-absolute top-0 bottom-0 start-0 end-0"
           [class.highlight-source]="

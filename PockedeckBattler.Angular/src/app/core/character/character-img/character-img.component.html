@@ -2,6 +2,7 @@
   <div
     class="border border-1 d-flex align-items-center justify-content-center position-relative"
     [class.border-4]="characterBeingDragged"
+    [class.text-light]="bgMode === 'dark'"
     [ngStyle]="{ 'width.px': imgSize, 'height.px': imgSize }"
     [ngbPopover]="
       size === 'sm' && character && enablePopoverDetails ? popover : null
@@ -29,6 +30,14 @@
       {{ character.identity.displayName.substring(0, 2) }}
     </span>
 
+    <img
+      #img
+      [ngSrc]="imgPath"
+      fill="true"
+      *ngIf="imgPath"
+      (error)="img.style.display = 'none'"
+    />
+
     <ng-container *ngIf="character && enablePopoverDetails">
       <ng-container [ngSwitch]="size">
         <ng-container *ngSwitchCase="'sm'"></ng-container>
@@ -53,6 +62,13 @@
         </div>
       </ng-container>
     </ng-container>
+
+    <div
+      class="position-absolute bottom-0 start-0 end-0 text-center small"
+      *ngIf="footer"
+    >
+      {{ footer }}
+    </div>
   </div>
 </div>
 

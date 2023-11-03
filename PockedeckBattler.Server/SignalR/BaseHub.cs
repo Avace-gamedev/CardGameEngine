@@ -18,8 +18,10 @@ public abstract class BaseHub<T> : Hub<T> where T: class, IHubClient
         return base.OnDisconnectedAsync(exception);
     }
 
-    public void DeclareIdentity(string playerName)
+    public async Task DeclareIdentity(string playerName)
     {
+        await Groups.AddToGroupAsync(Context.ConnectionId, playerName);
+
         _connections.Register(playerName, Context.ConnectionId);
     }
 }

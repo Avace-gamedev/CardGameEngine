@@ -1,53 +1,98 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Collections.Concurrent;
 using CardGame.Engine.Combats;
-using MediatR;
 using Microsoft.AspNetCore.SignalR;
+using PockedeckBattler.Server.BackgroundWorkers;
 using PockedeckBattler.Server.Rest.Combats.Notifications;
-using PockedeckBattler.Server.Stores.Combats;
 using PockedeckBattler.Server.Views;
 
 namespace PockedeckBattler.Server.SignalR.Combats.Notifications;
 
-public class PublishCombatNotificationToSignalRClients : INotificationHandler<CombatNotification>
+public class PublishCombatNotificationToSignalRClients : PeriodicWorker
 {
-    readonly IHubConnections _connections;
-    readonly IHubContext<CombatsHub, ICombatsHubClient> _hub;
+    readonly ConcurrentDictionary<string, DateTime> _lastPublishDate = new();
+    readonly ILogger<PublishCombatNotificationToSignalRClients> _logger;
+    readonly IServiceProvider _serviceProvider;
+    readonly TimeSpan _throttlePeriod;
+    readonly ConcurrentDictionary<string, CombatNotification> _toPublish = new();
 
-    public PublishCombatNotificationToSignalRClients(IHubConnections connections, IHubContext<CombatsHub, ICombatsHubClient> hub)
+    public PublishCombatNotificationToSignalRClients(IServiceProvider serviceProvider, TimeSpan throttlePeriod) : base(TimeSpan.FromSeconds(0.1))
     {
-        _connections = connections;
-        _hub = hub;
+        _serviceProvider = serviceProvider;
+        _throttlePeriod = throttlePeriod;
+
+        _logger = serviceProvider.GetRequiredService<ILogger<PublishCombatNotificationToSignalRClients>>();
     }
 
-    public async Task Handle(CombatNotification notification, CancellationToken cancellationToken)
+    public void Publish(CombatNotification notification)
     {
-        Func<ICombatsHubClient, CombatSide, Task> action = notification.Event switch
-        {
-            CombatEvent.Created => (hubClient, side) => hubClient.CombatCreated(notification.Combat.PlayerView(side)),
-            CombatEvent.Ended => (hubClient, side) => hubClient.CombatEnded(notification.Combat.PlayerView(side)),
-            _ => (hubClient, side) => hubClient.CombatUpdated(notification.Combat.PlayerView(side))
-        };
-
-        await Notify(notification.Combat, action, cancellationToken);
+        RegisterPublicationRequest(notification, notification.Combat.LeftPlayerName);
+        RegisterPublicationRequest(notification, notification.Combat.RightPlayerName);
     }
 
-    public async Task Notify(CombatInstanceWithMetadata combat, Func<ICombatsHubClient, CombatSide, Task> notify, CancellationToken cancellationToken)
+    void RegisterPublicationRequest(CombatNotification notification, string playerName)
     {
-        if (IsConnected(combat.LeftPlayerName, out string? leftId))
-        {
-            await notify(_hub.Clients.Client(leftId), CombatSide.Left);
+        _toPublish[playerName] = notification;
+    }
 
+    protected override async Task Work(CancellationToken cancellationToken)
+    {
+        DateTime now = DateTime.Now;
+
+        foreach (string playerName in _toPublish.Keys.ToArray())
+        {
+            DateTime lastPublishDate = _lastPublishDate.GetValueOrDefault(playerName);
+
+            if (now <= lastPublishDate + _throttlePeriod)
+            {
+                continue;
+            }
+
+            if (_toPublish.Remove(playerName, out CombatNotification? notification))
+            {
+                await SendNotification(notification, playerName, cancellationToken);
+
+                _lastPublishDate[playerName] = DateTime.Now;
+            }
+        }
+    }
+
+    async Task SendNotification(CombatNotification notification, string playerName, CancellationToken cancellationToken)
+    {
+        IHubContext<CombatsHub, ICombatsHubClient>? hub = _serviceProvider.GetService<IHubContext<CombatsHub, ICombatsHubClient>>();
+        if (hub == null)
+        {
+            return;
         }
 
-        if (IsConnected(combat.RightPlayerName, out string? rightId))
-        {
-            await notify(_hub.Clients.Client(rightId), CombatSide.Right);
-        }
-    }
+        CombatSide side = playerName == notification.Combat.LeftPlayerName
+            ? CombatSide.Left
+            : playerName == notification.Combat.RightPlayerName
+                ? CombatSide.Right
+                : CombatSide.None;
 
-    bool IsConnected(string name, [NotNullWhen(true)] out string? connectionId)
-    {
-        connectionId = _connections.GetConnection(name);
-        return connectionId != null;
+        if (side == CombatSide.None)
+        {
+            _logger.LogWarning(
+                "Was trying to publish message to player {playerName} not part of combat, combat players are: {leftName} and {rightName}",
+                playerName,
+                notification.Combat.LeftPlayerName,
+                notification.Combat.RightPlayerName
+            );
+            return;
+        }
+
+        switch (notification.Event)
+        {
+            case CombatEvent.Created:
+                await hub.Clients.Group(playerName).CombatCreated(notification.Combat.PlayerView(side));
+                break;
+            case CombatEvent.Ended:
+                await hub.Clients.Group(playerName).CombatEnded(notification.Combat.PlayerView(side));
+                break;
+            case CombatEvent.Updated:
+            default:
+                await hub.Clients.Group(playerName).CombatUpdated(notification.Combat.PlayerView(side));
+                break;
+        }
     }
 }

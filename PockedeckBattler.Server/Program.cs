@@ -7,6 +7,7 @@ using PockedeckBattler.Server.Rest.Combats;
 using PockedeckBattler.Server.Rest.Exceptions;
 using PockedeckBattler.Server.SignalR;
 using PockedeckBattler.Server.SignalR.Combats;
+using PockedeckBattler.Server.SignalR.Combats.Notifications;
 using PockedeckBattler.Server.Stores;
 using PockedeckBattler.Server.Stores.Combats;
 using PockedeckBattler.Server.Stores.CombatsInPreparation;
@@ -52,6 +53,11 @@ builder.Services.AddSingleton<ICombatService, CombatsService>();
 
 builder.Services.AddSingleton<IStore<CombatInPreparation>, CombatInPreparationFileStore>();
 builder.Services.AddSingleton<ICombatInPreparationService, CombatInPreparationService>();
+
+builder.Services.AddSingleton<PublishCombatNotificationToSignalRClients>(
+    provider => new PublishCombatNotificationToSignalRClients(provider, TimeSpan.FromSeconds(0.5))
+);
+builder.Services.AddHostedService<PublishCombatNotificationToSignalRClients>(provider => provider.GetRequiredService<PublishCombatNotificationToSignalRClients>());
 
 WebApplication app = builder.Build();
 

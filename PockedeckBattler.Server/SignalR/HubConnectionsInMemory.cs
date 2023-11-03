@@ -7,6 +7,7 @@ public class HubConnectionsInMemory : IHubConnections
     readonly ConcurrentDictionary<string, string> _connectionToPlayerName = new();
     readonly ILogger<HubConnectionsInMemory> _logger;
     readonly ConcurrentDictionary<string, string> _playerNameToConnection = new();
+    readonly ConcurrentDictionary<string, DateTime> _playerNameTolastMessageTime = new();
 
     public HubConnectionsInMemory(ILogger<HubConnectionsInMemory> logger)
     {
@@ -58,5 +59,15 @@ public class HubConnectionsInMemory : IHubConnections
         _connectionToPlayerName.Remove(connectionId, out _);
 
         _logger.LogInformation("Player {name} has been unregistered", oldPlayerName);
+    }
+
+    public void UpdateLastMessageTime(string playerName)
+    {
+        _playerNameTolastMessageTime[playerName] = DateTime.Now;
+    }
+
+    public DateTime GetLastMessageTime(string playerName)
+    {
+        return _playerNameTolastMessageTime.GetValueOrDefault(playerName);
     }
 }

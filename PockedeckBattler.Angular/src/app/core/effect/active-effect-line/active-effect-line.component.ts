@@ -1,14 +1,13 @@
 import { Component, Input } from '@angular/core';
 import { ActiveEffectView } from '../../../api/pockedeck-battler-api-client';
-import { ActiveEffectTypeUtils } from '../../core-common/utils/active-effect-type-utils';
-import { ActiveEffectType } from '../../core-common/utils/types';
+import { ActiveEffectTypeUtils } from '../../../shared/utils/active-effect-type-utils';
+import { ActiveEffectType } from '../../../shared/utils/types';
 
 @Component({
   selector: 'app-active-effect-line',
   templateUrl: './active-effect-line.component.html',
-  styleUrls: ['./active-effect-line.component.css'],
 })
-export class ActiveEffectLine {
+export class ActiveEffectLineComponent {
   @Input()
   get effect(): ActiveEffectView | undefined {
     return this._effect;

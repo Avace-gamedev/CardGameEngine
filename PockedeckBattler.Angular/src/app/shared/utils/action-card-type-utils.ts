@@ -2,7 +2,7 @@ import {
   ActionCardView,
   ActiveEffectView,
   RandomEffectView,
-} from '../../../api/pockedeck-battler-api-client';
+} from '../../api/pockedeck-battler-api-client';
 import { ActiveEffectTypeUtils } from './active-effect-type-utils';
 import { ActiveEffectType, CardType } from './types';
 

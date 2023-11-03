@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { PassiveEffectView } from '../../../api/pockedeck-battler-api-client';
-import { PassiveEffectTypeUtils } from '../../core-common/utils/passive-effect-type-utils';
-import { PassiveEffectType } from '../../core-common/utils/types';
+import { PassiveEffectTypeUtils } from '../../../shared/utils/passive-effect-type-utils';
+import { PassiveEffectType } from '../../../shared/utils/types';
 
 @Component({
   selector: 'app-passive-effect-line',

@@ -6,7 +6,7 @@ import {
   HealEffectView,
   RandomEffectView,
   ShieldEffectView,
-} from '../../../api/pockedeck-battler-api-client';
+} from '../../api/pockedeck-battler-api-client';
 import { ActiveEffectType } from './types';
 
 export class ActiveEffectTypeUtils {

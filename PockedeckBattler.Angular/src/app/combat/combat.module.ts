@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbAlert, NgbPopover, NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
-import { CoreCommonModule } from '../core/core-common/core-common.module';
 import { CoreModule } from '../core/core.module';
 import { ActionCardInstanceComponent } from './action-card-instance/action-card-instance.component';
 import { CombatCharacterImgComponent } from './combat-character-img/combat-character-img.component';
@@ -43,7 +42,6 @@ import { PlayerSideElementsComponent } from './player-side-elements/player-side-
     NgbPopover,
     NgbAlert,
     GenericUiModule,
-    CoreCommonModule,
   ],
 })
 export class CombatModule {}

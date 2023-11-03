@@ -37,7 +37,7 @@ export class CombatComponent implements OnInit {
       .subscribe((combat) => (this.combat = combat));
 
     this.signalrService
-      .listen<PlayerCombatView>('combats', 'CombatOver', PlayerCombatView.fromJS)
+      .listen<PlayerCombatView>('combats', 'CombatEnded', PlayerCombatView.fromJS)
       .subscribe((combat) => (this.combat = combat));
 
     this.activatedRoute.paramMap
@@ -94,14 +94,17 @@ export class CombatComponent implements OnInit {
     this.source = card.character;
     const allyTargets = ActionCardTargetUtils.getAllyTargets(
       card.card.target,
-      card.character === this.combat.player.frontCharacter.character.identity.name ? 'front' : 'back'
+      card.character === this.combat.player.frontCharacter?.character.identity.name ? 'front' : 'back'
     );
 
     switch (allyTargets) {
       case 'none':
         break;
       case 'front':
-        this.allyTargets.push(this.combat.player.frontCharacter.character.identity.name);
+        if (this.combat.player.frontCharacter) {
+          this.allyTargets.push(this.combat.player.frontCharacter.character.identity.name);
+        }
+
         break;
       case 'back':
         if (this.combat.player.backCharacter) {
@@ -109,7 +112,9 @@ export class CombatComponent implements OnInit {
         }
         break;
       case 'both':
-        this.allyTargets.push(this.combat.player.frontCharacter.character.identity.name);
+        if (this.combat.player.frontCharacter) {
+          this.allyTargets.push(this.combat.player.frontCharacter.character.identity.name);
+        }
 
         if (this.combat.player.backCharacter) {
           this.allyTargets.push(this.combat.player.backCharacter.character.identity.name);
@@ -122,7 +127,9 @@ export class CombatComponent implements OnInit {
       case 'none':
         break;
       case 'front':
-        this.enemyTargets.push(this.combat.opponent.frontCharacter.character.identity.name);
+        if (this.combat.opponent.frontCharacter) {
+          this.enemyTargets.push(this.combat.opponent.frontCharacter.character.identity.name);
+        }
         break;
       case 'back':
         if (this.combat.opponent.backCharacter) {
@@ -130,7 +137,9 @@ export class CombatComponent implements OnInit {
         }
         break;
       case 'both':
-        this.enemyTargets.push(this.combat.opponent.frontCharacter.character.identity.name);
+        if (this.combat.opponent.frontCharacter) {
+          this.enemyTargets.push(this.combat.opponent.frontCharacter.character.identity.name);
+        }
 
         if (this.combat.opponent.backCharacter) {
           this.enemyTargets.push(this.combat.opponent.backCharacter.character.identity.name);

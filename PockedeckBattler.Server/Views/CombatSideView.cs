@@ -23,7 +23,6 @@ public class CombatSideView
     public int HandSize { get; init; }
     public int DeckSize { get; init; }
 
-    [Required]
     public CharacterCombatView? FrontCharacter { get; }
 
     public CharacterCombatView? BackCharacter { get; }

@@ -1757,7 +1757,7 @@ export class CombatSideView implements ICombatSideView {
     ap!: number;
     handSize!: number;
     deckSize!: number;
-    frontCharacter!: CharacterCombatView;
+    frontCharacter?: CharacterCombatView | undefined;
     backCharacter?: CharacterCombatView | undefined;
 
     constructor(data?: ICombatSideView) {
@@ -1766,9 +1766,6 @@ export class CombatSideView implements ICombatSideView {
                 if (data.hasOwnProperty(property))
                     (<any>this)[property] = (<any>data)[property];
             }
-        }
-        if (!data) {
-            this.frontCharacter = new CharacterCombatView();
         }
     }
 
@@ -1779,7 +1776,7 @@ export class CombatSideView implements ICombatSideView {
             this.ap = _data["ap"];
             this.handSize = _data["handSize"];
             this.deckSize = _data["deckSize"];
-            this.frontCharacter = _data["frontCharacter"] ? CharacterCombatView.fromJS(_data["frontCharacter"]) : new CharacterCombatView();
+            this.frontCharacter = _data["frontCharacter"] ? CharacterCombatView.fromJS(_data["frontCharacter"]) : <any>undefined;
             this.backCharacter = _data["backCharacter"] ? CharacterCombatView.fromJS(_data["backCharacter"]) : <any>undefined;
         }
     }
@@ -1810,7 +1807,7 @@ export interface ICombatSideView {
     ap: number;
     handSize: number;
     deckSize: number;
-    frontCharacter: CharacterCombatView;
+    frontCharacter?: CharacterCombatView | undefined;
     backCharacter?: CharacterCombatView | undefined;
 }
 

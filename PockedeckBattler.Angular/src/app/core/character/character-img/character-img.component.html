@@ -1,5 +1,5 @@
 <div class="d-flex align-items-center justify-content-center">
-  <button
+  <div
     class="border border-1 d-flex align-items-center justify-content-center position-relative"
     [class.border-4]="characterBeingDragged"
     [ngStyle]="{ 'width.px': imgSize, 'height.px': imgSize }"
@@ -13,7 +13,6 @@
     (dragover)="$event.preventDefault()"
     (dragleave)="dragleave()"
     (drop)="ondrop($event)"
-    (click)="pressed.emit($event)"
   >
     <span
       class="fw-bold pe-none user-select-none"
@@ -54,7 +53,7 @@
         </div>
       </ng-container>
     </ng-container>
-  </button>
+  </div>
 </div>
 
 <ng-template #popover>

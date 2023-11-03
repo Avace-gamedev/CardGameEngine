@@ -7,6 +7,7 @@ public interface ICombatsHubClient : IHubClient
     Task CombatInPreparationCreated(CombatInPreparationView view);
     Task CombatInPreparationChanged(CombatInPreparationView view);
     Task CombatInPreparationDeleted(CombatInPreparationView view);
+    Task CombatInPreparationStarted(Guid combatId);
 
     Task CombatCreated(PlayerCombatView view);
     Task CombatUpdated(PlayerCombatView view);

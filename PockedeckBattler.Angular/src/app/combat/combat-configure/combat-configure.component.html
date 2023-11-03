@@ -37,12 +37,16 @@
 
   <div class="flex-fill"></div>
 
-  <button
-    class="btn btn-primary"
-    [class.disabled]="!combat || !combat.leftReady || !combat.rightReady"
-    [disabled]="!combat || !combat.leftReady || !combat.rightReady"
-    (click)="start()"
-  >
-    Start
-  </button>
+  <div class="hstack gap-1">
+    <div class="text-success text-center" *ngIf="startedCombatId">Combat has started, click START to join!</div>
+
+    <button
+      class="btn btn-primary"
+      [class.disabled]="!combat || !combat.leftReady || !combat.rightReady"
+      [disabled]="!combat || !combat.leftReady || !combat.rightReady"
+      (click)="start()"
+    >
+      Start
+    </button>
+  </div>
 </section>

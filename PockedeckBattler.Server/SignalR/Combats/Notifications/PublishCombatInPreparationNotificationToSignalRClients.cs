@@ -1,72 +1,58 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.SignalR;
-using PockedeckBattler.Server.Stores.CombatsInPreparation;
 using PockedeckBattler.Server.Stores.CombatsInPreparation.Notifications;
 using PockedeckBattler.Server.Views;
 
 namespace PockedeckBattler.Server.SignalR.Combats.Notifications;
 
 public class PublishCombatInPreparationNotificationToSignalRClients
-    : INotificationHandler<CombatInPreparationCreated>, INotificationHandler<CombatInPreparationSaved>, INotificationHandler<CombatInPreparationDeleted>
+    : INotificationHandler<CombatInPreparationCreated>, INotificationHandler<CombatInPreparationSaved>, INotificationHandler<CombatInPreparationDeleted>,
+        INotificationHandler<CombatInPreparationStarted>
 {
-    readonly IHubConnections _connections;
     readonly IHubContext<CombatsHub, ICombatsHubClient> _hub;
 
-    public PublishCombatInPreparationNotificationToSignalRClients(IHubConnections connections, IHubContext<CombatsHub, ICombatsHubClient> hub)
+    public PublishCombatInPreparationNotificationToSignalRClients(IHubContext<CombatsHub, ICombatsHubClient> hub)
     {
-        _connections = connections;
         _hub = hub;
     }
 
     public async Task Handle(CombatInPreparationCreated notification, CancellationToken cancellationToken)
     {
-        if (!HasTargets(notification.Combat, out IEnumerable<string> connectionIds))
-        {
-            return;
-        }
+        await _hub.Clients.Group(notification.Combat.LeftPlayerName).CombatInPreparationCreated(notification.Combat.View());
 
-        foreach (string id in connectionIds)
+        if (notification.Combat.RightPlayerName != null)
         {
-            await _hub.Clients.Client(id).CombatInPreparationCreated(notification.Combat.View());
+            await _hub.Clients.Group(notification.Combat.RightPlayerName).CombatInPreparationCreated(notification.Combat.View());
         }
     }
 
     public async Task Handle(CombatInPreparationDeleted notification, CancellationToken cancellationToken)
     {
-        if (!HasTargets(notification.Combat, out IEnumerable<string> connectionIds))
-        {
-            return;
-        }
+        await _hub.Clients.Group(notification.Combat.LeftPlayerName).CombatInPreparationDeleted(notification.Combat.View());
 
-        foreach (string id in connectionIds)
+        if (notification.Combat.RightPlayerName != null)
         {
-            await _hub.Clients.Client(id).CombatInPreparationDeleted(notification.Combat.View());
+            await _hub.Clients.Group(notification.Combat.RightPlayerName).CombatInPreparationDeleted(notification.Combat.View());
         }
     }
 
     public async Task Handle(CombatInPreparationSaved notification, CancellationToken cancellationToken)
     {
-        if (!HasTargets(notification.Combat, out IEnumerable<string> connectionIds))
-        {
-            return;
-        }
+        await _hub.Clients.Group(notification.Combat.LeftPlayerName).CombatInPreparationChanged(notification.Combat.View());
 
-        foreach (string id in connectionIds)
+        if (notification.Combat.RightPlayerName != null)
         {
-            await _hub.Clients.Client(id).CombatInPreparationChanged(notification.Combat.View());
+            await _hub.Clients.Group(notification.Combat.RightPlayerName).CombatInPreparationChanged(notification.Combat.View());
         }
     }
 
-    bool HasTargets(CombatInPreparation combat, out IEnumerable<string> connectionIds)
+    public async Task Handle(CombatInPreparationStarted notification, CancellationToken cancellationToken)
     {
-        IEnumerable<string> players = new[] { combat.LeftPlayerName, combat.RightPlayerName }.Where(name => name != null).Select(name => name!);
-        connectionIds = players.Select(name => _connections.GetConnection(name)).Where(name => name != null).Select(name => name!).ToArray();
+        await _hub.Clients.Group(notification.Combat.LeftPlayerName).CombatInPreparationStarted(notification.CombatId);
 
-        if (!connectionIds.Any())
+        if (notification.Combat.RightPlayerName != null)
         {
-            return false;
+            await _hub.Clients.Group(notification.Combat.RightPlayerName).CombatInPreparationStarted(notification.CombatId);
         }
-
-        return true;
     }
 }

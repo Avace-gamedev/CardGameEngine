@@ -14,6 +14,7 @@ import { SignalRService } from '../../api/signal-r/signal-r.service';
 import { IdentityService } from '../../core/authentication/services/identity.service';
 import { ModalsService } from '../../core/modals/modals.service';
 import { CombatSideConfiguration } from './combat-configure-side/combat-configure-side.component';
+import { AlertsService } from '../../core/alert/alerts.service';
 
 @UntilDestroy()
 @Component({
@@ -24,6 +25,9 @@ export class CombatConfigureComponent implements OnInit {
   protected combat: CombatInPreparationView | undefined;
   protected side: CombatSide | undefined;
 
+  protected startedCombatId: string | undefined;
+  private hasRequestedStartOfCombat: boolean | undefined;
+
   constructor(
     private signalRService: SignalRService,
     private identityService: IdentityService,
@@ -31,7 +35,8 @@ export class CombatConfigureComponent implements OnInit {
     private charactersService: CharactersService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    private modalsService: ModalsService
+    private modalsService: ModalsService,
+    private alertsService: AlertsService
   ) {}
 
   ngOnInit() {
@@ -46,6 +51,11 @@ export class CombatConfigureComponent implements OnInit {
       .listen<CombatInPreparationView>('combats', 'CombatInPreparationDeleted', CombatInPreparationView.fromJS)
       .pipe(untilDestroyed(this))
       .subscribe((combat) => this.onDeleted(combat));
+
+    this.signalRService
+      .listenRaw('combats', 'CombatInPreparationStarted')
+      .pipe(untilDestroyed(this))
+      .subscribe((...args: any[]) => this.onCreated(args[0]));
 
     this.activatedRoute.paramMap
       .pipe(
@@ -79,6 +89,10 @@ export class CombatConfigureComponent implements OnInit {
   }
 
   protected start() {
+    if (this.startedCombatId) {
+      this.router.toCombat(this.startedCombatId).then();
+    }
+
     if (!this.combat) {
       return;
     }
@@ -151,11 +165,13 @@ export class CombatConfigureComponent implements OnInit {
   }
 
   private onDeleted(combat: CombatInPreparationView) {
-    if (combat.leftPlayerName === this.identityService.getIdentity()) {
+    if (this.startedCombatId) {
       return;
     }
 
-    console.log(combat, this.identityService.getIdentity());
+    if (combat.leftPlayerName === this.identityService.getIdentity()) {
+      return;
+    }
 
     this.modalsService
       .alert({
@@ -163,6 +179,19 @@ export class CombatConfigureComponent implements OnInit {
         closeLabel: 'Go back',
       })
       .subscribe(() => this.router.toCombatSelection().then());
+  }
+
+  private onCreated(combatId: string) {
+    if (this.hasRequestedStartOfCombat) {
+      return;
+    }
+
+    this.startedCombatId = combatId;
+
+    const currentPlayer = this.identityService.getIdentity();
+    const otherPlayer =
+      this.combat?.leftPlayerName === currentPlayer ? this.combat?.rightPlayerName : this.combat?.leftPlayerName;
+    this.alertsService.info(`Combat has been started by ${otherPlayer}. Press START to join them.`);
   }
 
   protected readonly CombatSide = CombatSide;

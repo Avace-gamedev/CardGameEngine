@@ -101,7 +101,7 @@ public class CombatsController : ControllerBase
 
         if (playerName == combat.LeftPlayerName)
         {
-            await _combatInPreparationService.DeleteCombatInPreparation(combat);
+            await _combatInPreparationService.AbortCombatInPreparation(combat);
         }
         else if (playerName == combat.RightPlayerName)
         {
@@ -129,7 +129,7 @@ public class CombatsController : ControllerBase
 
         CombatInstanceWithMetadata combat = await _combatsService.CreateCombat(inPreparation);
 
-        await _combatInPreparationService.DeleteCombatInPreparation(inPreparation);
+        await _combatInPreparationService.RemoveCombatInPreparationThatHasBeenStarted(inPreparation, combat.Id);
 
         return combat.Id;
     }

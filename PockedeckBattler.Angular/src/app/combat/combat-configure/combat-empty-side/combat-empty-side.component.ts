@@ -30,9 +30,6 @@ export class CombatEmptySideComponent {
   }
 
   private updateUrl() {
-    this.url = new URL(
-      'combat/preparation/join/' + this._combat?.id ?? '???',
-      new URL(this.baseHref, window.location.origin)
-    ).href;
+    this.url = new URL('combat/join/' + this._combat?.id ?? '???', new URL(this.baseHref, window.location.origin)).href;
   }
 }

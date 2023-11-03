@@ -51,17 +51,44 @@ public class CombatInPreparationService : ICombatInPreparationService
         }
     }
 
-    public async Task DeleteCombatInPreparation(CombatInPreparation combatInPreparation, CancellationToken cancellationToken = default)
+    public async Task AbortCombatInPreparation(CombatInPreparation combatInPreparation, CancellationToken cancellationToken = default)
     {
-        string key = GetKey(combatInPreparation.Id);
-        CombatInPreparation? actualCombatInPreparation = await _store.Load(key, cancellationToken);
+        CombatInPreparation? actualCombatInPreparation = await DeleteCombatInPreparationWithoutNotification(combatInPreparation, cancellationToken);
         if (actualCombatInPreparation == null)
         {
             return;
         }
 
-        await _store.Delete(key, cancellationToken);
         await _mediator.Publish(new CombatInPreparationDeleted(actualCombatInPreparation), cancellationToken);
+    }
+
+    public async Task RemoveCombatInPreparationThatHasBeenStarted(
+        CombatInPreparation combatInPreparation,
+        Guid combatId,
+        CancellationToken cancellationToken = default
+    )
+    {
+        CombatInPreparation? actualCombatInPreparation = await DeleteCombatInPreparationWithoutNotification(combatInPreparation, cancellationToken);
+        if (actualCombatInPreparation == null)
+        {
+            return;
+        }
+
+        await _mediator.Publish(new CombatInPreparationStarted(actualCombatInPreparation, combatId), cancellationToken);
+    }
+
+    async Task<CombatInPreparation?> DeleteCombatInPreparationWithoutNotification(CombatInPreparation combatInPreparation, CancellationToken cancellationToken)
+    {
+
+        string key = GetKey(combatInPreparation.Id);
+        CombatInPreparation? actualCombatInPreparation = await _store.Load(key, cancellationToken);
+        if (actualCombatInPreparation == null)
+        {
+            return null;
+        }
+
+        await _store.Delete(key, cancellationToken);
+        return actualCombatInPreparation;
     }
 
     static string GetKey(Guid guid)

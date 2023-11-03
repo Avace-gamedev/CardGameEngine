@@ -71,7 +71,7 @@ export class AssetIconComponent implements AfterViewInit {
 
   set pxOffsetX(value: number) {
     this._pxOffsetX = value;
-    this.cssTransform = this.getCssTransform(value, this.pxOffsetY);
+    this.cssTransform = this.getCssTransform(value, this._pxOffsetY);
   }
 
   private _pxOffsetX: number = 0;
@@ -83,7 +83,7 @@ export class AssetIconComponent implements AfterViewInit {
 
   set pxOffsetY(value: number) {
     this._pxOffsetY = value;
-    this.cssTransform = this.getCssTransform(this.pxOffsetX, value);
+    this.cssTransform = this.getCssTransform(this._pxOffsetX, value);
   }
 
   private _pxOffsetY: number = 0;

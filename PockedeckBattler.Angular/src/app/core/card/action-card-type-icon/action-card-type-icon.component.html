@@ -3,15 +3,19 @@
     <i class="bi bi-dot"></i>
   </ng-container>
   <ng-container *ngSwitchCase="CardType.Damage">
-    <app-asset-icon icon="screen-impact" size="sm"></app-asset-icon>
+    <app-asset-icon
+      icon="screen-impact"
+      size="sm"
+      [pxOffsetY]="2"
+    ></app-asset-icon>
   </ng-container>
   <ng-container *ngSwitchCase="CardType.Heal">
-    <i class="fw-bold" title="Heal">H</i>
+    <app-asset-icon icon="heal" size="sm" [pxOffsetY]="2"></app-asset-icon>
   </ng-container>
   <ng-container *ngSwitchCase="CardType.Shield">
-    <i class="bi bi-shield-fill" title="Shield"></i>
+    <app-asset-icon icon="shield" size="sm" [pxOffsetY]="2"></app-asset-icon>
   </ng-container>
   <ng-container *ngSwitchCase="CardType.Effect">
-    <i class="bi bi-tropical-storm" title="Effect"></i>
+    <app-asset-icon icon="galaxy" size="sm" [pxOffsetY]="2"></app-asset-icon>
   </ng-container>
 </ng-container>

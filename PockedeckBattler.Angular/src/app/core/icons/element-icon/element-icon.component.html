@@ -1,17 +1,38 @@
+<script src="../asset-icon/asset-icons.ts"></script>
 <ng-container [ngSwitch]="element">
   <ng-container *ngSwitchCase="Element.Neutral">
     <i class="bi bi-yin-yang" title="Fire"></i>
   </ng-container>
   <ng-container *ngSwitchCase="Element.Earth">
-    <i class="bi bi-yin-yang" title="Neutral"></i>
+    <app-asset-icon
+      icon="three-leaves"
+      size="sm"
+      [pxOffsetY]="2"
+      ngbTooltip="Earth"
+    ></app-asset-icon>
   </ng-container>
   <ng-container *ngSwitchCase="Element.Fire">
-    <i class="bi bi-fire" title="Earth"></i>
+    <app-asset-icon
+      icon="fire"
+      size="sm"
+      [pxOffsetY]="2"
+      ngbTooltip="Fire"
+    ></app-asset-icon>
   </ng-container>
   <ng-container *ngSwitchCase="Element.Water">
-    <i class="bi bi-droplet-fill" title="Water"></i>
+    <app-asset-icon
+      icon="water-drop"
+      size="sm"
+      [pxOffsetY]="2"
+      ngbTooltip="Water"
+    ></app-asset-icon>
   </ng-container>
   <ng-container *ngSwitchCase="Element.Wind">
-    <i class="bi bi-wind" title="Wind"></i>
+    <app-asset-icon
+      icon="sandstorm"
+      size="sm"
+      [pxOffsetY]="2"
+      ngbTooltip="Wind"
+    ></app-asset-icon>
   </ng-container>
 </ng-container>

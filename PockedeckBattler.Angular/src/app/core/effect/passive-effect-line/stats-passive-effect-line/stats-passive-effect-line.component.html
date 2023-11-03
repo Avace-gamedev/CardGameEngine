@@ -1,11 +1,14 @@
 <div class="vstack" *ngIf="effect">
   <ng-container *ngFor="let modifier of modifiers">
-    <div class="text-nowrap" *ngIf="modifier.value !== 0">
-      {{ modifier.value | sign }}
-      {{ modifier.name }}
+    <div class="hstack gap-1" *ngIf="modifier.value !== 0">
+      <div class="text-nowrap">
+        {{ modifier.value | sign }}
+        {{ modifier.name }}
+      </div>
       <app-turns-icon
         [value]="modifier.duration"
         [enableTooltip]="true"
+        size="sm"
       ></app-turns-icon>
     </div>
   </ng-container>

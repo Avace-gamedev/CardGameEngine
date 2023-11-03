@@ -1,10 +1,12 @@
-<ng-container *ngIf="value && value >= 0 && value <= 9; else default">
-  <i
-    class="bi bi-{{ value }}-circle"
-    [ngbTooltip]="enableTooltip ? value + ' turns' : null"
-  >
-  </i>
-</ng-container>
-<ng-template #default>
+<div
+  class="border border-1 rounded-circle text-center"
+  [ngStyle]="{
+    'width.px': sizeInPx,
+    'height.px': sizeInPx,
+    'lineHeight.px': sizeInPx,
+    'fontSize.rem': textSizeInRem
+  }"
+  [ngbTooltip]="enableTooltip ? tooltipString : null"
+>
   {{ value }}
-</ng-template>
+</div>

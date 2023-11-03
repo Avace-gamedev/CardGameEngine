@@ -1,0 +1,10 @@
+<app-asset-icon
+  [icon]="assetIcon"
+  size="sm"
+  [ngbTooltip]="enableTooltip ? tooltipString : null"
+  [pxOffsetY]="2"
+  *ngIf="assetIcon"
+></app-asset-icon>
+<div [ngbTooltip]="enableTooltip ? tooltipString : null" *ngIf="valueString">
+  {{ valueString }}
+</div>

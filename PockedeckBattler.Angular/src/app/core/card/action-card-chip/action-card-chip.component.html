@@ -21,7 +21,8 @@
   <div class="vr"></div>
 
   <span class="hstack gap-1">
-    <app-action-points [value]="card?.apCost"></app-action-points>
+    <app-action-points-icon size="sm"></app-action-points-icon>
+    {{ card?.apCost }}
   </span>
 
   <i class="bi bi-stopwatch" *ngIf="isTriggered"></i>

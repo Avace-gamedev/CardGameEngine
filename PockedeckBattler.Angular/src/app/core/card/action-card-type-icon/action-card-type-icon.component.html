@@ -3,15 +3,15 @@
     <i class="bi bi-dot"></i>
   </ng-container>
   <ng-container *ngSwitchCase="CardType.Damage">
-    <app-asset-icon icon="screen-impact" size="sm" [pxOffsetY]="2"></app-asset-icon>
+    <app-asset-icon icon="screen-impact" size="sm" [pxOffsetY]="2" ngbTooltip="Damage"></app-asset-icon>
   </ng-container>
   <ng-container *ngSwitchCase="CardType.Heal">
-    <app-asset-icon icon="heal" size="sm" [pxOffsetY]="2"></app-asset-icon>
+    <app-asset-icon icon="heal" size="sm" [pxOffsetY]="2" ngbTooltip="Heal"></app-asset-icon>
   </ng-container>
   <ng-container *ngSwitchCase="CardType.Shield">
-    <app-asset-icon icon="shield" size="sm" [pxOffsetY]="2"></app-asset-icon>
+    <app-asset-icon icon="healing-shield" size="sm" [pxOffsetY]="2" ngbTooltip="Shield"></app-asset-icon>
   </ng-container>
   <ng-container *ngSwitchCase="CardType.Effect">
-    <app-asset-icon icon="galaxy" size="sm" [pxOffsetY]="2"></app-asset-icon>
+    <app-asset-icon icon="galaxy" size="sm" [pxOffsetY]="2" ngbTooltip="Effect"></app-asset-icon>
   </ng-container>
 </ng-container>

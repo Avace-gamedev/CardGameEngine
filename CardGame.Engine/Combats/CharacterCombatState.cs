@@ -1,5 +1,6 @@
 ﻿using CardGame.Engine.Characters;
 using CardGame.Engine.Effects.Passive;
+using CardGame.Engine.Effects.Passive.Stats;
 using CardGame.Engine.Effects.Triggered;
 
 namespace CardGame.Engine.Combats;
@@ -27,7 +28,7 @@ public class CharacterCombatState
 
     public StatsModifier StatsModifier =>
         PassiveEffects.Select(e => e.Effect).OfType<PassiveStatsModifier>().Any()
-            ? PassiveEffects.Select(e => e.Effect).OfType<PassiveStatsModifier>().Select(e => e.StatsModifier).Aggregate(StatsModifier.Combine)
+            ? PassiveEffects.Select(e => e.Effect).OfType<PassiveStatsModifier>().Select(e => e.GetStatsModifier()).Aggregate(StatsModifier.Combine)
             : StatsModifier.None;
 
     public bool IsDead { get; private set; }

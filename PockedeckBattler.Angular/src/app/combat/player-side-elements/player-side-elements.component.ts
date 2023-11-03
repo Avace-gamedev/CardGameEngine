@@ -46,6 +46,22 @@ export class PlayerSideElementsComponent implements OnInit {
     this.charactersService.getAll().subscribe((characters) => (this.characters = characters));
   }
 
+  protected sendPlay(index: number) {
+    if (this.disabled) {
+      return;
+    }
+
+    this.play.emit(index);
+  }
+
+  protected sendEndTurn() {
+    if (this.disabled) {
+      return;
+    }
+
+    this.endTurn.emit();
+  }
+
   protected mouseEnter(card: CardInstanceWithModifiersView) {
     this.hoveredCharacter = card.character;
     this.hover.emit(card);

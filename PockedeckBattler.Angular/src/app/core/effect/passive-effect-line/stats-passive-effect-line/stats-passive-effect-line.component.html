@@ -1,11 +1,15 @@
-<div class="vstack" *ngIf="effect">
-  <ng-container *ngFor="let modifier of modifiers">
-    <div class="hstack gap-1" *ngIf="modifier.value !== 0">
+<div class="vstack" *ngIf="display">
+  <div class="hstack gap-2 align-items-start" *ngIf="display.value !== 0">
+    <app-asset-icon [icon]="display.icon" size="sm" class="pt-1"></app-asset-icon>
+    <div class="vstack">
       <div class="text-nowrap">
-        {{ modifier.value | sign }}
-        {{ modifier.name }}
+        {{ display.value | sign }}
+        {{ display.name }}
       </div>
-      <app-turns-icon [value]="modifier.duration" [enableTooltip]="true" size="sm"></app-turns-icon>
+      <div class="hstack gap-1 justify-content-end">
+        <app-asset-icon icon="duration" size="sm" ngbTooltip="Duration"></app-asset-icon>
+        <small> {{ display.duration }} turns</small>
+      </div>
     </div>
-  </ng-container>
+  </div>
 </div>

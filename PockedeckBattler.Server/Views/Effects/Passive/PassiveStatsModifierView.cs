@@ -1,24 +1,26 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using CardGame.Engine.Combats;
-using CardGame.Engine.Effects.Passive;
+using CardGame.Engine.Effects.Passive.Stats;
 
 namespace PockedeckBattler.Server.Views.Effects.Passive;
 
 public class PassiveStatsModifierView : PassiveEffectView
 {
-    public PassiveStatsModifierView(StatsModifier statsModifier, int duration) : base(duration)
+    public PassiveStatsModifierView(StatEffect effect, int amount, int duration) : base(duration)
     {
-        StatsModifier = statsModifier;
+        Effect = effect;
+        Amount = amount;
     }
 
     [Required]
-    public StatsModifier StatsModifier { get; }
+    public StatEffect Effect { get; }
+
+    public int Amount { get; }
 }
 
 public static class PassiveStatsModifierViewMappingExtensions
 {
     public static PassiveStatsModifierView View(this PassiveStatsModifier modifier)
     {
-        return new PassiveStatsModifierView(modifier.StatsModifier, modifier.Duration);
+        return new PassiveStatsModifierView(modifier.Effect, modifier.Amount, modifier.Duration);
     }
 }

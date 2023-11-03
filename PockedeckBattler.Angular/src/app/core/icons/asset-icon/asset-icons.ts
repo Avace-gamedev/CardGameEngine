@@ -16,5 +16,21 @@ export const assetIcons = [
   'galaxy',
   'shield',
   'heal',
+  'heart-shield',
+  'healing-shield',
+  'health-increase',
+  'heart-plus',
+  'heart-minus',
+  'armor-upgrade',
+  'armor-downgrade',
+  'dice-increase',
+  'dice-decrease',
+  'biceps',
+  'broken-axe',
+  'cracked-shield',
+  'shield-reflect',
+  'fangs',
+  'stopwatch',
+  'duration',
 ] as const;
-export type AssetIcon = typeof assetIcons[number];
+export type AssetIcon = (typeof assetIcons)[number];

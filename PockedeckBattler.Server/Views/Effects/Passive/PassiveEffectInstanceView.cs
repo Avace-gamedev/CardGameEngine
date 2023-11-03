@@ -1,8 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using CardGame.Engine.Effects.Passive;
-using PockedeckBattler.Server.Views.Effects.Passive;
 
-namespace PockedeckBattler.Server.Views.Effects;
+namespace PockedeckBattler.Server.Views.Effects.Passive;
 
 public class PassiveEffectInstanceView
 {

@@ -18,2301 +18,2288 @@ import * as moment from 'moment';
 export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 
 export interface ICharactersService {
-  getAll(): Observable<CharacterView[]>;
-  get(name: string): Observable<CharacterView>;
+    getAll(): Observable<CharacterView[]>;
+    get(name: string): Observable<CharacterView>;
 }
 
 @Injectable({
-  providedIn: 'root',
+    providedIn: 'root'
 })
 export class CharactersService implements ICharactersService {
-  private http: HttpClient;
-  private baseUrl: string;
-  protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
-  constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-    this.http = http;
-    this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : 'http://localhost:5295';
-  }
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "http://localhost:5295";
+    }
 
-  getAll(): Observable<CharacterView[]> {
-    let url_ = this.baseUrl + '/characters';
-    url_ = url_.replace(/[?&]$/, '');
+    getAll(): Observable<CharacterView[]> {
+        let url_ = this.baseUrl + "/characters";
+        url_ = url_.replace(/[?&]$/, "");
 
-    let options_: any = {
-      observe: 'response',
-      responseType: 'blob',
-      headers: new HttpHeaders({
-        Accept: 'application/json',
-      }),
-    };
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
 
-    return this.http
-      .request('get', url_, options_)
-      .pipe(
-        _observableMergeMap((response_: any) => {
-          return this.processGetAll(response_);
-        })
-      )
-      .pipe(
-        _observableCatch((response_: any) => {
-          if (response_ instanceof HttpResponseBase) {
-            try {
-              return this.processGetAll(response_ as any);
-            } catch (e) {
-              return _observableThrow(e) as any as Observable<CharacterView[]>;
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAll(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAll(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<CharacterView[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<CharacterView[]>;
+        }));
+    }
+
+    protected processGetAll(response: HttpResponseBase): Observable<CharacterView[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(CharacterView.fromJS(item));
             }
-          } else return _observableThrow(response_) as any as Observable<CharacterView[]>;
-        })
-      );
-  }
-
-  protected processGetAll(response: HttpResponseBase): Observable<CharacterView[]> {
-    const status = response.status;
-    const responseBlob =
-      response instanceof HttpResponse
-        ? response.body
-        : (response as any).error instanceof Blob
-        ? (response as any).error
-        : undefined;
-
-    let _headers: any = {};
-    if (response.headers) {
-      for (let key of response.headers.keys()) {
-        _headers[key] = response.headers.get(key);
-      }
-    }
-    if (status === 200) {
-      return blobToText(responseBlob).pipe(
-        _observableMergeMap((_responseText: string) => {
-          let result200: any = null;
-          let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-          if (Array.isArray(resultData200)) {
-            result200 = [] as any;
-            for (let item of resultData200) result200!.push(CharacterView.fromJS(item));
-          } else {
-            result200 = <any>null;
-          }
-          return _observableOf(result200);
-        })
-      );
-    } else if (status !== 200 && status !== 204) {
-      return blobToText(responseBlob).pipe(
-        _observableMergeMap((_responseText: string) => {
-          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
-        })
-      );
-    }
-    return _observableOf(null as any);
-  }
-
-  get(name: string): Observable<CharacterView> {
-    let url_ = this.baseUrl + '/characters/{name}';
-    if (name === undefined || name === null) throw new Error("The parameter 'name' must be defined.");
-    url_ = url_.replace('{name}', encodeURIComponent('' + name));
-    url_ = url_.replace(/[?&]$/, '');
-
-    let options_: any = {
-      observe: 'response',
-      responseType: 'blob',
-      headers: new HttpHeaders({
-        Accept: 'application/json',
-      }),
-    };
-
-    return this.http
-      .request('get', url_, options_)
-      .pipe(
-        _observableMergeMap((response_: any) => {
-          return this.processGet(response_);
-        })
-      )
-      .pipe(
-        _observableCatch((response_: any) => {
-          if (response_ instanceof HttpResponseBase) {
-            try {
-              return this.processGet(response_ as any);
-            } catch (e) {
-              return _observableThrow(e) as any as Observable<CharacterView>;
+            else {
+                result200 = <any>null;
             }
-          } else return _observableThrow(response_) as any as Observable<CharacterView>;
-        })
-      );
-  }
-
-  protected processGet(response: HttpResponseBase): Observable<CharacterView> {
-    const status = response.status;
-    const responseBlob =
-      response instanceof HttpResponse
-        ? response.body
-        : (response as any).error instanceof Blob
-        ? (response as any).error
-        : undefined;
-
-    let _headers: any = {};
-    if (response.headers) {
-      for (let key of response.headers.keys()) {
-        _headers[key] = response.headers.get(key);
-      }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
     }
-    if (status === 200) {
-      return blobToText(responseBlob).pipe(
-        _observableMergeMap((_responseText: string) => {
-          let result200: any = null;
-          let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-          result200 = CharacterView.fromJS(resultData200);
-          return _observableOf(result200);
-        })
-      );
-    } else if (status !== 200 && status !== 204) {
-      return blobToText(responseBlob).pipe(
-        _observableMergeMap((_responseText: string) => {
-          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
-        })
-      );
+
+    get(name: string): Observable<CharacterView> {
+        let url_ = this.baseUrl + "/characters/{name}";
+        if (name === undefined || name === null)
+            throw new Error("The parameter 'name' must be defined.");
+        url_ = url_.replace("{name}", encodeURIComponent("" + name));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGet(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGet(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<CharacterView>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<CharacterView>;
+        }));
     }
-    return _observableOf(null as any);
-  }
+
+    protected processGet(response: HttpResponseBase): Observable<CharacterView> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = CharacterView.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
 }
 
 export interface ICombatsService {
-  getCombatInPreparation(id: string, playerName?: string | undefined): Observable<CombatInPreparationView>;
-  updateCombatInPreparation(id: string, request: UpdateCombatInPreparationRequest): Observable<void>;
-  getCombatsInPreparationOfPlayer(playerName?: string | undefined): Observable<CombatInPreparationView[]>;
-  createCombat(playerName?: string | undefined): Observable<CombatInPreparationView>;
-  getCombatsOfPlayer(playerName?: string | undefined): Observable<PlayerCombatView[]>;
-  leaveCombatInPreparation(id: string, playerName?: string | undefined): Observable<FileResponse | null>;
-  startCombat(id: string, playerName?: string | undefined): Observable<string>;
-  getCombat(id: string, playerName?: string | undefined): Observable<PlayerCombatView>;
-  playCard(id: string, index: number, playerName?: string | undefined): Observable<FileResponse | null>;
-  endTurn(id: string, playerName?: string | undefined): Observable<FileResponse | null>;
+    getCombatInPreparation(id: string, playerName?: string | undefined): Observable<CombatInPreparationView>;
+    updateCombatInPreparation(id: string, request: UpdateCombatInPreparationRequest): Observable<void>;
+    getCombatsInPreparationOfPlayer(playerName?: string | undefined): Observable<CombatInPreparationView[]>;
+    createCombat(playerName?: string | undefined): Observable<CombatInPreparationView>;
+    getCombatsOfPlayer(playerName?: string | undefined): Observable<PlayerCombatView[]>;
+    leaveCombatInPreparation(id: string, playerName?: string | undefined): Observable<FileResponse | null>;
+    startCombat(id: string, playerName?: string | undefined): Observable<string>;
+    getCombat(id: string, playerName?: string | undefined): Observable<PlayerCombatView>;
+    playCard(id: string, index: number, playerName?: string | undefined): Observable<FileResponse | null>;
+    endTurn(id: string, playerName?: string | undefined): Observable<FileResponse | null>;
 }
 
 @Injectable({
-  providedIn: 'root',
+    providedIn: 'root'
 })
 export class CombatsService implements ICombatsService {
-  private http: HttpClient;
-  private baseUrl: string;
-  protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
-  constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-    this.http = http;
-    this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : 'http://localhost:5295';
-  }
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "http://localhost:5295";
+    }
 
-  getCombatInPreparation(id: string, playerName?: string | undefined): Observable<CombatInPreparationView> {
-    let url_ = this.baseUrl + '/combats/in-preparation/{id}?';
-    if (id === undefined || id === null) throw new Error("The parameter 'id' must be defined.");
-    url_ = url_.replace('{id}', encodeURIComponent('' + id));
-    if (playerName === null) throw new Error("The parameter 'playerName' cannot be null.");
-    else if (playerName !== undefined) url_ += 'playerName=' + encodeURIComponent('' + playerName) + '&';
-    url_ = url_.replace(/[?&]$/, '');
+    getCombatInPreparation(id: string, playerName?: string | undefined): Observable<CombatInPreparationView> {
+        let url_ = this.baseUrl + "/combats/in-preparation/{id}?";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        if (playerName === null)
+            throw new Error("The parameter 'playerName' cannot be null.");
+        else if (playerName !== undefined)
+            url_ += "playerName=" + encodeURIComponent("" + playerName) + "&";
+        url_ = url_.replace(/[?&]$/, "");
 
-    let options_: any = {
-      observe: 'response',
-      responseType: 'blob',
-      headers: new HttpHeaders({
-        Accept: 'application/json',
-      }),
-    };
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
 
-    return this.http
-      .request('get', url_, options_)
-      .pipe(
-        _observableMergeMap((response_: any) => {
-          return this.processGetCombatInPreparation(response_);
-        })
-      )
-      .pipe(
-        _observableCatch((response_: any) => {
-          if (response_ instanceof HttpResponseBase) {
-            try {
-              return this.processGetCombatInPreparation(response_ as any);
-            } catch (e) {
-              return _observableThrow(e) as any as Observable<CombatInPreparationView>;
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetCombatInPreparation(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetCombatInPreparation(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<CombatInPreparationView>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<CombatInPreparationView>;
+        }));
+    }
+
+    protected processGetCombatInPreparation(response: HttpResponseBase): Observable<CombatInPreparationView> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = CombatInPreparationView.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    updateCombatInPreparation(id: string, request: UpdateCombatInPreparationRequest): Observable<void> {
+        let url_ = this.baseUrl + "/combats/in-preparation/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(request);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateCombatInPreparation(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateCombatInPreparation(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processUpdateCombatInPreparation(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return _observableOf(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    getCombatsInPreparationOfPlayer(playerName?: string | undefined): Observable<CombatInPreparationView[]> {
+        let url_ = this.baseUrl + "/combats/in-preparation?";
+        if (playerName === null)
+            throw new Error("The parameter 'playerName' cannot be null.");
+        else if (playerName !== undefined)
+            url_ += "playerName=" + encodeURIComponent("" + playerName) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetCombatsInPreparationOfPlayer(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetCombatsInPreparationOfPlayer(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<CombatInPreparationView[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<CombatInPreparationView[]>;
+        }));
+    }
+
+    protected processGetCombatsInPreparationOfPlayer(response: HttpResponseBase): Observable<CombatInPreparationView[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(CombatInPreparationView.fromJS(item));
             }
-          } else return _observableThrow(response_) as any as Observable<CombatInPreparationView>;
-        })
-      );
-  }
-
-  protected processGetCombatInPreparation(response: HttpResponseBase): Observable<CombatInPreparationView> {
-    const status = response.status;
-    const responseBlob =
-      response instanceof HttpResponse
-        ? response.body
-        : (response as any).error instanceof Blob
-        ? (response as any).error
-        : undefined;
-
-    let _headers: any = {};
-    if (response.headers) {
-      for (let key of response.headers.keys()) {
-        _headers[key] = response.headers.get(key);
-      }
-    }
-    if (status === 200) {
-      return blobToText(responseBlob).pipe(
-        _observableMergeMap((_responseText: string) => {
-          let result200: any = null;
-          let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-          result200 = CombatInPreparationView.fromJS(resultData200);
-          return _observableOf(result200);
-        })
-      );
-    } else if (status !== 200 && status !== 204) {
-      return blobToText(responseBlob).pipe(
-        _observableMergeMap((_responseText: string) => {
-          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
-        })
-      );
-    }
-    return _observableOf(null as any);
-  }
-
-  updateCombatInPreparation(id: string, request: UpdateCombatInPreparationRequest): Observable<void> {
-    let url_ = this.baseUrl + '/combats/in-preparation/{id}';
-    if (id === undefined || id === null) throw new Error("The parameter 'id' must be defined.");
-    url_ = url_.replace('{id}', encodeURIComponent('' + id));
-    url_ = url_.replace(/[?&]$/, '');
-
-    const content_ = JSON.stringify(request);
-
-    let options_: any = {
-      body: content_,
-      observe: 'response',
-      responseType: 'blob',
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-      }),
-    };
-
-    return this.http
-      .request('post', url_, options_)
-      .pipe(
-        _observableMergeMap((response_: any) => {
-          return this.processUpdateCombatInPreparation(response_);
-        })
-      )
-      .pipe(
-        _observableCatch((response_: any) => {
-          if (response_ instanceof HttpResponseBase) {
-            try {
-              return this.processUpdateCombatInPreparation(response_ as any);
-            } catch (e) {
-              return _observableThrow(e) as any as Observable<void>;
+            else {
+                result200 = <any>null;
             }
-          } else return _observableThrow(response_) as any as Observable<void>;
-        })
-      );
-  }
-
-  protected processUpdateCombatInPreparation(response: HttpResponseBase): Observable<void> {
-    const status = response.status;
-    const responseBlob =
-      response instanceof HttpResponse
-        ? response.body
-        : (response as any).error instanceof Blob
-        ? (response as any).error
-        : undefined;
-
-    let _headers: any = {};
-    if (response.headers) {
-      for (let key of response.headers.keys()) {
-        _headers[key] = response.headers.get(key);
-      }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
     }
-    if (status === 200) {
-      return blobToText(responseBlob).pipe(
-        _observableMergeMap((_responseText: string) => {
-          return _observableOf(null as any);
-        })
-      );
-    } else if (status !== 200 && status !== 204) {
-      return blobToText(responseBlob).pipe(
-        _observableMergeMap((_responseText: string) => {
-          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
-        })
-      );
+
+    createCombat(playerName?: string | undefined): Observable<CombatInPreparationView> {
+        let url_ = this.baseUrl + "/combats?";
+        if (playerName === null)
+            throw new Error("The parameter 'playerName' cannot be null.");
+        else if (playerName !== undefined)
+            url_ += "playerName=" + encodeURIComponent("" + playerName) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateCombat(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateCombat(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<CombatInPreparationView>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<CombatInPreparationView>;
+        }));
     }
-    return _observableOf(null as any);
-  }
 
-  getCombatsInPreparationOfPlayer(playerName?: string | undefined): Observable<CombatInPreparationView[]> {
-    let url_ = this.baseUrl + '/combats/in-preparation?';
-    if (playerName === null) throw new Error("The parameter 'playerName' cannot be null.");
-    else if (playerName !== undefined) url_ += 'playerName=' + encodeURIComponent('' + playerName) + '&';
-    url_ = url_.replace(/[?&]$/, '');
+    protected processCreateCombat(response: HttpResponseBase): Observable<CombatInPreparationView> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
 
-    let options_: any = {
-      observe: 'response',
-      responseType: 'blob',
-      headers: new HttpHeaders({
-        Accept: 'application/json',
-      }),
-    };
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = CombatInPreparationView.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
 
-    return this.http
-      .request('get', url_, options_)
-      .pipe(
-        _observableMergeMap((response_: any) => {
-          return this.processGetCombatsInPreparationOfPlayer(response_);
-        })
-      )
-      .pipe(
-        _observableCatch((response_: any) => {
-          if (response_ instanceof HttpResponseBase) {
-            try {
-              return this.processGetCombatsInPreparationOfPlayer(response_ as any);
-            } catch (e) {
-              return _observableThrow(e) as any as Observable<CombatInPreparationView[]>;
+    getCombatsOfPlayer(playerName?: string | undefined): Observable<PlayerCombatView[]> {
+        let url_ = this.baseUrl + "/combats?";
+        if (playerName === null)
+            throw new Error("The parameter 'playerName' cannot be null.");
+        else if (playerName !== undefined)
+            url_ += "playerName=" + encodeURIComponent("" + playerName) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetCombatsOfPlayer(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetCombatsOfPlayer(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<PlayerCombatView[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<PlayerCombatView[]>;
+        }));
+    }
+
+    protected processGetCombatsOfPlayer(response: HttpResponseBase): Observable<PlayerCombatView[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(PlayerCombatView.fromJS(item));
             }
-          } else return _observableThrow(response_) as any as Observable<CombatInPreparationView[]>;
-        })
-      );
-  }
-
-  protected processGetCombatsInPreparationOfPlayer(response: HttpResponseBase): Observable<CombatInPreparationView[]> {
-    const status = response.status;
-    const responseBlob =
-      response instanceof HttpResponse
-        ? response.body
-        : (response as any).error instanceof Blob
-        ? (response as any).error
-        : undefined;
-
-    let _headers: any = {};
-    if (response.headers) {
-      for (let key of response.headers.keys()) {
-        _headers[key] = response.headers.get(key);
-      }
-    }
-    if (status === 200) {
-      return blobToText(responseBlob).pipe(
-        _observableMergeMap((_responseText: string) => {
-          let result200: any = null;
-          let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-          if (Array.isArray(resultData200)) {
-            result200 = [] as any;
-            for (let item of resultData200) result200!.push(CombatInPreparationView.fromJS(item));
-          } else {
-            result200 = <any>null;
-          }
-          return _observableOf(result200);
-        })
-      );
-    } else if (status !== 200 && status !== 204) {
-      return blobToText(responseBlob).pipe(
-        _observableMergeMap((_responseText: string) => {
-          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
-        })
-      );
-    }
-    return _observableOf(null as any);
-  }
-
-  createCombat(playerName?: string | undefined): Observable<CombatInPreparationView> {
-    let url_ = this.baseUrl + '/combats?';
-    if (playerName === null) throw new Error("The parameter 'playerName' cannot be null.");
-    else if (playerName !== undefined) url_ += 'playerName=' + encodeURIComponent('' + playerName) + '&';
-    url_ = url_.replace(/[?&]$/, '');
-
-    let options_: any = {
-      observe: 'response',
-      responseType: 'blob',
-      headers: new HttpHeaders({
-        Accept: 'application/json',
-      }),
-    };
-
-    return this.http
-      .request('post', url_, options_)
-      .pipe(
-        _observableMergeMap((response_: any) => {
-          return this.processCreateCombat(response_);
-        })
-      )
-      .pipe(
-        _observableCatch((response_: any) => {
-          if (response_ instanceof HttpResponseBase) {
-            try {
-              return this.processCreateCombat(response_ as any);
-            } catch (e) {
-              return _observableThrow(e) as any as Observable<CombatInPreparationView>;
+            else {
+                result200 = <any>null;
             }
-          } else return _observableThrow(response_) as any as Observable<CombatInPreparationView>;
-        })
-      );
-  }
-
-  protected processCreateCombat(response: HttpResponseBase): Observable<CombatInPreparationView> {
-    const status = response.status;
-    const responseBlob =
-      response instanceof HttpResponse
-        ? response.body
-        : (response as any).error instanceof Blob
-        ? (response as any).error
-        : undefined;
-
-    let _headers: any = {};
-    if (response.headers) {
-      for (let key of response.headers.keys()) {
-        _headers[key] = response.headers.get(key);
-      }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
     }
-    if (status === 200) {
-      return blobToText(responseBlob).pipe(
-        _observableMergeMap((_responseText: string) => {
-          let result200: any = null;
-          let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-          result200 = CombatInPreparationView.fromJS(resultData200);
-          return _observableOf(result200);
-        })
-      );
-    } else if (status !== 200 && status !== 204) {
-      return blobToText(responseBlob).pipe(
-        _observableMergeMap((_responseText: string) => {
-          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
-        })
-      );
+
+    leaveCombatInPreparation(id: string, playerName?: string | undefined): Observable<FileResponse | null> {
+        let url_ = this.baseUrl + "/combats/in-preparation/{id}/leave?";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        if (playerName === null)
+            throw new Error("The parameter 'playerName' cannot be null.");
+        else if (playerName !== undefined)
+            url_ += "playerName=" + encodeURIComponent("" + playerName) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/octet-stream"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processLeaveCombatInPreparation(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processLeaveCombatInPreparation(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<FileResponse | null>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<FileResponse | null>;
+        }));
     }
-    return _observableOf(null as any);
-  }
 
-  getCombatsOfPlayer(playerName?: string | undefined): Observable<PlayerCombatView[]> {
-    let url_ = this.baseUrl + '/combats?';
-    if (playerName === null) throw new Error("The parameter 'playerName' cannot be null.");
-    else if (playerName !== undefined) url_ += 'playerName=' + encodeURIComponent('' + playerName) + '&';
-    url_ = url_.replace(/[?&]$/, '');
+    protected processLeaveCombatInPreparation(response: HttpResponseBase): Observable<FileResponse | null> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
 
-    let options_: any = {
-      observe: 'response',
-      responseType: 'blob',
-      headers: new HttpHeaders({
-        Accept: 'application/json',
-      }),
-    };
-
-    return this.http
-      .request('get', url_, options_)
-      .pipe(
-        _observableMergeMap((response_: any) => {
-          return this.processGetCombatsOfPlayer(response_);
-        })
-      )
-      .pipe(
-        _observableCatch((response_: any) => {
-          if (response_ instanceof HttpResponseBase) {
-            try {
-              return this.processGetCombatsOfPlayer(response_ as any);
-            } catch (e) {
-              return _observableThrow(e) as any as Observable<PlayerCombatView[]>;
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
+            let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
+            if (fileName) {
+                fileName = decodeURIComponent(fileName);
+            } else {
+                fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+                fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
             }
-          } else return _observableThrow(response_) as any as Observable<PlayerCombatView[]>;
-        })
-      );
-  }
-
-  protected processGetCombatsOfPlayer(response: HttpResponseBase): Observable<PlayerCombatView[]> {
-    const status = response.status;
-    const responseBlob =
-      response instanceof HttpResponse
-        ? response.body
-        : (response as any).error instanceof Blob
-        ? (response as any).error
-        : undefined;
-
-    let _headers: any = {};
-    if (response.headers) {
-      for (let key of response.headers.keys()) {
-        _headers[key] = response.headers.get(key);
-      }
+            return _observableOf({ fileName: fileName, data: responseBlob as any, status: status, headers: _headers });
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
     }
-    if (status === 200) {
-      return blobToText(responseBlob).pipe(
-        _observableMergeMap((_responseText: string) => {
-          let result200: any = null;
-          let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-          if (Array.isArray(resultData200)) {
-            result200 = [] as any;
-            for (let item of resultData200) result200!.push(PlayerCombatView.fromJS(item));
-          } else {
-            result200 = <any>null;
-          }
-          return _observableOf(result200);
-        })
-      );
-    } else if (status !== 200 && status !== 204) {
-      return blobToText(responseBlob).pipe(
-        _observableMergeMap((_responseText: string) => {
-          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
-        })
-      );
+
+    startCombat(id: string, playerName?: string | undefined): Observable<string> {
+        let url_ = this.baseUrl + "/combats/{id}/start?";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        if (playerName === null)
+            throw new Error("The parameter 'playerName' cannot be null.");
+        else if (playerName !== undefined)
+            url_ += "playerName=" + encodeURIComponent("" + playerName) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processStartCombat(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processStartCombat(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<string>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<string>;
+        }));
     }
-    return _observableOf(null as any);
-  }
 
-  leaveCombatInPreparation(id: string, playerName?: string | undefined): Observable<FileResponse | null> {
-    let url_ = this.baseUrl + '/combats/in-preparation/{id}/leave?';
-    if (id === undefined || id === null) throw new Error("The parameter 'id' must be defined.");
-    url_ = url_.replace('{id}', encodeURIComponent('' + id));
-    if (playerName === null) throw new Error("The parameter 'playerName' cannot be null.");
-    else if (playerName !== undefined) url_ += 'playerName=' + encodeURIComponent('' + playerName) + '&';
-    url_ = url_.replace(/[?&]$/, '');
+    protected processStartCombat(response: HttpResponseBase): Observable<string> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
 
-    let options_: any = {
-      observe: 'response',
-      responseType: 'blob',
-      headers: new HttpHeaders({
-        Accept: 'application/octet-stream',
-      }),
-    };
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
 
-    return this.http
-      .request('post', url_, options_)
-      .pipe(
-        _observableMergeMap((response_: any) => {
-          return this.processLeaveCombatInPreparation(response_);
-        })
-      )
-      .pipe(
-        _observableCatch((response_: any) => {
-          if (response_ instanceof HttpResponseBase) {
-            try {
-              return this.processLeaveCombatInPreparation(response_ as any);
-            } catch (e) {
-              return _observableThrow(e) as any as Observable<FileResponse | null>;
+    getCombat(id: string, playerName?: string | undefined): Observable<PlayerCombatView> {
+        let url_ = this.baseUrl + "/combats/{id}?";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        if (playerName === null)
+            throw new Error("The parameter 'playerName' cannot be null.");
+        else if (playerName !== undefined)
+            url_ += "playerName=" + encodeURIComponent("" + playerName) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetCombat(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetCombat(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<PlayerCombatView>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<PlayerCombatView>;
+        }));
+    }
+
+    protected processGetCombat(response: HttpResponseBase): Observable<PlayerCombatView> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = PlayerCombatView.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    playCard(id: string, index: number, playerName?: string | undefined): Observable<FileResponse | null> {
+        let url_ = this.baseUrl + "/combats/{id}/play/{index}?";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        if (index === undefined || index === null)
+            throw new Error("The parameter 'index' must be defined.");
+        url_ = url_.replace("{index}", encodeURIComponent("" + index));
+        if (playerName === null)
+            throw new Error("The parameter 'playerName' cannot be null.");
+        else if (playerName !== undefined)
+            url_ += "playerName=" + encodeURIComponent("" + playerName) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/octet-stream"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processPlayCard(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processPlayCard(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<FileResponse | null>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<FileResponse | null>;
+        }));
+    }
+
+    protected processPlayCard(response: HttpResponseBase): Observable<FileResponse | null> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
+            let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
+            if (fileName) {
+                fileName = decodeURIComponent(fileName);
+            } else {
+                fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+                fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
             }
-          } else return _observableThrow(response_) as any as Observable<FileResponse | null>;
-        })
-      );
-  }
-
-  protected processLeaveCombatInPreparation(response: HttpResponseBase): Observable<FileResponse | null> {
-    const status = response.status;
-    const responseBlob =
-      response instanceof HttpResponse
-        ? response.body
-        : (response as any).error instanceof Blob
-        ? (response as any).error
-        : undefined;
-
-    let _headers: any = {};
-    if (response.headers) {
-      for (let key of response.headers.keys()) {
-        _headers[key] = response.headers.get(key);
-      }
+            return _observableOf({ fileName: fileName, data: responseBlob as any, status: status, headers: _headers });
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
     }
-    if (status === 200 || status === 206) {
-      const contentDisposition = response.headers ? response.headers.get('content-disposition') : undefined;
-      let fileNameMatch = contentDisposition
-        ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition)
-        : undefined;
-      let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
-      if (fileName) {
-        fileName = decodeURIComponent(fileName);
-      } else {
-        fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
-        fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
-      }
-      return _observableOf({ fileName: fileName, data: responseBlob as any, status: status, headers: _headers });
-    } else if (status !== 200 && status !== 204) {
-      return blobToText(responseBlob).pipe(
-        _observableMergeMap((_responseText: string) => {
-          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
-        })
-      );
+
+    endTurn(id: string, playerName?: string | undefined): Observable<FileResponse | null> {
+        let url_ = this.baseUrl + "/combats/{id}/end-turn?";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        if (playerName === null)
+            throw new Error("The parameter 'playerName' cannot be null.");
+        else if (playerName !== undefined)
+            url_ += "playerName=" + encodeURIComponent("" + playerName) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/octet-stream"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processEndTurn(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processEndTurn(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<FileResponse | null>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<FileResponse | null>;
+        }));
     }
-    return _observableOf(null as any);
-  }
 
-  startCombat(id: string, playerName?: string | undefined): Observable<string> {
-    let url_ = this.baseUrl + '/combats/{id}/start?';
-    if (id === undefined || id === null) throw new Error("The parameter 'id' must be defined.");
-    url_ = url_.replace('{id}', encodeURIComponent('' + id));
-    if (playerName === null) throw new Error("The parameter 'playerName' cannot be null.");
-    else if (playerName !== undefined) url_ += 'playerName=' + encodeURIComponent('' + playerName) + '&';
-    url_ = url_.replace(/[?&]$/, '');
+    protected processEndTurn(response: HttpResponseBase): Observable<FileResponse | null> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
 
-    let options_: any = {
-      observe: 'response',
-      responseType: 'blob',
-      headers: new HttpHeaders({
-        Accept: 'application/json',
-      }),
-    };
-
-    return this.http
-      .request('post', url_, options_)
-      .pipe(
-        _observableMergeMap((response_: any) => {
-          return this.processStartCombat(response_);
-        })
-      )
-      .pipe(
-        _observableCatch((response_: any) => {
-          if (response_ instanceof HttpResponseBase) {
-            try {
-              return this.processStartCombat(response_ as any);
-            } catch (e) {
-              return _observableThrow(e) as any as Observable<string>;
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
+            let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
+            if (fileName) {
+                fileName = decodeURIComponent(fileName);
+            } else {
+                fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+                fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
             }
-          } else return _observableThrow(response_) as any as Observable<string>;
-        })
-      );
-  }
-
-  protected processStartCombat(response: HttpResponseBase): Observable<string> {
-    const status = response.status;
-    const responseBlob =
-      response instanceof HttpResponse
-        ? response.body
-        : (response as any).error instanceof Blob
-        ? (response as any).error
-        : undefined;
-
-    let _headers: any = {};
-    if (response.headers) {
-      for (let key of response.headers.keys()) {
-        _headers[key] = response.headers.get(key);
-      }
+            return _observableOf({ fileName: fileName, data: responseBlob as any, status: status, headers: _headers });
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
     }
-    if (status === 200) {
-      return blobToText(responseBlob).pipe(
-        _observableMergeMap((_responseText: string) => {
-          let result200: any = null;
-          let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-          result200 = resultData200 !== undefined ? resultData200 : <any>null;
-
-          return _observableOf(result200);
-        })
-      );
-    } else if (status !== 200 && status !== 204) {
-      return blobToText(responseBlob).pipe(
-        _observableMergeMap((_responseText: string) => {
-          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
-        })
-      );
-    }
-    return _observableOf(null as any);
-  }
-
-  getCombat(id: string, playerName?: string | undefined): Observable<PlayerCombatView> {
-    let url_ = this.baseUrl + '/combats/{id}?';
-    if (id === undefined || id === null) throw new Error("The parameter 'id' must be defined.");
-    url_ = url_.replace('{id}', encodeURIComponent('' + id));
-    if (playerName === null) throw new Error("The parameter 'playerName' cannot be null.");
-    else if (playerName !== undefined) url_ += 'playerName=' + encodeURIComponent('' + playerName) + '&';
-    url_ = url_.replace(/[?&]$/, '');
-
-    let options_: any = {
-      observe: 'response',
-      responseType: 'blob',
-      headers: new HttpHeaders({
-        Accept: 'application/json',
-      }),
-    };
-
-    return this.http
-      .request('get', url_, options_)
-      .pipe(
-        _observableMergeMap((response_: any) => {
-          return this.processGetCombat(response_);
-        })
-      )
-      .pipe(
-        _observableCatch((response_: any) => {
-          if (response_ instanceof HttpResponseBase) {
-            try {
-              return this.processGetCombat(response_ as any);
-            } catch (e) {
-              return _observableThrow(e) as any as Observable<PlayerCombatView>;
-            }
-          } else return _observableThrow(response_) as any as Observable<PlayerCombatView>;
-        })
-      );
-  }
-
-  protected processGetCombat(response: HttpResponseBase): Observable<PlayerCombatView> {
-    const status = response.status;
-    const responseBlob =
-      response instanceof HttpResponse
-        ? response.body
-        : (response as any).error instanceof Blob
-        ? (response as any).error
-        : undefined;
-
-    let _headers: any = {};
-    if (response.headers) {
-      for (let key of response.headers.keys()) {
-        _headers[key] = response.headers.get(key);
-      }
-    }
-    if (status === 200) {
-      return blobToText(responseBlob).pipe(
-        _observableMergeMap((_responseText: string) => {
-          let result200: any = null;
-          let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-          result200 = PlayerCombatView.fromJS(resultData200);
-          return _observableOf(result200);
-        })
-      );
-    } else if (status !== 200 && status !== 204) {
-      return blobToText(responseBlob).pipe(
-        _observableMergeMap((_responseText: string) => {
-          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
-        })
-      );
-    }
-    return _observableOf(null as any);
-  }
-
-  playCard(id: string, index: number, playerName?: string | undefined): Observable<FileResponse | null> {
-    let url_ = this.baseUrl + '/combats/{id}/play/{index}?';
-    if (id === undefined || id === null) throw new Error("The parameter 'id' must be defined.");
-    url_ = url_.replace('{id}', encodeURIComponent('' + id));
-    if (index === undefined || index === null) throw new Error("The parameter 'index' must be defined.");
-    url_ = url_.replace('{index}', encodeURIComponent('' + index));
-    if (playerName === null) throw new Error("The parameter 'playerName' cannot be null.");
-    else if (playerName !== undefined) url_ += 'playerName=' + encodeURIComponent('' + playerName) + '&';
-    url_ = url_.replace(/[?&]$/, '');
-
-    let options_: any = {
-      observe: 'response',
-      responseType: 'blob',
-      headers: new HttpHeaders({
-        Accept: 'application/octet-stream',
-      }),
-    };
-
-    return this.http
-      .request('post', url_, options_)
-      .pipe(
-        _observableMergeMap((response_: any) => {
-          return this.processPlayCard(response_);
-        })
-      )
-      .pipe(
-        _observableCatch((response_: any) => {
-          if (response_ instanceof HttpResponseBase) {
-            try {
-              return this.processPlayCard(response_ as any);
-            } catch (e) {
-              return _observableThrow(e) as any as Observable<FileResponse | null>;
-            }
-          } else return _observableThrow(response_) as any as Observable<FileResponse | null>;
-        })
-      );
-  }
-
-  protected processPlayCard(response: HttpResponseBase): Observable<FileResponse | null> {
-    const status = response.status;
-    const responseBlob =
-      response instanceof HttpResponse
-        ? response.body
-        : (response as any).error instanceof Blob
-        ? (response as any).error
-        : undefined;
-
-    let _headers: any = {};
-    if (response.headers) {
-      for (let key of response.headers.keys()) {
-        _headers[key] = response.headers.get(key);
-      }
-    }
-    if (status === 200 || status === 206) {
-      const contentDisposition = response.headers ? response.headers.get('content-disposition') : undefined;
-      let fileNameMatch = contentDisposition
-        ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition)
-        : undefined;
-      let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
-      if (fileName) {
-        fileName = decodeURIComponent(fileName);
-      } else {
-        fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
-        fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
-      }
-      return _observableOf({ fileName: fileName, data: responseBlob as any, status: status, headers: _headers });
-    } else if (status !== 200 && status !== 204) {
-      return blobToText(responseBlob).pipe(
-        _observableMergeMap((_responseText: string) => {
-          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
-        })
-      );
-    }
-    return _observableOf(null as any);
-  }
-
-  endTurn(id: string, playerName?: string | undefined): Observable<FileResponse | null> {
-    let url_ = this.baseUrl + '/combats/{id}/end-turn?';
-    if (id === undefined || id === null) throw new Error("The parameter 'id' must be defined.");
-    url_ = url_.replace('{id}', encodeURIComponent('' + id));
-    if (playerName === null) throw new Error("The parameter 'playerName' cannot be null.");
-    else if (playerName !== undefined) url_ += 'playerName=' + encodeURIComponent('' + playerName) + '&';
-    url_ = url_.replace(/[?&]$/, '');
-
-    let options_: any = {
-      observe: 'response',
-      responseType: 'blob',
-      headers: new HttpHeaders({
-        Accept: 'application/octet-stream',
-      }),
-    };
-
-    return this.http
-      .request('post', url_, options_)
-      .pipe(
-        _observableMergeMap((response_: any) => {
-          return this.processEndTurn(response_);
-        })
-      )
-      .pipe(
-        _observableCatch((response_: any) => {
-          if (response_ instanceof HttpResponseBase) {
-            try {
-              return this.processEndTurn(response_ as any);
-            } catch (e) {
-              return _observableThrow(e) as any as Observable<FileResponse | null>;
-            }
-          } else return _observableThrow(response_) as any as Observable<FileResponse | null>;
-        })
-      );
-  }
-
-  protected processEndTurn(response: HttpResponseBase): Observable<FileResponse | null> {
-    const status = response.status;
-    const responseBlob =
-      response instanceof HttpResponse
-        ? response.body
-        : (response as any).error instanceof Blob
-        ? (response as any).error
-        : undefined;
-
-    let _headers: any = {};
-    if (response.headers) {
-      for (let key of response.headers.keys()) {
-        _headers[key] = response.headers.get(key);
-      }
-    }
-    if (status === 200 || status === 206) {
-      const contentDisposition = response.headers ? response.headers.get('content-disposition') : undefined;
-      let fileNameMatch = contentDisposition
-        ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition)
-        : undefined;
-      let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
-      if (fileName) {
-        fileName = decodeURIComponent(fileName);
-      } else {
-        fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
-        fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
-      }
-      return _observableOf({ fileName: fileName, data: responseBlob as any, status: status, headers: _headers });
-    } else if (status !== 200 && status !== 204) {
-      return blobToText(responseBlob).pipe(
-        _observableMergeMap((_responseText: string) => {
-          return throwException('An unexpected server error occurred.', status, _responseText, _headers);
-        })
-      );
-    }
-    return _observableOf(null as any);
-  }
 }
 
 export class CharacterView implements ICharacterView {
-  identity!: CharacterIdentity;
-  statistics!: CharacterStatistics;
-  deck!: ActionCardView[];
+    identity!: CharacterIdentity;
+    statistics!: CharacterStatistics;
+    deck!: ActionCardView[];
 
-  constructor(data?: ICharacterView) {
-    if (data) {
-      for (var property in data) {
-        if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-      }
+    constructor(data?: ICharacterView) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.identity = new CharacterIdentity();
+            this.statistics = new CharacterStatistics();
+            this.deck = [];
+        }
     }
-    if (!data) {
-      this.identity = new CharacterIdentity();
-      this.statistics = new CharacterStatistics();
-      this.deck = [];
-    }
-  }
 
-  init(_data?: any) {
-    if (_data) {
-      this.identity = _data['identity'] ? CharacterIdentity.fromJS(_data['identity']) : new CharacterIdentity();
-      this.statistics = _data['statistics']
-        ? CharacterStatistics.fromJS(_data['statistics'])
-        : new CharacterStatistics();
-      if (Array.isArray(_data['deck'])) {
-        this.deck = [] as any;
-        for (let item of _data['deck']) this.deck!.push(ActionCardView.fromJS(item));
-      }
+    init(_data?: any) {
+        if (_data) {
+            this.identity = _data["identity"] ? CharacterIdentity.fromJS(_data["identity"]) : new CharacterIdentity();
+            this.statistics = _data["statistics"] ? CharacterStatistics.fromJS(_data["statistics"]) : new CharacterStatistics();
+            if (Array.isArray(_data["deck"])) {
+                this.deck = [] as any;
+                for (let item of _data["deck"])
+                    this.deck!.push(ActionCardView.fromJS(item));
+            }
+        }
     }
-  }
 
-  static fromJS(data: any): CharacterView {
-    data = typeof data === 'object' ? data : {};
-    let result = new CharacterView();
-    result.init(data);
-    return result;
-  }
-
-  toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    data['identity'] = this.identity ? this.identity.toJSON() : <any>undefined;
-    data['statistics'] = this.statistics ? this.statistics.toJSON() : <any>undefined;
-    if (Array.isArray(this.deck)) {
-      data['deck'] = [];
-      for (let item of this.deck) data['deck'].push(item.toJSON());
+    static fromJS(data: any): CharacterView {
+        data = typeof data === 'object' ? data : {};
+        let result = new CharacterView();
+        result.init(data);
+        return result;
     }
-    return data;
-  }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["identity"] = this.identity ? this.identity.toJSON() : <any>undefined;
+        data["statistics"] = this.statistics ? this.statistics.toJSON() : <any>undefined;
+        if (Array.isArray(this.deck)) {
+            data["deck"] = [];
+            for (let item of this.deck)
+                data["deck"].push(item.toJSON());
+        }
+        return data;
+    }
 }
 
 export interface ICharacterView {
-  identity: CharacterIdentity;
-  statistics: CharacterStatistics;
-  deck: ActionCardView[];
+    identity: CharacterIdentity;
+    statistics: CharacterStatistics;
+    deck: ActionCardView[];
 }
 
 export class CharacterIdentity implements ICharacterIdentity {
-  name!: string;
-  displayName!: string;
-  description?: string | undefined;
+    name!: string;
+    displayName!: string;
+    description?: string | undefined;
 
-  constructor(data?: ICharacterIdentity) {
-    if (data) {
-      for (var property in data) {
-        if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-      }
+    constructor(data?: ICharacterIdentity) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
     }
-  }
 
-  init(_data?: any) {
-    if (_data) {
-      this.name = _data['name'];
-      this.displayName = _data['displayName'];
-      this.description = _data['description'];
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.displayName = _data["displayName"];
+            this.description = _data["description"];
+        }
     }
-  }
 
-  static fromJS(data: any): CharacterIdentity {
-    data = typeof data === 'object' ? data : {};
-    let result = new CharacterIdentity();
-    result.init(data);
-    return result;
-  }
+    static fromJS(data: any): CharacterIdentity {
+        data = typeof data === 'object' ? data : {};
+        let result = new CharacterIdentity();
+        result.init(data);
+        return result;
+    }
 
-  toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    data['name'] = this.name;
-    data['displayName'] = this.displayName;
-    data['description'] = this.description;
-    return data;
-  }
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["displayName"] = this.displayName;
+        data["description"] = this.description;
+        return data;
+    }
 }
 
 export interface ICharacterIdentity {
-  name: string;
-  displayName: string;
-  description?: string | undefined;
+    name: string;
+    displayName: string;
+    description?: string | undefined;
 }
 
 export class CharacterStatistics implements ICharacterStatistics {
-  maxHealth!: number;
+    maxHealth!: number;
 
-  constructor(data?: ICharacterStatistics) {
-    if (data) {
-      for (var property in data) {
-        if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-      }
+    constructor(data?: ICharacterStatistics) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
     }
-  }
 
-  init(_data?: any) {
-    if (_data) {
-      this.maxHealth = _data['maxHealth'];
+    init(_data?: any) {
+        if (_data) {
+            this.maxHealth = _data["maxHealth"];
+        }
     }
-  }
 
-  static fromJS(data: any): CharacterStatistics {
-    data = typeof data === 'object' ? data : {};
-    let result = new CharacterStatistics();
-    result.init(data);
-    return result;
-  }
+    static fromJS(data: any): CharacterStatistics {
+        data = typeof data === 'object' ? data : {};
+        let result = new CharacterStatistics();
+        result.init(data);
+        return result;
+    }
 
-  toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    data['maxHealth'] = this.maxHealth;
-    return data;
-  }
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["maxHealth"] = this.maxHealth;
+        return data;
+    }
 }
 
 export interface ICharacterStatistics {
-  maxHealth: number;
+    maxHealth: number;
 }
 
 export class ActionCardView implements IActionCardView {
-  name!: string;
-  description?: string | undefined;
-  apCost!: number;
-  target!: ActionCardTarget;
-  mainEffect!: ActiveEffectView;
-  additionalEffects!: ActiveEffectView[];
+    name!: string;
+    description?: string | undefined;
+    apCost!: number;
+    target!: ActionCardTarget;
+    mainEffect!: ActiveEffectView;
+    additionalEffects!: ActiveEffectView[];
 
-  constructor(data?: IActionCardView) {
-    if (data) {
-      for (var property in data) {
-        if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-      }
+    constructor(data?: IActionCardView) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.additionalEffects = [];
+        }
     }
-    if (!data) {
-      this.additionalEffects = [];
-    }
-  }
 
-  init(_data?: any) {
-    if (_data) {
-      this.name = _data['name'];
-      this.description = _data['description'];
-      this.apCost = _data['apCost'];
-      this.target = _data['target'];
-      this.mainEffect = _data['mainEffect'] ? ActiveEffectView.fromJS(_data['mainEffect']) : <any>undefined;
-      if (Array.isArray(_data['additionalEffects'])) {
-        this.additionalEffects = [] as any;
-        for (let item of _data['additionalEffects']) this.additionalEffects!.push(ActiveEffectView.fromJS(item));
-      }
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.description = _data["description"];
+            this.apCost = _data["apCost"];
+            this.target = _data["target"];
+            this.mainEffect = _data["mainEffect"] ? ActiveEffectView.fromJS(_data["mainEffect"]) : <any>undefined;
+            if (Array.isArray(_data["additionalEffects"])) {
+                this.additionalEffects = [] as any;
+                for (let item of _data["additionalEffects"])
+                    this.additionalEffects!.push(ActiveEffectView.fromJS(item));
+            }
+        }
     }
-  }
 
-  static fromJS(data: any): ActionCardView {
-    data = typeof data === 'object' ? data : {};
-    let result = new ActionCardView();
-    result.init(data);
-    return result;
-  }
-
-  toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    data['name'] = this.name;
-    data['description'] = this.description;
-    data['apCost'] = this.apCost;
-    data['target'] = this.target;
-    data['mainEffect'] = this.mainEffect ? this.mainEffect.toJSON() : <any>undefined;
-    if (Array.isArray(this.additionalEffects)) {
-      data['additionalEffects'] = [];
-      for (let item of this.additionalEffects) data['additionalEffects'].push(item.toJSON());
+    static fromJS(data: any): ActionCardView {
+        data = typeof data === 'object' ? data : {};
+        let result = new ActionCardView();
+        result.init(data);
+        return result;
     }
-    return data;
-  }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["description"] = this.description;
+        data["apCost"] = this.apCost;
+        data["target"] = this.target;
+        data["mainEffect"] = this.mainEffect ? this.mainEffect.toJSON() : <any>undefined;
+        if (Array.isArray(this.additionalEffects)) {
+            data["additionalEffects"] = [];
+            for (let item of this.additionalEffects)
+                data["additionalEffects"].push(item.toJSON());
+        }
+        return data;
+    }
 }
 
 export interface IActionCardView {
-  name: string;
-  description?: string | undefined;
-  apCost: number;
-  target: ActionCardTarget;
-  mainEffect: ActiveEffectView;
-  additionalEffects: ActiveEffectView[];
+    name: string;
+    description?: string | undefined;
+    apCost: number;
+    target: ActionCardTarget;
+    mainEffect: ActiveEffectView;
+    additionalEffects: ActiveEffectView[];
 }
 
 export enum ActionCardTarget {
-  None = 'none',
-  Self = 'self',
-  OtherAlly = 'otherAlly',
-  FrontOpponent = 'frontOpponent',
-  BackOpponent = 'backOpponent',
-  AllOpponents = 'allOpponents',
-  FrontAlly = 'frontAlly',
-  BackAlly = 'backAlly',
-  AllAllies = 'allAllies',
+    None = "none",
+    Self = "self",
+    OtherAlly = "otherAlly",
+    FrontOpponent = "frontOpponent",
+    BackOpponent = "backOpponent",
+    AllOpponents = "allOpponents",
+    FrontAlly = "frontAlly",
+    BackAlly = "backAlly",
+    AllAllies = "allAllies",
 }
 
 export abstract class ActiveEffectView implements IActiveEffectView {
-  protected _discriminator: string;
 
-  constructor(data?: IActiveEffectView) {
-    if (data) {
-      for (var property in data) {
-        if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-      }
-    }
-    this._discriminator = 'ActiveEffectView';
-  }
+    protected _discriminator: string;
 
-  init(_data?: any) {}
+    constructor(data?: IActiveEffectView) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        this._discriminator = "ActiveEffectView";
+    }
 
-  static fromJS(data: any): ActiveEffectView {
-    data = typeof data === 'object' ? data : {};
-    if (data['type'] === 'DamageEffectView') {
-      let result = new DamageEffectView();
-      result.init(data);
-      return result;
+    init(_data?: any) {
     }
-    if (data['type'] === 'HealEffectView') {
-      let result = new HealEffectView();
-      result.init(data);
-      return result;
-    }
-    if (data['type'] === 'ShieldEffectView') {
-      let result = new ShieldEffectView();
-      result.init(data);
-      return result;
-    }
-    if (data['type'] === 'AddPassiveEffectView') {
-      let result = new AddPassiveEffectView();
-      result.init(data);
-      return result;
-    }
-    if (data['type'] === 'AddTriggeredEffectView') {
-      let result = new AddTriggeredEffectView();
-      result.init(data);
-      return result;
-    }
-    if (data['type'] === 'RandomEffectView') {
-      let result = new RandomEffectView();
-      result.init(data);
-      return result;
-    }
-    throw new Error("The abstract class 'ActiveEffectView' cannot be instantiated.");
-  }
 
-  toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    data['type'] = this._discriminator;
-    return data;
-  }
+    static fromJS(data: any): ActiveEffectView {
+        data = typeof data === 'object' ? data : {};
+        if (data["type"] === "DamageEffectView") {
+            let result = new DamageEffectView();
+            result.init(data);
+            return result;
+        }
+        if (data["type"] === "HealEffectView") {
+            let result = new HealEffectView();
+            result.init(data);
+            return result;
+        }
+        if (data["type"] === "ShieldEffectView") {
+            let result = new ShieldEffectView();
+            result.init(data);
+            return result;
+        }
+        if (data["type"] === "AddPassiveEffectView") {
+            let result = new AddPassiveEffectView();
+            result.init(data);
+            return result;
+        }
+        if (data["type"] === "AddTriggeredEffectView") {
+            let result = new AddTriggeredEffectView();
+            result.init(data);
+            return result;
+        }
+        if (data["type"] === "RandomEffectView") {
+            let result = new RandomEffectView();
+            result.init(data);
+            return result;
+        }
+        throw new Error("The abstract class 'ActiveEffectView' cannot be instantiated.");
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["type"] = this._discriminator;
+        return data;
+    }
 }
 
-export interface IActiveEffectView {}
+export interface IActiveEffectView {
+}
 
 export class DamageEffectView extends ActiveEffectView implements IDamageEffectView {
-  amount!: number;
-  element!: Element;
-  lifeStealRatio!: number;
+    amount!: number;
+    element!: Element;
+    lifeStealRatio!: number;
 
-  constructor(data?: IDamageEffectView) {
-    super(data);
-    this._discriminator = 'DamageEffectView';
-  }
-
-  override init(_data?: any) {
-    super.init(_data);
-    if (_data) {
-      this.amount = _data['amount'];
-      this.element = _data['element'];
-      this.lifeStealRatio = _data['lifeStealRatio'];
+    constructor(data?: IDamageEffectView) {
+        super(data);
+        this._discriminator = "DamageEffectView";
     }
-  }
 
-  static override fromJS(data: any): DamageEffectView {
-    data = typeof data === 'object' ? data : {};
-    let result = new DamageEffectView();
-    result.init(data);
-    return result;
-  }
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.amount = _data["amount"];
+            this.element = _data["element"];
+            this.lifeStealRatio = _data["lifeStealRatio"];
+        }
+    }
 
-  override toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    data['amount'] = this.amount;
-    data['element'] = this.element;
-    data['lifeStealRatio'] = this.lifeStealRatio;
-    super.toJSON(data);
-    return data;
-  }
+    static override fromJS(data: any): DamageEffectView {
+        data = typeof data === 'object' ? data : {};
+        let result = new DamageEffectView();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["amount"] = this.amount;
+        data["element"] = this.element;
+        data["lifeStealRatio"] = this.lifeStealRatio;
+        super.toJSON(data);
+        return data;
+    }
 }
 
 export interface IDamageEffectView extends IActiveEffectView {
-  amount: number;
-  element: Element;
-  lifeStealRatio: number;
+    amount: number;
+    element: Element;
+    lifeStealRatio: number;
 }
 
 export enum Element {
-  Neutral = 'neutral',
-  Fire = 'fire',
-  Earth = 'earth',
-  Water = 'water',
-  Wind = 'wind',
+    Neutral = "neutral",
+    Fire = "fire",
+    Earth = "earth",
+    Water = "water",
+    Wind = "wind",
 }
 
 export class HealEffectView extends ActiveEffectView implements IHealEffectView {
-  amount!: number;
+    amount!: number;
 
-  constructor(data?: IHealEffectView) {
-    super(data);
-    this._discriminator = 'HealEffectView';
-  }
-
-  override init(_data?: any) {
-    super.init(_data);
-    if (_data) {
-      this.amount = _data['amount'];
+    constructor(data?: IHealEffectView) {
+        super(data);
+        this._discriminator = "HealEffectView";
     }
-  }
 
-  static override fromJS(data: any): HealEffectView {
-    data = typeof data === 'object' ? data : {};
-    let result = new HealEffectView();
-    result.init(data);
-    return result;
-  }
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.amount = _data["amount"];
+        }
+    }
 
-  override toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    data['amount'] = this.amount;
-    super.toJSON(data);
-    return data;
-  }
+    static override fromJS(data: any): HealEffectView {
+        data = typeof data === 'object' ? data : {};
+        let result = new HealEffectView();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["amount"] = this.amount;
+        super.toJSON(data);
+        return data;
+    }
 }
 
 export interface IHealEffectView extends IActiveEffectView {
-  amount: number;
+    amount: number;
 }
 
 export class ShieldEffectView extends ActiveEffectView implements IShieldEffectView {
-  amount!: number;
+    amount!: number;
 
-  constructor(data?: IShieldEffectView) {
-    super(data);
-    this._discriminator = 'ShieldEffectView';
-  }
-
-  override init(_data?: any) {
-    super.init(_data);
-    if (_data) {
-      this.amount = _data['amount'];
+    constructor(data?: IShieldEffectView) {
+        super(data);
+        this._discriminator = "ShieldEffectView";
     }
-  }
 
-  static override fromJS(data: any): ShieldEffectView {
-    data = typeof data === 'object' ? data : {};
-    let result = new ShieldEffectView();
-    result.init(data);
-    return result;
-  }
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.amount = _data["amount"];
+        }
+    }
 
-  override toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    data['amount'] = this.amount;
-    super.toJSON(data);
-    return data;
-  }
+    static override fromJS(data: any): ShieldEffectView {
+        data = typeof data === 'object' ? data : {};
+        let result = new ShieldEffectView();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["amount"] = this.amount;
+        super.toJSON(data);
+        return data;
+    }
 }
 
 export interface IShieldEffectView extends IActiveEffectView {
-  amount: number;
+    amount: number;
 }
 
 export class AddPassiveEffectView extends ActiveEffectView implements IAddPassiveEffectView {
-  passiveEffect!: PassiveEffectView;
+    passiveEffect!: PassiveEffectView;
 
-  constructor(data?: IAddPassiveEffectView) {
-    super(data);
-    if (!data) {
-      this.passiveEffect = new PassiveEffectView();
+    constructor(data?: IAddPassiveEffectView) {
+        super(data);
+        if (!data) {
+            this.passiveEffect = new PassiveEffectView();
+        }
+        this._discriminator = "AddPassiveEffectView";
     }
-    this._discriminator = 'AddPassiveEffectView';
-  }
 
-  override init(_data?: any) {
-    super.init(_data);
-    if (_data) {
-      this.passiveEffect = _data['passiveEffect']
-        ? PassiveEffectView.fromJS(_data['passiveEffect'])
-        : new PassiveEffectView();
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.passiveEffect = _data["passiveEffect"] ? PassiveEffectView.fromJS(_data["passiveEffect"]) : new PassiveEffectView();
+        }
     }
-  }
 
-  static override fromJS(data: any): AddPassiveEffectView {
-    data = typeof data === 'object' ? data : {};
-    let result = new AddPassiveEffectView();
-    result.init(data);
-    return result;
-  }
+    static override fromJS(data: any): AddPassiveEffectView {
+        data = typeof data === 'object' ? data : {};
+        let result = new AddPassiveEffectView();
+        result.init(data);
+        return result;
+    }
 
-  override toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    data['passiveEffect'] = this.passiveEffect ? this.passiveEffect.toJSON() : <any>undefined;
-    super.toJSON(data);
-    return data;
-  }
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["passiveEffect"] = this.passiveEffect ? this.passiveEffect.toJSON() : <any>undefined;
+        super.toJSON(data);
+        return data;
+    }
 }
 
 export interface IAddPassiveEffectView extends IActiveEffectView {
-  passiveEffect: PassiveEffectView;
+    passiveEffect: PassiveEffectView;
 }
 
 export class PassiveEffectView implements IPassiveEffectView {
-  duration!: number;
+    duration!: number;
 
-  protected _discriminator: string;
+    protected _discriminator: string;
 
-  constructor(data?: IPassiveEffectView) {
-    if (data) {
-      for (var property in data) {
-        if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-      }
+    constructor(data?: IPassiveEffectView) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        this._discriminator = "PassiveEffectView";
     }
-    this._discriminator = 'PassiveEffectView';
-  }
 
-  init(_data?: any) {
-    if (_data) {
-      this.duration = _data['duration'];
+    init(_data?: any) {
+        if (_data) {
+            this.duration = _data["duration"];
+        }
     }
-  }
 
-  static fromJS(data: any): PassiveEffectView {
-    data = typeof data === 'object' ? data : {};
-    if (data['type'] === 'PassiveStatsModifierView') {
-      let result = new PassiveStatsModifierView();
-      result.init(data);
-      return result;
+    static fromJS(data: any): PassiveEffectView {
+        data = typeof data === 'object' ? data : {};
+        if (data["type"] === "PassiveStatsModifierView") {
+            let result = new PassiveStatsModifierView();
+            result.init(data);
+            return result;
+        }
+        let result = new PassiveEffectView();
+        result.init(data);
+        return result;
     }
-    let result = new PassiveEffectView();
-    result.init(data);
-    return result;
-  }
 
-  toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    data['type'] = this._discriminator;
-    data['duration'] = this.duration;
-    return data;
-  }
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["type"] = this._discriminator;
+        data["duration"] = this.duration;
+        return data;
+    }
 }
 
 export interface IPassiveEffectView {
-  duration: number;
+    duration: number;
 }
 
 export class PassiveStatsModifierView extends PassiveEffectView implements IPassiveStatsModifierView {
-  statsModifier!: StatsModifier;
+    effect!: StatEffect;
+    amount!: number;
 
-  constructor(data?: IPassiveStatsModifierView) {
-    super(data);
-    if (!data) {
-      this.statsModifier = new StatsModifier();
+    constructor(data?: IPassiveStatsModifierView) {
+        super(data);
+        this._discriminator = "PassiveStatsModifierView";
     }
-    this._discriminator = 'PassiveStatsModifierView';
-  }
 
-  override init(_data?: any) {
-    super.init(_data);
-    if (_data) {
-      this.statsModifier = _data['statsModifier'] ? StatsModifier.fromJS(_data['statsModifier']) : new StatsModifier();
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.effect = _data["effect"];
+            this.amount = _data["amount"];
+        }
     }
-  }
 
-  static override fromJS(data: any): PassiveStatsModifierView {
-    data = typeof data === 'object' ? data : {};
-    let result = new PassiveStatsModifierView();
-    result.init(data);
-    return result;
-  }
+    static override fromJS(data: any): PassiveStatsModifierView {
+        data = typeof data === 'object' ? data : {};
+        let result = new PassiveStatsModifierView();
+        result.init(data);
+        return result;
+    }
 
-  override toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    data['statsModifier'] = this.statsModifier ? this.statsModifier.toJSON() : <any>undefined;
-    super.toJSON(data);
-    return data;
-  }
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["effect"] = this.effect;
+        data["amount"] = this.amount;
+        super.toJSON(data);
+        return data;
+    }
 }
 
 export interface IPassiveStatsModifierView extends IPassiveEffectView {
-  statsModifier: StatsModifier;
+    effect: StatEffect;
+    amount: number;
 }
 
-export class StatsModifier implements IStatsModifier {
-  healthAdditiveModifier!: number;
-  apCostAdditiveModifier!: number;
-  damageAdditiveModifier!: number;
-  damageReductionAdditiveModifier!: number;
-
-  constructor(data?: IStatsModifier) {
-    if (data) {
-      for (var property in data) {
-        if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-      }
-    }
-  }
-
-  init(_data?: any) {
-    if (_data) {
-      this.healthAdditiveModifier = _data['healthAdditiveModifier'];
-      this.apCostAdditiveModifier = _data['apCostAdditiveModifier'];
-      this.damageAdditiveModifier = _data['damageAdditiveModifier'];
-      this.damageReductionAdditiveModifier = _data['damageReductionAdditiveModifier'];
-    }
-  }
-
-  static fromJS(data: any): StatsModifier {
-    data = typeof data === 'object' ? data : {};
-    let result = new StatsModifier();
-    result.init(data);
-    return result;
-  }
-
-  toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    data['healthAdditiveModifier'] = this.healthAdditiveModifier;
-    data['apCostAdditiveModifier'] = this.apCostAdditiveModifier;
-    data['damageAdditiveModifier'] = this.damageAdditiveModifier;
-    data['damageReductionAdditiveModifier'] = this.damageReductionAdditiveModifier;
-    return data;
-  }
-}
-
-export interface IStatsModifier {
-  healthAdditiveModifier: number;
-  apCostAdditiveModifier: number;
-  damageAdditiveModifier: number;
-  damageReductionAdditiveModifier: number;
-}
-
-export class TriggeredEffectView implements ITriggeredEffectView {
-  trigger!: EffectTriggerView;
-  effect!: ActiveEffectView;
-
-  constructor(data?: ITriggeredEffectView) {
-    if (data) {
-      for (var property in data) {
-        if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-      }
-    }
-    if (!data) {
-      this.trigger = new EffectTriggerView();
-    }
-  }
-
-  init(_data?: any) {
-    if (_data) {
-      this.trigger = _data['trigger'] ? EffectTriggerView.fromJS(_data['trigger']) : new EffectTriggerView();
-      this.effect = _data['effect'] ? ActiveEffectView.fromJS(_data['effect']) : <any>undefined;
-    }
-  }
-
-  static fromJS(data: any): TriggeredEffectView {
-    data = typeof data === 'object' ? data : {};
-    let result = new TriggeredEffectView();
-    result.init(data);
-    return result;
-  }
-
-  toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    data['trigger'] = this.trigger ? this.trigger.toJSON() : <any>undefined;
-    data['effect'] = this.effect ? this.effect.toJSON() : <any>undefined;
-    return data;
-  }
-}
-
-export interface ITriggeredEffectView {
-  trigger: EffectTriggerView;
-  effect: ActiveEffectView;
-}
-
-export class EffectTriggerView implements IEffectTriggerView {
-  protected _discriminator: string;
-
-  constructor(data?: IEffectTriggerView) {
-    if (data) {
-      for (var property in data) {
-        if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-      }
-    }
-    this._discriminator = 'EffectTriggerView';
-  }
-
-  init(_data?: any) {}
-
-  static fromJS(data: any): EffectTriggerView {
-    data = typeof data === 'object' ? data : {};
-    if (data['type'] === 'TurnTriggerView') {
-      let result = new TurnTriggerView();
-      result.init(data);
-      return result;
-    }
-    let result = new EffectTriggerView();
-    result.init(data);
-    return result;
-  }
-
-  toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    data['type'] = this._discriminator;
-    return data;
-  }
-}
-
-export interface IEffectTriggerView {}
-
-export class TurnTriggerView extends EffectTriggerView implements ITurnTriggerView {
-  moment!: TriggerMoment;
-  duration!: number;
-  initialDelay!: number;
-
-  constructor(data?: ITurnTriggerView) {
-    super(data);
-    this._discriminator = 'TurnTriggerView';
-  }
-
-  override init(_data?: any) {
-    super.init(_data);
-    if (_data) {
-      this.moment = _data['moment'];
-      this.duration = _data['duration'];
-      this.initialDelay = _data['initialDelay'];
-    }
-  }
-
-  static override fromJS(data: any): TurnTriggerView {
-    data = typeof data === 'object' ? data : {};
-    let result = new TurnTriggerView();
-    result.init(data);
-    return result;
-  }
-
-  override toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    data['moment'] = this.moment;
-    data['duration'] = this.duration;
-    data['initialDelay'] = this.initialDelay;
-    super.toJSON(data);
-    return data;
-  }
-}
-
-export interface ITurnTriggerView extends IEffectTriggerView {
-  moment: TriggerMoment;
-  duration: number;
-  initialDelay: number;
-}
-
-export enum TriggerMoment {
-  StartOfSourceTurn = 'startOfSourceTurn',
-  EndOfSourceTurn = 'endOfSourceTurn',
-  StartOfTargetTurn = 'startOfTargetTurn',
-  EndOfTargetTurn = 'endOfTargetTurn',
+export enum StatEffect {
+    IncreaseApCost = "increaseApCost",
+    ReduceApCost = "reduceApCost",
+    IncreaseDamage = "increaseDamage",
+    ReduceDamage = "reduceDamage",
+    IncreaseResistance = "increaseResistance",
+    ReduceResistance = "reduceResistance",
 }
 
 export class AddTriggeredEffectView extends ActiveEffectView implements IAddTriggeredEffectView {
-  triggeredEffect!: TriggeredEffectView;
+    triggeredEffect!: TriggeredEffectView;
 
-  constructor(data?: IAddTriggeredEffectView) {
-    super(data);
-    if (!data) {
-      this.triggeredEffect = new TriggeredEffectView();
+    constructor(data?: IAddTriggeredEffectView) {
+        super(data);
+        if (!data) {
+            this.triggeredEffect = new TriggeredEffectView();
+        }
+        this._discriminator = "AddTriggeredEffectView";
     }
-    this._discriminator = 'AddTriggeredEffectView';
-  }
 
-  override init(_data?: any) {
-    super.init(_data);
-    if (_data) {
-      this.triggeredEffect = _data['triggeredEffect']
-        ? TriggeredEffectView.fromJS(_data['triggeredEffect'])
-        : new TriggeredEffectView();
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.triggeredEffect = _data["triggeredEffect"] ? TriggeredEffectView.fromJS(_data["triggeredEffect"]) : new TriggeredEffectView();
+        }
     }
-  }
 
-  static override fromJS(data: any): AddTriggeredEffectView {
-    data = typeof data === 'object' ? data : {};
-    let result = new AddTriggeredEffectView();
-    result.init(data);
-    return result;
-  }
+    static override fromJS(data: any): AddTriggeredEffectView {
+        data = typeof data === 'object' ? data : {};
+        let result = new AddTriggeredEffectView();
+        result.init(data);
+        return result;
+    }
 
-  override toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    data['triggeredEffect'] = this.triggeredEffect ? this.triggeredEffect.toJSON() : <any>undefined;
-    super.toJSON(data);
-    return data;
-  }
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["triggeredEffect"] = this.triggeredEffect ? this.triggeredEffect.toJSON() : <any>undefined;
+        super.toJSON(data);
+        return data;
+    }
 }
 
 export interface IAddTriggeredEffectView extends IActiveEffectView {
-  triggeredEffect: TriggeredEffectView;
+    triggeredEffect: TriggeredEffectView;
+}
+
+export class TriggeredEffectView implements ITriggeredEffectView {
+    trigger!: EffectTriggerView;
+    effect!: ActiveEffectView;
+
+    constructor(data?: ITriggeredEffectView) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.trigger = new EffectTriggerView();
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.trigger = _data["trigger"] ? EffectTriggerView.fromJS(_data["trigger"]) : new EffectTriggerView();
+            this.effect = _data["effect"] ? ActiveEffectView.fromJS(_data["effect"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): TriggeredEffectView {
+        data = typeof data === 'object' ? data : {};
+        let result = new TriggeredEffectView();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["trigger"] = this.trigger ? this.trigger.toJSON() : <any>undefined;
+        data["effect"] = this.effect ? this.effect.toJSON() : <any>undefined;
+        return data;
+    }
+}
+
+export interface ITriggeredEffectView {
+    trigger: EffectTriggerView;
+    effect: ActiveEffectView;
+}
+
+export class EffectTriggerView implements IEffectTriggerView {
+
+    protected _discriminator: string;
+
+    constructor(data?: IEffectTriggerView) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        this._discriminator = "EffectTriggerView";
+    }
+
+    init(_data?: any) {
+    }
+
+    static fromJS(data: any): EffectTriggerView {
+        data = typeof data === 'object' ? data : {};
+        if (data["type"] === "TurnTriggerView") {
+            let result = new TurnTriggerView();
+            result.init(data);
+            return result;
+        }
+        let result = new EffectTriggerView();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["type"] = this._discriminator;
+        return data;
+    }
+}
+
+export interface IEffectTriggerView {
+}
+
+export class TurnTriggerView extends EffectTriggerView implements ITurnTriggerView {
+    moment!: TriggerMoment;
+    duration!: number;
+    initialDelay!: number;
+
+    constructor(data?: ITurnTriggerView) {
+        super(data);
+        this._discriminator = "TurnTriggerView";
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.moment = _data["moment"];
+            this.duration = _data["duration"];
+            this.initialDelay = _data["initialDelay"];
+        }
+    }
+
+    static override fromJS(data: any): TurnTriggerView {
+        data = typeof data === 'object' ? data : {};
+        let result = new TurnTriggerView();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["moment"] = this.moment;
+        data["duration"] = this.duration;
+        data["initialDelay"] = this.initialDelay;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface ITurnTriggerView extends IEffectTriggerView {
+    moment: TriggerMoment;
+    duration: number;
+    initialDelay: number;
+}
+
+export enum TriggerMoment {
+    StartOfSourceTurn = "startOfSourceTurn",
+    EndOfSourceTurn = "endOfSourceTurn",
+    StartOfTargetTurn = "startOfTargetTurn",
+    EndOfTargetTurn = "endOfTargetTurn",
 }
 
 export class RandomEffectView extends ActiveEffectView implements IRandomEffectView {
-  entries!: RandomEffectEntryView[];
+    entries!: RandomEffectEntryView[];
 
-  constructor(data?: IRandomEffectView) {
-    super(data);
-    if (!data) {
-      this.entries = [];
+    constructor(data?: IRandomEffectView) {
+        super(data);
+        if (!data) {
+            this.entries = [];
+        }
+        this._discriminator = "RandomEffectView";
     }
-    this._discriminator = 'RandomEffectView';
-  }
 
-  override init(_data?: any) {
-    super.init(_data);
-    if (_data) {
-      if (Array.isArray(_data['entries'])) {
-        this.entries = [] as any;
-        for (let item of _data['entries']) this.entries!.push(RandomEffectEntryView.fromJS(item));
-      }
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            if (Array.isArray(_data["entries"])) {
+                this.entries = [] as any;
+                for (let item of _data["entries"])
+                    this.entries!.push(RandomEffectEntryView.fromJS(item));
+            }
+        }
     }
-  }
 
-  static override fromJS(data: any): RandomEffectView {
-    data = typeof data === 'object' ? data : {};
-    let result = new RandomEffectView();
-    result.init(data);
-    return result;
-  }
-
-  override toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    if (Array.isArray(this.entries)) {
-      data['entries'] = [];
-      for (let item of this.entries) data['entries'].push(item.toJSON());
+    static override fromJS(data: any): RandomEffectView {
+        data = typeof data === 'object' ? data : {};
+        let result = new RandomEffectView();
+        result.init(data);
+        return result;
     }
-    super.toJSON(data);
-    return data;
-  }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.entries)) {
+            data["entries"] = [];
+            for (let item of this.entries)
+                data["entries"].push(item.toJSON());
+        }
+        super.toJSON(data);
+        return data;
+    }
 }
 
 export interface IRandomEffectView extends IActiveEffectView {
-  entries: RandomEffectEntryView[];
+    entries: RandomEffectEntryView[];
 }
 
 export class RandomEffectEntryView implements IRandomEffectEntryView {
-  effect!: ActiveEffectView;
-  probability!: number;
+    effect!: ActiveEffectView;
+    probability!: number;
 
-  constructor(data?: IRandomEffectEntryView) {
-    if (data) {
-      for (var property in data) {
-        if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-      }
+    constructor(data?: IRandomEffectEntryView) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
     }
-  }
 
-  init(_data?: any) {
-    if (_data) {
-      this.effect = _data['effect'] ? ActiveEffectView.fromJS(_data['effect']) : <any>undefined;
-      this.probability = _data['probability'];
+    init(_data?: any) {
+        if (_data) {
+            this.effect = _data["effect"] ? ActiveEffectView.fromJS(_data["effect"]) : <any>undefined;
+            this.probability = _data["probability"];
+        }
     }
-  }
 
-  static fromJS(data: any): RandomEffectEntryView {
-    data = typeof data === 'object' ? data : {};
-    let result = new RandomEffectEntryView();
-    result.init(data);
-    return result;
-  }
+    static fromJS(data: any): RandomEffectEntryView {
+        data = typeof data === 'object' ? data : {};
+        let result = new RandomEffectEntryView();
+        result.init(data);
+        return result;
+    }
 
-  toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    data['effect'] = this.effect ? this.effect.toJSON() : <any>undefined;
-    data['probability'] = this.probability;
-    return data;
-  }
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["effect"] = this.effect ? this.effect.toJSON() : <any>undefined;
+        data["probability"] = this.probability;
+        return data;
+    }
 }
 
 export interface IRandomEffectEntryView {
-  effect: ActiveEffectView;
-  probability: number;
+    effect: ActiveEffectView;
+    probability: number;
 }
 
 export class CombatInPreparationView implements ICombatInPreparationView {
-  id!: string;
-  leftPlayerName!: string;
-  leftFrontCharacter?: string | undefined;
-  leftBackCharacter?: string | undefined;
-  leftReady!: boolean;
-  rightPlayerIsAi!: boolean;
-  rightPlayerName?: string | undefined;
-  rightFrontCharacter?: string | undefined;
-  rightBackCharacter?: string | undefined;
-  rightReady!: boolean;
+    id!: string;
+    leftPlayerName!: string;
+    leftFrontCharacter?: string | undefined;
+    leftBackCharacter?: string | undefined;
+    leftReady!: boolean;
+    rightPlayerIsAi!: boolean;
+    rightPlayerName?: string | undefined;
+    rightFrontCharacter?: string | undefined;
+    rightBackCharacter?: string | undefined;
+    rightReady!: boolean;
 
-  constructor(data?: ICombatInPreparationView) {
-    if (data) {
-      for (var property in data) {
-        if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-      }
+    constructor(data?: ICombatInPreparationView) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
     }
-  }
 
-  init(_data?: any) {
-    if (_data) {
-      this.id = _data['id'];
-      this.leftPlayerName = _data['leftPlayerName'];
-      this.leftFrontCharacter = _data['leftFrontCharacter'];
-      this.leftBackCharacter = _data['leftBackCharacter'];
-      this.leftReady = _data['leftReady'];
-      this.rightPlayerIsAi = _data['rightPlayerIsAi'];
-      this.rightPlayerName = _data['rightPlayerName'];
-      this.rightFrontCharacter = _data['rightFrontCharacter'];
-      this.rightBackCharacter = _data['rightBackCharacter'];
-      this.rightReady = _data['rightReady'];
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.leftPlayerName = _data["leftPlayerName"];
+            this.leftFrontCharacter = _data["leftFrontCharacter"];
+            this.leftBackCharacter = _data["leftBackCharacter"];
+            this.leftReady = _data["leftReady"];
+            this.rightPlayerIsAi = _data["rightPlayerIsAi"];
+            this.rightPlayerName = _data["rightPlayerName"];
+            this.rightFrontCharacter = _data["rightFrontCharacter"];
+            this.rightBackCharacter = _data["rightBackCharacter"];
+            this.rightReady = _data["rightReady"];
+        }
     }
-  }
 
-  static fromJS(data: any): CombatInPreparationView {
-    data = typeof data === 'object' ? data : {};
-    let result = new CombatInPreparationView();
-    result.init(data);
-    return result;
-  }
+    static fromJS(data: any): CombatInPreparationView {
+        data = typeof data === 'object' ? data : {};
+        let result = new CombatInPreparationView();
+        result.init(data);
+        return result;
+    }
 
-  toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    data['id'] = this.id;
-    data['leftPlayerName'] = this.leftPlayerName;
-    data['leftFrontCharacter'] = this.leftFrontCharacter;
-    data['leftBackCharacter'] = this.leftBackCharacter;
-    data['leftReady'] = this.leftReady;
-    data['rightPlayerIsAi'] = this.rightPlayerIsAi;
-    data['rightPlayerName'] = this.rightPlayerName;
-    data['rightFrontCharacter'] = this.rightFrontCharacter;
-    data['rightBackCharacter'] = this.rightBackCharacter;
-    data['rightReady'] = this.rightReady;
-    return data;
-  }
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["leftPlayerName"] = this.leftPlayerName;
+        data["leftFrontCharacter"] = this.leftFrontCharacter;
+        data["leftBackCharacter"] = this.leftBackCharacter;
+        data["leftReady"] = this.leftReady;
+        data["rightPlayerIsAi"] = this.rightPlayerIsAi;
+        data["rightPlayerName"] = this.rightPlayerName;
+        data["rightFrontCharacter"] = this.rightFrontCharacter;
+        data["rightBackCharacter"] = this.rightBackCharacter;
+        data["rightReady"] = this.rightReady;
+        return data;
+    }
 }
 
 export interface ICombatInPreparationView {
-  id: string;
-  leftPlayerName: string;
-  leftFrontCharacter?: string | undefined;
-  leftBackCharacter?: string | undefined;
-  leftReady: boolean;
-  rightPlayerIsAi: boolean;
-  rightPlayerName?: string | undefined;
-  rightFrontCharacter?: string | undefined;
-  rightBackCharacter?: string | undefined;
-  rightReady: boolean;
+    id: string;
+    leftPlayerName: string;
+    leftFrontCharacter?: string | undefined;
+    leftBackCharacter?: string | undefined;
+    leftReady: boolean;
+    rightPlayerIsAi: boolean;
+    rightPlayerName?: string | undefined;
+    rightFrontCharacter?: string | undefined;
+    rightBackCharacter?: string | undefined;
+    rightReady: boolean;
 }
 
 export class UpdateCombatInPreparationRequest implements IUpdateCombatInPreparationRequest {
-  isAi?: boolean | undefined;
-  playerName!: string;
-  ready!: boolean;
-  frontCharacter?: string | undefined;
-  backCharacter?: string | undefined;
+    isAi?: boolean | undefined;
+    playerName!: string;
+    ready!: boolean;
+    frontCharacter?: string | undefined;
+    backCharacter?: string | undefined;
 
-  constructor(data?: IUpdateCombatInPreparationRequest) {
-    if (data) {
-      for (var property in data) {
-        if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-      }
+    constructor(data?: IUpdateCombatInPreparationRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
     }
-  }
 
-  init(_data?: any) {
-    if (_data) {
-      this.isAi = _data['isAi'];
-      this.playerName = _data['playerName'];
-      this.ready = _data['ready'];
-      this.frontCharacter = _data['frontCharacter'];
-      this.backCharacter = _data['backCharacter'];
+    init(_data?: any) {
+        if (_data) {
+            this.isAi = _data["isAi"];
+            this.playerName = _data["playerName"];
+            this.ready = _data["ready"];
+            this.frontCharacter = _data["frontCharacter"];
+            this.backCharacter = _data["backCharacter"];
+        }
     }
-  }
 
-  static fromJS(data: any): UpdateCombatInPreparationRequest {
-    data = typeof data === 'object' ? data : {};
-    let result = new UpdateCombatInPreparationRequest();
-    result.init(data);
-    return result;
-  }
+    static fromJS(data: any): UpdateCombatInPreparationRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateCombatInPreparationRequest();
+        result.init(data);
+        return result;
+    }
 
-  toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    data['isAi'] = this.isAi;
-    data['playerName'] = this.playerName;
-    data['ready'] = this.ready;
-    data['frontCharacter'] = this.frontCharacter;
-    data['backCharacter'] = this.backCharacter;
-    return data;
-  }
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["isAi"] = this.isAi;
+        data["playerName"] = this.playerName;
+        data["ready"] = this.ready;
+        data["frontCharacter"] = this.frontCharacter;
+        data["backCharacter"] = this.backCharacter;
+        return data;
+    }
 }
 
 export interface IUpdateCombatInPreparationRequest {
-  isAi?: boolean | undefined;
-  playerName: string;
-  ready: boolean;
-  frontCharacter?: string | undefined;
-  backCharacter?: string | undefined;
+    isAi?: boolean | undefined;
+    playerName: string;
+    ready: boolean;
+    frontCharacter?: string | undefined;
+    backCharacter?: string | undefined;
 }
 
 export class BaseCombatView implements IBaseCombatView {
-  ongoing!: boolean;
-  over!: boolean;
-  turn!: number;
-  maxAp!: number;
-  currentSide!: CombatSide;
-  currentPhase!: CombatSideTurnPhase;
-  winner!: CombatSide;
+    ongoing!: boolean;
+    over!: boolean;
+    turn!: number;
+    maxAp!: number;
+    currentSide!: CombatSide;
+    currentPhase!: CombatSideTurnPhase;
+    winner!: CombatSide;
 
-  constructor(data?: IBaseCombatView) {
-    if (data) {
-      for (var property in data) {
-        if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-      }
+    constructor(data?: IBaseCombatView) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
     }
-  }
 
-  init(_data?: any) {
-    if (_data) {
-      this.ongoing = _data['ongoing'];
-      this.over = _data['over'];
-      this.turn = _data['turn'];
-      this.maxAp = _data['maxAp'];
-      this.currentSide = _data['currentSide'];
-      this.currentPhase = _data['currentPhase'];
-      this.winner = _data['winner'];
+    init(_data?: any) {
+        if (_data) {
+            this.ongoing = _data["ongoing"];
+            this.over = _data["over"];
+            this.turn = _data["turn"];
+            this.maxAp = _data["maxAp"];
+            this.currentSide = _data["currentSide"];
+            this.currentPhase = _data["currentPhase"];
+            this.winner = _data["winner"];
+        }
     }
-  }
 
-  static fromJS(data: any): BaseCombatView {
-    data = typeof data === 'object' ? data : {};
-    let result = new BaseCombatView();
-    result.init(data);
-    return result;
-  }
+    static fromJS(data: any): BaseCombatView {
+        data = typeof data === 'object' ? data : {};
+        let result = new BaseCombatView();
+        result.init(data);
+        return result;
+    }
 
-  toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    data['ongoing'] = this.ongoing;
-    data['over'] = this.over;
-    data['turn'] = this.turn;
-    data['maxAp'] = this.maxAp;
-    data['currentSide'] = this.currentSide;
-    data['currentPhase'] = this.currentPhase;
-    data['winner'] = this.winner;
-    return data;
-  }
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["ongoing"] = this.ongoing;
+        data["over"] = this.over;
+        data["turn"] = this.turn;
+        data["maxAp"] = this.maxAp;
+        data["currentSide"] = this.currentSide;
+        data["currentPhase"] = this.currentPhase;
+        data["winner"] = this.winner;
+        return data;
+    }
 }
 
 export interface IBaseCombatView {
-  ongoing: boolean;
-  over: boolean;
-  turn: number;
-  maxAp: number;
-  currentSide: CombatSide;
-  currentPhase: CombatSideTurnPhase;
-  winner: CombatSide;
+    ongoing: boolean;
+    over: boolean;
+    turn: number;
+    maxAp: number;
+    currentSide: CombatSide;
+    currentPhase: CombatSideTurnPhase;
+    winner: CombatSide;
 }
 
 export class PlayerCombatView extends BaseCombatView implements IPlayerCombatView {
-  id!: string;
-  player!: PlayerSideView;
-  opponent!: CombatSideView;
+    id!: string;
+    player!: PlayerSideView;
+    opponent!: CombatSideView;
 
-  constructor(data?: IPlayerCombatView) {
-    super(data);
-    if (!data) {
-      this.player = new PlayerSideView();
-      this.opponent = new CombatSideView();
+    constructor(data?: IPlayerCombatView) {
+        super(data);
+        if (!data) {
+            this.player = new PlayerSideView();
+            this.opponent = new CombatSideView();
+        }
     }
-  }
 
-  override init(_data?: any) {
-    super.init(_data);
-    if (_data) {
-      this.id = _data['id'];
-      this.player = _data['player'] ? PlayerSideView.fromJS(_data['player']) : new PlayerSideView();
-      this.opponent = _data['opponent'] ? CombatSideView.fromJS(_data['opponent']) : new CombatSideView();
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.id = _data["id"];
+            this.player = _data["player"] ? PlayerSideView.fromJS(_data["player"]) : new PlayerSideView();
+            this.opponent = _data["opponent"] ? CombatSideView.fromJS(_data["opponent"]) : new CombatSideView();
+        }
     }
-  }
 
-  static override fromJS(data: any): PlayerCombatView {
-    data = typeof data === 'object' ? data : {};
-    let result = new PlayerCombatView();
-    result.init(data);
-    return result;
-  }
+    static override fromJS(data: any): PlayerCombatView {
+        data = typeof data === 'object' ? data : {};
+        let result = new PlayerCombatView();
+        result.init(data);
+        return result;
+    }
 
-  override toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    data['id'] = this.id;
-    data['player'] = this.player ? this.player.toJSON() : <any>undefined;
-    data['opponent'] = this.opponent ? this.opponent.toJSON() : <any>undefined;
-    super.toJSON(data);
-    return data;
-  }
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["player"] = this.player ? this.player.toJSON() : <any>undefined;
+        data["opponent"] = this.opponent ? this.opponent.toJSON() : <any>undefined;
+        super.toJSON(data);
+        return data;
+    }
 }
 
 export interface IPlayerCombatView extends IBaseCombatView {
-  id: string;
-  player: PlayerSideView;
-  opponent: CombatSideView;
+    id: string;
+    player: PlayerSideView;
+    opponent: CombatSideView;
 }
 
 export class CombatSideView implements ICombatSideView {
-  playerName!: string;
-  isAi!: boolean;
-  side!: CombatSide;
-  ap!: number;
-  handSize!: number;
-  deckSize!: number;
-  frontCharacter!: CharacterCombatView;
-  backCharacter?: CharacterCombatView | undefined;
+    playerName!: string;
+    isAi!: boolean;
+    side!: CombatSide;
+    ap!: number;
+    handSize!: number;
+    deckSize!: number;
+    frontCharacter!: CharacterCombatView;
+    backCharacter?: CharacterCombatView | undefined;
 
-  constructor(data?: ICombatSideView) {
-    if (data) {
-      for (var property in data) {
-        if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-      }
+    constructor(data?: ICombatSideView) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.frontCharacter = new CharacterCombatView();
+        }
     }
-    if (!data) {
-      this.frontCharacter = new CharacterCombatView();
+
+    init(_data?: any) {
+        if (_data) {
+            this.playerName = _data["playerName"];
+            this.isAi = _data["isAi"];
+            this.side = _data["side"];
+            this.ap = _data["ap"];
+            this.handSize = _data["handSize"];
+            this.deckSize = _data["deckSize"];
+            this.frontCharacter = _data["frontCharacter"] ? CharacterCombatView.fromJS(_data["frontCharacter"]) : new CharacterCombatView();
+            this.backCharacter = _data["backCharacter"] ? CharacterCombatView.fromJS(_data["backCharacter"]) : <any>undefined;
+        }
     }
-  }
 
-  init(_data?: any) {
-    if (_data) {
-      this.playerName = _data['playerName'];
-      this.isAi = _data['isAi'];
-      this.side = _data['side'];
-      this.ap = _data['ap'];
-      this.handSize = _data['handSize'];
-      this.deckSize = _data['deckSize'];
-      this.frontCharacter = _data['frontCharacter']
-        ? CharacterCombatView.fromJS(_data['frontCharacter'])
-        : new CharacterCombatView();
-      this.backCharacter = _data['backCharacter'] ? CharacterCombatView.fromJS(_data['backCharacter']) : <any>undefined;
+    static fromJS(data: any): CombatSideView {
+        data = typeof data === 'object' ? data : {};
+        let result = new CombatSideView();
+        result.init(data);
+        return result;
     }
-  }
 
-  static fromJS(data: any): CombatSideView {
-    data = typeof data === 'object' ? data : {};
-    let result = new CombatSideView();
-    result.init(data);
-    return result;
-  }
-
-  toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    data['playerName'] = this.playerName;
-    data['isAi'] = this.isAi;
-    data['side'] = this.side;
-    data['ap'] = this.ap;
-    data['handSize'] = this.handSize;
-    data['deckSize'] = this.deckSize;
-    data['frontCharacter'] = this.frontCharacter ? this.frontCharacter.toJSON() : <any>undefined;
-    data['backCharacter'] = this.backCharacter ? this.backCharacter.toJSON() : <any>undefined;
-    return data;
-  }
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["playerName"] = this.playerName;
+        data["isAi"] = this.isAi;
+        data["side"] = this.side;
+        data["ap"] = this.ap;
+        data["handSize"] = this.handSize;
+        data["deckSize"] = this.deckSize;
+        data["frontCharacter"] = this.frontCharacter ? this.frontCharacter.toJSON() : <any>undefined;
+        data["backCharacter"] = this.backCharacter ? this.backCharacter.toJSON() : <any>undefined;
+        return data;
+    }
 }
 
 export interface ICombatSideView {
-  playerName: string;
-  isAi: boolean;
-  side: CombatSide;
-  ap: number;
-  handSize: number;
-  deckSize: number;
-  frontCharacter: CharacterCombatView;
-  backCharacter?: CharacterCombatView | undefined;
+    playerName: string;
+    isAi: boolean;
+    side: CombatSide;
+    ap: number;
+    handSize: number;
+    deckSize: number;
+    frontCharacter: CharacterCombatView;
+    backCharacter?: CharacterCombatView | undefined;
 }
 
 export class PlayerSideView extends CombatSideView implements IPlayerSideView {
-  hand!: CardInstanceWithModifiersView[];
+    hand!: CardInstanceWithModifiersView[];
 
-  constructor(data?: IPlayerSideView) {
-    super(data);
-    if (!data) {
-      this.hand = [];
+    constructor(data?: IPlayerSideView) {
+        super(data);
+        if (!data) {
+            this.hand = [];
+        }
     }
-  }
 
-  override init(_data?: any) {
-    super.init(_data);
-    if (_data) {
-      if (Array.isArray(_data['hand'])) {
-        this.hand = [] as any;
-        for (let item of _data['hand']) this.hand!.push(CardInstanceWithModifiersView.fromJS(item));
-      }
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            if (Array.isArray(_data["hand"])) {
+                this.hand = [] as any;
+                for (let item of _data["hand"])
+                    this.hand!.push(CardInstanceWithModifiersView.fromJS(item));
+            }
+        }
     }
-  }
 
-  static override fromJS(data: any): PlayerSideView {
-    data = typeof data === 'object' ? data : {};
-    let result = new PlayerSideView();
-    result.init(data);
-    return result;
-  }
-
-  override toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    if (Array.isArray(this.hand)) {
-      data['hand'] = [];
-      for (let item of this.hand) data['hand'].push(item.toJSON());
+    static override fromJS(data: any): PlayerSideView {
+        data = typeof data === 'object' ? data : {};
+        let result = new PlayerSideView();
+        result.init(data);
+        return result;
     }
-    super.toJSON(data);
-    return data;
-  }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.hand)) {
+            data["hand"] = [];
+            for (let item of this.hand)
+                data["hand"].push(item.toJSON());
+        }
+        super.toJSON(data);
+        return data;
+    }
 }
 
 export interface IPlayerSideView extends ICombatSideView {
-  hand: CardInstanceWithModifiersView[];
+    hand: CardInstanceWithModifiersView[];
 }
 
 export class CardInstanceView implements ICardInstanceView {
-  card!: ActionCardView;
-  character!: string;
+    card!: ActionCardView;
+    character!: string;
 
-  constructor(data?: ICardInstanceView) {
-    if (data) {
-      for (var property in data) {
-        if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-      }
+    constructor(data?: ICardInstanceView) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.card = new ActionCardView();
+        }
     }
-    if (!data) {
-      this.card = new ActionCardView();
+
+    init(_data?: any) {
+        if (_data) {
+            this.card = _data["card"] ? ActionCardView.fromJS(_data["card"]) : new ActionCardView();
+            this.character = _data["character"];
+        }
     }
-  }
 
-  init(_data?: any) {
-    if (_data) {
-      this.card = _data['card'] ? ActionCardView.fromJS(_data['card']) : new ActionCardView();
-      this.character = _data['character'];
+    static fromJS(data: any): CardInstanceView {
+        data = typeof data === 'object' ? data : {};
+        let result = new CardInstanceView();
+        result.init(data);
+        return result;
     }
-  }
 
-  static fromJS(data: any): CardInstanceView {
-    data = typeof data === 'object' ? data : {};
-    let result = new CardInstanceView();
-    result.init(data);
-    return result;
-  }
-
-  toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    data['card'] = this.card ? this.card.toJSON() : <any>undefined;
-    data['character'] = this.character;
-    return data;
-  }
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["card"] = this.card ? this.card.toJSON() : <any>undefined;
+        data["character"] = this.character;
+        return data;
+    }
 }
 
 export interface ICardInstanceView {
-  card: ActionCardView;
-  character: string;
+    card: ActionCardView;
+    character: string;
 }
 
 export class CardInstanceWithModifiersView extends CardInstanceView implements ICardInstanceWithModifiersView {
-  baseCard!: ActionCardView;
+    baseCard!: ActionCardView;
 
-  constructor(data?: ICardInstanceWithModifiersView) {
-    super(data);
-    if (!data) {
-      this.baseCard = new ActionCardView();
+    constructor(data?: ICardInstanceWithModifiersView) {
+        super(data);
+        if (!data) {
+            this.baseCard = new ActionCardView();
+        }
     }
-  }
 
-  override init(_data?: any) {
-    super.init(_data);
-    if (_data) {
-      this.baseCard = _data['baseCard'] ? ActionCardView.fromJS(_data['baseCard']) : new ActionCardView();
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.baseCard = _data["baseCard"] ? ActionCardView.fromJS(_data["baseCard"]) : new ActionCardView();
+        }
     }
-  }
 
-  static override fromJS(data: any): CardInstanceWithModifiersView {
-    data = typeof data === 'object' ? data : {};
-    let result = new CardInstanceWithModifiersView();
-    result.init(data);
-    return result;
-  }
+    static override fromJS(data: any): CardInstanceWithModifiersView {
+        data = typeof data === 'object' ? data : {};
+        let result = new CardInstanceWithModifiersView();
+        result.init(data);
+        return result;
+    }
 
-  override toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    data['baseCard'] = this.baseCard ? this.baseCard.toJSON() : <any>undefined;
-    super.toJSON(data);
-    return data;
-  }
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["baseCard"] = this.baseCard ? this.baseCard.toJSON() : <any>undefined;
+        super.toJSON(data);
+        return data;
+    }
 }
 
 export interface ICardInstanceWithModifiersView extends ICardInstanceView {
-  baseCard: ActionCardView;
+    baseCard: ActionCardView;
 }
 
 export enum CombatSide {
-  None = 'none',
-  Left = 'left',
-  Right = 'right',
+    None = "none",
+    Left = "left",
+    Right = "right",
 }
 
 export class CharacterCombatView implements ICharacterCombatView {
-  character!: CharacterView;
-  health!: number;
-  shield!: number;
-  passiveEffects!: PassiveEffectInstanceView[];
-  modifiers!: StatsModifier;
+    character!: CharacterView;
+    health!: number;
+    shield!: number;
+    passiveEffects!: PassiveEffectInstanceView[];
+    triggeredEffects!: TriggeredEffectInstanceView[];
+    modifiers!: StatsModifier;
 
-  constructor(data?: ICharacterCombatView) {
-    if (data) {
-      for (var property in data) {
-        if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-      }
+    constructor(data?: ICharacterCombatView) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.character = new CharacterView();
+            this.passiveEffects = [];
+            this.triggeredEffects = [];
+            this.modifiers = new StatsModifier();
+        }
     }
-    if (!data) {
-      this.character = new CharacterView();
-      this.passiveEffects = [];
-      this.modifiers = new StatsModifier();
-    }
-  }
 
-  init(_data?: any) {
-    if (_data) {
-      this.character = _data['character'] ? CharacterView.fromJS(_data['character']) : new CharacterView();
-      this.health = _data['health'];
-      this.shield = _data['shield'];
-      if (Array.isArray(_data['passiveEffects'])) {
-        this.passiveEffects = [] as any;
-        for (let item of _data['passiveEffects']) this.passiveEffects!.push(PassiveEffectInstanceView.fromJS(item));
-      }
-      this.modifiers = _data['modifiers'] ? StatsModifier.fromJS(_data['modifiers']) : new StatsModifier();
+    init(_data?: any) {
+        if (_data) {
+            this.character = _data["character"] ? CharacterView.fromJS(_data["character"]) : new CharacterView();
+            this.health = _data["health"];
+            this.shield = _data["shield"];
+            if (Array.isArray(_data["passiveEffects"])) {
+                this.passiveEffects = [] as any;
+                for (let item of _data["passiveEffects"])
+                    this.passiveEffects!.push(PassiveEffectInstanceView.fromJS(item));
+            }
+            if (Array.isArray(_data["triggeredEffects"])) {
+                this.triggeredEffects = [] as any;
+                for (let item of _data["triggeredEffects"])
+                    this.triggeredEffects!.push(TriggeredEffectInstanceView.fromJS(item));
+            }
+            this.modifiers = _data["modifiers"] ? StatsModifier.fromJS(_data["modifiers"]) : new StatsModifier();
+        }
     }
-  }
 
-  static fromJS(data: any): CharacterCombatView {
-    data = typeof data === 'object' ? data : {};
-    let result = new CharacterCombatView();
-    result.init(data);
-    return result;
-  }
-
-  toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    data['character'] = this.character ? this.character.toJSON() : <any>undefined;
-    data['health'] = this.health;
-    data['shield'] = this.shield;
-    if (Array.isArray(this.passiveEffects)) {
-      data['passiveEffects'] = [];
-      for (let item of this.passiveEffects) data['passiveEffects'].push(item.toJSON());
+    static fromJS(data: any): CharacterCombatView {
+        data = typeof data === 'object' ? data : {};
+        let result = new CharacterCombatView();
+        result.init(data);
+        return result;
     }
-    data['modifiers'] = this.modifiers ? this.modifiers.toJSON() : <any>undefined;
-    return data;
-  }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["character"] = this.character ? this.character.toJSON() : <any>undefined;
+        data["health"] = this.health;
+        data["shield"] = this.shield;
+        if (Array.isArray(this.passiveEffects)) {
+            data["passiveEffects"] = [];
+            for (let item of this.passiveEffects)
+                data["passiveEffects"].push(item.toJSON());
+        }
+        if (Array.isArray(this.triggeredEffects)) {
+            data["triggeredEffects"] = [];
+            for (let item of this.triggeredEffects)
+                data["triggeredEffects"].push(item.toJSON());
+        }
+        data["modifiers"] = this.modifiers ? this.modifiers.toJSON() : <any>undefined;
+        return data;
+    }
 }
 
 export interface ICharacterCombatView {
-  character: CharacterView;
-  health: number;
-  shield: number;
-  passiveEffects: PassiveEffectInstanceView[];
-  modifiers: StatsModifier;
+    character: CharacterView;
+    health: number;
+    shield: number;
+    passiveEffects: PassiveEffectInstanceView[];
+    triggeredEffects: TriggeredEffectInstanceView[];
+    modifiers: StatsModifier;
 }
 
 export class PassiveEffectInstanceView implements IPassiveEffectInstanceView {
-  id!: string;
-  effect!: PassiveEffectView;
-  source!: string;
-  remainingDuration!: number;
+    id!: string;
+    effect!: PassiveEffectView;
+    source!: string;
+    remainingDuration!: number;
 
-  constructor(data?: IPassiveEffectInstanceView) {
-    if (data) {
-      for (var property in data) {
-        if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-      }
+    constructor(data?: IPassiveEffectInstanceView) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.effect = new PassiveEffectView();
+        }
     }
-    if (!data) {
-      this.effect = new PassiveEffectView();
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.effect = _data["effect"] ? PassiveEffectView.fromJS(_data["effect"]) : new PassiveEffectView();
+            this.source = _data["source"];
+            this.remainingDuration = _data["remainingDuration"];
+        }
     }
-  }
 
-  init(_data?: any) {
-    if (_data) {
-      this.id = _data['id'];
-      this.effect = _data['effect'] ? PassiveEffectView.fromJS(_data['effect']) : new PassiveEffectView();
-      this.source = _data['source'];
-      this.remainingDuration = _data['remainingDuration'];
+    static fromJS(data: any): PassiveEffectInstanceView {
+        data = typeof data === 'object' ? data : {};
+        let result = new PassiveEffectInstanceView();
+        result.init(data);
+        return result;
     }
-  }
 
-  static fromJS(data: any): PassiveEffectInstanceView {
-    data = typeof data === 'object' ? data : {};
-    let result = new PassiveEffectInstanceView();
-    result.init(data);
-    return result;
-  }
-
-  toJSON(data?: any) {
-    data = typeof data === 'object' ? data : {};
-    data['id'] = this.id;
-    data['effect'] = this.effect ? this.effect.toJSON() : <any>undefined;
-    data['source'] = this.source;
-    data['remainingDuration'] = this.remainingDuration;
-    return data;
-  }
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["effect"] = this.effect ? this.effect.toJSON() : <any>undefined;
+        data["source"] = this.source;
+        data["remainingDuration"] = this.remainingDuration;
+        return data;
+    }
 }
 
 export interface IPassiveEffectInstanceView {
-  id: string;
-  effect: PassiveEffectView;
-  source: string;
-  remainingDuration: number;
+    id: string;
+    effect: PassiveEffectView;
+    source: string;
+    remainingDuration: number;
+}
+
+export class TriggeredEffectInstanceView implements ITriggeredEffectInstanceView {
+    id!: string;
+    effect!: TriggeredEffectView;
+    source!: string;
+    triggerState!: TriggerStateView;
+
+    constructor(data?: ITriggeredEffectInstanceView) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.effect = new TriggeredEffectView();
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.effect = _data["effect"] ? TriggeredEffectView.fromJS(_data["effect"]) : new TriggeredEffectView();
+            this.source = _data["source"];
+            this.triggerState = _data["triggerState"] ? TriggerStateView.fromJS(_data["triggerState"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): TriggeredEffectInstanceView {
+        data = typeof data === 'object' ? data : {};
+        let result = new TriggeredEffectInstanceView();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["effect"] = this.effect ? this.effect.toJSON() : <any>undefined;
+        data["source"] = this.source;
+        data["triggerState"] = this.triggerState ? this.triggerState.toJSON() : <any>undefined;
+        return data;
+    }
+}
+
+export interface ITriggeredEffectInstanceView {
+    id: string;
+    effect: TriggeredEffectView;
+    source: string;
+    triggerState: TriggerStateView;
+}
+
+export abstract class TriggerStateView implements ITriggerStateView {
+
+    protected _discriminator: string;
+
+    constructor(data?: ITriggerStateView) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        this._discriminator = "TriggerStateView";
+    }
+
+    init(_data?: any) {
+    }
+
+    static fromJS(data: any): TriggerStateView {
+        data = typeof data === 'object' ? data : {};
+        if (data["type"] === "TurnTriggerStateView") {
+            let result = new TurnTriggerStateView();
+            result.init(data);
+            return result;
+        }
+        throw new Error("The abstract class 'TriggerStateView' cannot be instantiated.");
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["type"] = this._discriminator;
+        return data;
+    }
+}
+
+export interface ITriggerStateView {
+}
+
+export class TurnTriggerStateView extends TriggerStateView implements ITurnTriggerStateView {
+    triggersIn!: number;
+    remainingDuration!: number;
+
+    constructor(data?: ITurnTriggerStateView) {
+        super(data);
+        this._discriminator = "TurnTriggerStateView";
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.triggersIn = _data["triggersIn"];
+            this.remainingDuration = _data["remainingDuration"];
+        }
+    }
+
+    static override fromJS(data: any): TurnTriggerStateView {
+        data = typeof data === 'object' ? data : {};
+        let result = new TurnTriggerStateView();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["triggersIn"] = this.triggersIn;
+        data["remainingDuration"] = this.remainingDuration;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface ITurnTriggerStateView extends ITriggerStateView {
+    triggersIn: number;
+    remainingDuration: number;
+}
+
+export class StatsModifier implements IStatsModifier {
+    healthAdditiveModifier!: number;
+    apCostAdditiveModifier!: number;
+    damageAdditiveModifier!: number;
+    resistanceAdditiveModifier!: number;
+
+    constructor(data?: IStatsModifier) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.healthAdditiveModifier = _data["healthAdditiveModifier"];
+            this.apCostAdditiveModifier = _data["apCostAdditiveModifier"];
+            this.damageAdditiveModifier = _data["damageAdditiveModifier"];
+            this.resistanceAdditiveModifier = _data["resistanceAdditiveModifier"];
+        }
+    }
+
+    static fromJS(data: any): StatsModifier {
+        data = typeof data === 'object' ? data : {};
+        let result = new StatsModifier();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["healthAdditiveModifier"] = this.healthAdditiveModifier;
+        data["apCostAdditiveModifier"] = this.apCostAdditiveModifier;
+        data["damageAdditiveModifier"] = this.damageAdditiveModifier;
+        data["resistanceAdditiveModifier"] = this.resistanceAdditiveModifier;
+        return data;
+    }
+}
+
+export interface IStatsModifier {
+    healthAdditiveModifier: number;
+    apCostAdditiveModifier: number;
+    damageAdditiveModifier: number;
+    resistanceAdditiveModifier: number;
 }
 
 export enum CombatSideTurnPhase {
-  None = 'none',
-  StartOfTurn = 'startOfTurn',
-  Draw = 'draw',
-  Play = 'play',
-  EndOfTurn = 'endOfTurn',
+    None = "none",
+    StartOfTurn = "startOfTurn",
+    Draw = "draw",
+    Play = "play",
+    EndOfTurn = "endOfTurn",
 }
 
 export interface FileResponse {
-  data: Blob;
-  status: number;
-  fileName?: string;
-  headers?: { [name: string]: any };
+    data: Blob;
+    status: number;
+    fileName?: string;
+    headers?: { [name: string]: any };
 }
 
 export class ApiException extends Error {
-  override message: string;
-  status: number;
-  response: string;
-  headers: { [key: string]: any };
-  result: any;
+    override message: string;
+    status: number;
+    response: string;
+    headers: { [key: string]: any; };
+    result: any;
 
-  constructor(message: string, status: number, response: string, headers: { [key: string]: any }, result: any) {
-    super();
+    constructor(message: string, status: number, response: string, headers: { [key: string]: any; }, result: any) {
+        super();
 
-    this.message = message;
-    this.status = status;
-    this.response = response;
-    this.headers = headers;
-    this.result = result;
-  }
+        this.message = message;
+        this.status = status;
+        this.response = response;
+        this.headers = headers;
+        this.result = result;
+    }
 
-  protected isApiException = true;
+    protected isApiException = true;
 
-  static isApiException(obj: any): obj is ApiException {
-    return obj.isApiException === true;
-  }
+    static isApiException(obj: any): obj is ApiException {
+        return obj.isApiException === true;
+    }
 }
 
-function throwException(
-  message: string,
-  status: number,
-  response: string,
-  headers: { [key: string]: any },
-  result?: any
-): Observable<any> {
-  if (result !== null && result !== undefined) return _observableThrow(result);
-  else return _observableThrow(new ApiException(message, status, response, headers, null));
+function throwException(message: string, status: number, response: string, headers: { [key: string]: any; }, result?: any): Observable<any> {
+    if (result !== null && result !== undefined)
+        return _observableThrow(result);
+    else
+        return _observableThrow(new ApiException(message, status, response, headers, null));
 }
 
 function blobToText(blob: any): Observable<string> {
-  return new Observable<string>((observer: any) => {
-    if (!blob) {
-      observer.next('');
-      observer.complete();
-    } else {
-      let reader = new FileReader();
-      reader.onload = (event) => {
-        observer.next((event.target as any).result);
-        observer.complete();
-      };
-      reader.readAsText(blob);
-    }
-  });
+    return new Observable<string>((observer: any) => {
+        if (!blob) {
+            observer.next("");
+            observer.complete();
+        } else {
+            let reader = new FileReader();
+            reader.onload = event => {
+                observer.next((event.target as any).result);
+                observer.complete();
+            };
+            reader.readAsText(blob);
+        }
+    });
 }

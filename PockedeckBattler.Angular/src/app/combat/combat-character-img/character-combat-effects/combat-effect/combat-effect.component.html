@@ -1,0 +1,28 @@
+<div
+  class="border border-1 d-flex align-items-center justify-content-center user-select-none"
+  [ngStyle]="{ 'width.px': sizeInPx, 'height.px': sizeInPx }"
+  [ngbPopover]="popoverBody"
+  [popoverTitle]="popoverTitle"
+  container="body"
+  triggers="mouseenter:mouseleave"
+  (shown)="popoverVisible = true"
+  (hidden)="popoverVisible = false"
+>
+  <ng-container *ngTemplateOutlet="iconTpl"></ng-container>
+</div>
+
+<ng-template #iconTpl>
+  <app-asset-icon [icon]="icon" [size]="iconSize" *ngIf="icon"></app-asset-icon>
+  <div class="fw-bold small" *ngIf="!icon">
+    <i>{{ name[0] }}</i>
+  </div>
+</ng-template>
+<ng-template #popoverTitle>
+  <div class="hstack gap-2">
+    <ng-container *ngTemplateOutlet="iconTpl"></ng-container>
+    {{ name }}
+  </div>
+</ng-template>
+<ng-template #popoverBody>
+  <ng-content></ng-content>
+</ng-template>

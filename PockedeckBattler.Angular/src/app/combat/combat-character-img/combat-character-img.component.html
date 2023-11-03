@@ -1,20 +1,43 @@
 <ng-container *ngIf="character">
-  <div class="pb-2 position-relative">
-    <app-character-img
-      [character]="character.character"
-      [size]="size"
-      [enablePopoverDetails]="true"
-      [popoverPlacement]="popoverPlacement"
-      [footer]="footer"
-    ></app-character-img>
+  <div class="d-flex">
+    <div class="hstack">
+      <div class="vstack">
+        <div class="w-100 mb-1">
+          <app-character-combat-effects [character]="character" [size]="size" mode="row"></app-character-combat-effects>
+        </div>
 
-    <app-health-bar
-      class="position-absolute start-0 end-0 bottom-0"
-      style="height: 0.5rem"
-      [value]="character.health"
-      [maxValue]="character.character.statistics.maxHealth"
-      [shield]="character.shield"
-    >
-    </app-health-bar>
+        <div class="position-relative">
+          <app-character-img
+            [character]="character.character"
+            [size]="size"
+            [enablePopoverDetails]="true"
+            [popoverPlacement]="popoverPlacement"
+            [footer]="footer"
+          ></app-character-img>
+          <div
+            class="position-absolute top-0 bottom-0 start-0 end-0"
+            [ngStyle]="{ boxShadow: innerShadowCssValue }"
+            *ngIf="innerShadowCssValue"
+          ></div>
+          <div
+            class="position-absolute top-0 bottom-0 start-0 end-0"
+            [ngStyle]="{ boxShadow: outerShadowCssValue }"
+            *ngIf="outerShadowCssValue"
+          ></div>
+        </div>
+
+        <app-health-bar
+          class="w-100"
+          style="height: 0.5rem"
+          [value]="character.health"
+          [maxValue]="character.character.statistics.maxHealth"
+          [shield]="character.shield"
+        >
+        </app-health-bar>
+      </div>
+      <div class="h-100 ms-1" style="padding-top: 36px">
+        <app-character-combat-effects [character]="character" [size]="size" mode="col"></app-character-combat-effects>
+      </div>
+    </div>
   </div>
 </ng-container>

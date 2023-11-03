@@ -1,0 +1,13 @@
+<div class="h-100 d-flex flex-column flex-wrap gap-1" *ngIf="mode === 'col'">
+  <ng-container *ngTemplateOutlet="content"></ng-container>
+</div>
+<div class="w-100 d-flex flex-wrap flex-wrap-reverse gap-1" *ngIf="mode === 'row'">
+  <ng-container *ngTemplateOutlet="content"></ng-container>
+</div>
+
+<ng-template #content>
+  <app-passive-effect-instance
+    [effect]="effect"
+    *ngFor="let effect of character?.passiveEffects"
+  ></app-passive-effect-instance>
+</ng-template>

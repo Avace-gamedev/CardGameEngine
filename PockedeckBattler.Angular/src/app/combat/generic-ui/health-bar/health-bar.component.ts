@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { Placement } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-health-bar',
@@ -35,13 +36,18 @@ export class HealthBarComponent {
   }
   private _shield: number = 0;
 
+  @Input()
+  public tooltipPlacement: Placement = 'bottom';
+
   protected healthPercent: number = 0;
   protected shieldPercent: number = 0;
+  protected tooltip: string | undefined;
 
   private update() {
     if (this._maxValue === 0) {
       this.healthPercent = 0;
       this.shieldPercent = 0;
+      this.tooltip = undefined;
     }
 
     const healthRatio = this._value / this._maxValue;
@@ -49,5 +55,13 @@ export class HealthBarComponent {
 
     const shieldRatio = this._shield / this._maxValue;
     this.shieldPercent = Math.max(0, Math.min(shieldRatio, 1)) * 100;
+
+    if (this._shield > 0) {
+      this.tooltip = `${this._value} (+ ${this._shield} / ${this._maxValue} HP`;
+    } else {
+      this.tooltip = `${this._value} / ${this._maxValue} HP`;
+    }
   }
+
+  protected readonly PerformanceObserverEntryList = PerformanceObserverEntryList;
 }

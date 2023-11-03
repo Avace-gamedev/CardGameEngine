@@ -1,10 +1,11 @@
 <div class="hstack gap-1 align-content-center">
-  <app-asset-icon icon="screen-impact" size="sm"></app-asset-icon>
   {{ effect?.amount ?? '?' }}
   damage
   <app-element-icon class="mx-1" [element]="effect?.element"></app-element-icon>
-  <ng-container *ngIf="effect && effect.lifeStealRatio == 1"> (lifesteal) </ng-container>
-  <ng-container *ngIf="effect && effect.lifeStealRatio != 1 && effect.lifeStealRatio > 0">
-    (lifesteal: {{ effect.lifeStealRatio | percent }})
-  </ng-container>
+  <app-asset-icon
+    icon="fangs"
+    size="sm"
+    ngbTooltip="lifesteal ({{ effect.lifeStealRatio | percent }})"
+    *ngIf="effect && effect.lifeStealRatio > 0"
+  ></app-asset-icon>
 </div>

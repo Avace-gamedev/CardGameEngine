@@ -1,14 +1,13 @@
 ﻿using System.Runtime.Serialization;
 using CardGame.Engine.Effects.Passive;
+using CardGame.Engine.Effects.Passive.Stats;
 using Newtonsoft.Json;
 using NJsonSchema.Converters;
-using PockedeckBattler.Server.Views.Effects.Triggered;
 
 namespace PockedeckBattler.Server.Views.Effects.Passive;
 
 [JsonConverter(typeof(JsonInheritanceConverter), "type")]
 [KnownType(typeof(PassiveStatsModifierView))]
-[KnownType(typeof(TriggeredEffectView))]
 public class PassiveEffectView
 {
     public PassiveEffectView(int duration)

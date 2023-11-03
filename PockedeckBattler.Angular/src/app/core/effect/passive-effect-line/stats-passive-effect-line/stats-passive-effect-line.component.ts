@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { PassiveStatsModifierView } from '../../../../api/pockedeck-battler-api-client';
+import { PassiveStatsModifierView, StatEffect } from '../../../../api/pockedeck-battler-api-client';
+import { AssetIcon } from '../../../icons/asset-icon/asset-icons';
 
 @Component({
   selector: 'app-stats-passive-effect-line',
@@ -16,42 +17,58 @@ export class StatsPassiveEffectLineComponent {
   }
   private _effect: PassiveStatsModifierView | undefined;
 
-  protected modifiers: ModifierToDisplay[] = [];
+  protected display: ModifierToDisplay | undefined;
 
   private update() {
-    this.modifiers = [];
-
     if (this.effect === undefined) {
+      this.display = undefined;
       return;
     }
 
-    this.modifiers.push({
-      value: this.effect.statsModifier.apCostAdditiveModifier,
-      name: 'AP Cost',
-      duration: this.effect.duration,
-    });
+    let name: string;
+    switch (this.effect.effect) {
+      case StatEffect.IncreaseApCost:
+      case StatEffect.ReduceApCost:
+        name = 'AP cost';
+        break;
+      case StatEffect.IncreaseDamage:
+      case StatEffect.ReduceDamage:
+        name = 'damage';
+        break;
+      case StatEffect.IncreaseResistance:
+      case StatEffect.ReduceResistance:
+        name = 'resistance';
+        break;
+    }
 
-    this.modifiers.push({
-      value: this.effect.statsModifier.damageAdditiveModifier,
-      name: 'damage',
-      duration: this.effect.duration,
-    });
+    let icon: AssetIcon;
+    switch (this.effect.effect) {
+      case StatEffect.IncreaseApCost:
+        icon = 'dice-increase';
+        break;
+      case StatEffect.ReduceApCost:
+        icon = 'dice-decrease';
+        break;
+      case StatEffect.IncreaseDamage:
+        icon = 'biceps';
+        break;
+      case StatEffect.ReduceDamage:
+        icon = 'broken-axe';
+        break;
+      case StatEffect.IncreaseResistance:
+        icon = 'shield-reflect';
+        break;
+      case StatEffect.ReduceResistance:
+        icon = 'cracked-shield';
+        break;
+    }
 
-    this.modifiers.push({
-      value: this.effect.statsModifier.damageReductionAdditiveModifier,
-      name: 'resistance',
-      duration: this.effect.duration,
-    });
-
-    this.modifiers.push({
-      value: this.effect.statsModifier.healthAdditiveModifier,
-      name: 'HP',
-      duration: this.effect.duration,
-    });
+    this.display = { icon, name, value: this.effect.amount, duration: this.effect.duration };
   }
 }
 
 interface ModifierToDisplay {
+  readonly icon: AssetIcon;
   readonly value: number;
   readonly name: string;
   readonly duration: number;

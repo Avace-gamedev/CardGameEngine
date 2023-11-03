@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
+import { NgbPopover, NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 import { EffectModule } from '../effect/effect.module';
 import { ActionCardChipComponent } from './action-card-chip/action-card-chip.component';
 import { ActionCardTargetLineComponent } from './action-card-target-line/action-card-target-line.component';
@@ -17,7 +17,7 @@ import { IconsModule } from '../icons/icons.module';
     ActionCardComponent,
     ActionCardTargetLineComponent,
   ],
-  imports: [CommonModule, IconsModule, EffectModule, NgbPopover],
+  imports: [CommonModule, IconsModule, EffectModule, NgbPopover, NgbTooltip],
   exports: [ActionCardChipComponent, ActionCardComponent],
 })
 export class CardModule {}

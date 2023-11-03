@@ -1,5 +1,6 @@
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { AssetIcon } from './asset-icons';
+import { Color, getCssColor } from '../../../shared/utils/colors';
 
 @Component({
   selector: 'app-asset-icon',
@@ -44,16 +45,16 @@ export class AssetIconComponent implements AfterViewInit {
   private _size: AssetIconSize = 'md';
 
   @Input()
-  get color(): AssetIconColor | undefined {
+  get color(): Color | undefined {
     return this._color;
   }
 
-  set color(value: AssetIconColor | undefined) {
+  set color(value: Color | undefined) {
     this._color = value;
     this.cssColor = this.getCssColor(value);
   }
 
-  private _color: AssetIconColor | undefined;
+  private _color: Color | undefined;
 
   @Input()
   get pxOffsetX(): number {
@@ -108,6 +109,8 @@ export class AssetIconComponent implements AfterViewInit {
 
   private getSizeInPx(value: AssetIconSize) {
     switch (value) {
+      case 'xs':
+        return 8;
       case 'sm':
         return 16;
       case 'md':
@@ -117,16 +120,12 @@ export class AssetIconComponent implements AfterViewInit {
     }
   }
 
-  private getCssColor(color: AssetIconColor | undefined): string | undefined {
+  private getCssColor(color: Color | undefined): string | undefined {
     if (!color) {
       return this.getColorProperty();
     }
 
-    if (isCssVarColor(color)) {
-      return `var(${color[1]})`;
-    } else {
-      return color;
-    }
+    return getCssColor(color);
   }
 
   private getCssTransform(x: number, y: number) {
@@ -147,18 +146,4 @@ export class AssetIconComponent implements AfterViewInit {
   }
 }
 
-export type AssetIconSize = 'sm' | 'md' | 'lg';
-
-type KnownColor = 'white' | 'black';
-type CssVarColor = `--${string}`;
-type HexColor = `#${string}`;
-type RgbColor = `rgb(${number}, ${number}, ${number})`;
-type RgbaColor = `rgba(${number}, ${number}, ${number}, ${number})`;
-
-export type AssetIconColor = KnownColor | CssVarColor | HexColor | RgbColor | RgbaColor;
-
-const isCssVarColor = (color: AssetIconColor): color is CssVarColor => color.startsWith('--');
-const isHexColor = (color: AssetIconColor): color is HexColor => color[0] === '#';
-const isRgbColor = (color: AssetIconColor): color is RgbColor => color.startsWith('rgb');
-const isRgbaColor = (color: AssetIconColor): color is RgbaColor => color.startsWith('rgba');
-const isKnownColor = (color: AssetIconColor): color is KnownColor => !isCssVarColor(color);
+export type AssetIconSize = 'xs' | 'sm' | 'md' | 'lg';

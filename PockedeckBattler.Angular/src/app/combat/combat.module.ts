@@ -17,6 +17,10 @@ import { CombatComponent } from './combat.component';
 import { GenericUiModule } from './generic-ui/generic-ui.module';
 import { OpponentSideElementsComponent } from './opponent-side-elements/opponent-side-elements.component';
 import { PlayerSideElementsComponent } from './player-side-elements/player-side-elements.component';
+import { CharacterCombatEffectsComponent } from './combat-character-img/character-combat-effects/character-combat-effects.component';
+import { CombatEffectComponent } from './combat-character-img/character-combat-effects/combat-effect/combat-effect.component';
+import { StatsModifierEffectComponent } from './combat-character-img/character-combat-effects/stats-modifier-effect/stats-modifier-effect.component';
+import { PassiveEffectInstanceComponent } from './combat-character-img/character-combat-effects/passive-effect-instance/passive-effect-instance.component';
 
 @NgModule({
   declarations: [
@@ -31,6 +35,10 @@ import { PlayerSideElementsComponent } from './player-side-elements/player-side-
     PlayerSideElementsComponent,
     OpponentSideElementsComponent,
     ActionCardInstanceComponent,
+    CharacterCombatEffectsComponent,
+    CombatEffectComponent,
+    StatsModifierEffectComponent,
+    PassiveEffectInstanceComponent,
   ],
   imports: [
     CommonModule,

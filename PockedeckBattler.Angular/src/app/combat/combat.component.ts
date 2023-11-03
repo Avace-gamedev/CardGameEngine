@@ -62,7 +62,12 @@ export class CombatComponent implements OnInit {
   }
 
   play(index: number) {
-    if (!this.combat) {
+    if (!this.combat || this.combat.currentSide !== this.combat.player.side) {
+      return;
+    }
+
+    const card = this.combat.player.hand[index];
+    if (!card || card.card.apCost > this.combat.player.ap) {
       return;
     }
 
@@ -70,7 +75,7 @@ export class CombatComponent implements OnInit {
   }
 
   endTurn() {
-    if (!this.combat) {
+    if (!this.combat || this.combat.currentSide !== this.combat.player.side) {
       return;
     }
 

@@ -2,12 +2,10 @@
   <div class="h-100 w-100 container-fluid hstack p-4">
     <div class="flex-fill hstack justify-content-center gap-2">
       <button
-        class="btn m-0 p-0"
+        class="btn m-0 p-0 position-relative"
         [class.highlight]="hoveredCharacter === card.character"
         style="height: 100%; width: 175px"
-        [class.btn-disabled]="disabled || card.card.apCost > combat.player.ap"
-        [disabled]="disabled || card.card.apCost > combat.player.ap"
-        (click)="play.emit(i)"
+        (click)="sendPlay(i)"
         *ngFor="let card of combat.player.hand; let i = index"
       >
         <app-action-card-instance
@@ -18,6 +16,12 @@
           (mouseleave)="mouseLeave(card)"
         >
         </app-action-card-instance>
+
+        <div
+          class="rounded-3 position-absolute top-0 bottom-0 start-0 end-0 pe-none"
+          style="background-color: rgba(0, 0, 0, 0.1)"
+          *ngIf="disabled || card.card.apCost > combat.player.ap"
+        ></div>
       </button>
     </div>
 
@@ -26,7 +30,7 @@
       [class.btn-primary]="combat.currentSide === combat.player.side"
       [class.btn-disabled]="combat.currentSide !== combat.player.side"
       [disabled]="disabled"
-      (click)="endTurn.emit()"
+      (click)="sendEndTurn()"
     >
       End Turn
     </button>

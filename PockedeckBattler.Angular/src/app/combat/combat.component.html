@@ -6,6 +6,7 @@
     <app-combat-side-common-elements
       [combat]="combat"
       [side]="combat.opponent"
+      [highlightEnemies]="enemyTargets"
       [invert]="true"
     ></app-combat-side-common-elements>
   </div>
@@ -13,6 +14,7 @@
     <app-combat-side-common-elements
       [combat]="combat"
       [side]="combat.player"
+      [highlightAllies]="allyTargets"
       [highlightSource]="source"
     ></app-combat-side-common-elements>
   </div>

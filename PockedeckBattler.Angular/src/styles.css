@@ -20,6 +20,7 @@ body {
   --health-color: #c6303e;
   --shield-color: #0d6efd;
 
+  --self-color: #13795b;
   --ally-color: #0d6efd;
   --enemy-color: #c6303e;
 }

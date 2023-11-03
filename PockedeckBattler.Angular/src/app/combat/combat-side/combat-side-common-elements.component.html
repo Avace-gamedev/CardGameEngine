@@ -18,8 +18,22 @@
 
         <div
           class="pe-none position-absolute top-0 bottom-0 start-0 end-0"
-          [class.highlightSource]="
+          [class.highlight-source]="
             highlightSource === side.backCharacter.character.identity.name
+          "
+        ></div>
+        <div
+          class="pe-none position-absolute top-0 bottom-0 start-0 end-0"
+          [class.highlight-enemy]="
+            highlightEnemies.includes(
+              side.backCharacter.character.identity.name
+            )
+          "
+        ></div>
+        <div
+          class="pe-none position-absolute top-0 bottom-0 start-0 end-0"
+          [class.highlight-ally]="
+            highlightAllies.includes(side.backCharacter.character.identity.name)
           "
         ></div>
       </div>
@@ -36,8 +50,24 @@
         </span>
         <div
           class="pe-none position-absolute top-0 bottom-0 start-0 end-0"
-          [class.highlightSource]="
+          [class.highlight-source]="
             highlightSource === side.frontCharacter.character.identity.name
+          "
+        ></div>
+        <div
+          class="pe-none position-absolute top-0 bottom-0 start-0 end-0"
+          [class.highlight-enemy]="
+            highlightEnemies.includes(
+              side.frontCharacter.character.identity.name
+            )
+          "
+        ></div>
+        <div
+          class="pe-none position-absolute top-0 bottom-0 start-0 end-0"
+          [class.highlight-ally]="
+            highlightAllies.includes(
+              side.frontCharacter.character.identity.name
+            )
           "
         ></div>
       </div>

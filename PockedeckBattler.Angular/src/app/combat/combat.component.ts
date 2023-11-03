@@ -9,6 +9,7 @@ import {
 } from '../api/pockedeck-battler-api-client';
 import { SignalRService } from '../api/signal-r/signal-r.service';
 import { IdentityService } from '../core/authentication/services/identity.service';
+import { ActionCardTargetUtils } from './utils/utils';
 
 @Component({
   selector: 'app-combat',
@@ -18,6 +19,8 @@ import { IdentityService } from '../core/authentication/services/identity.servic
 export class CombatComponent implements OnInit {
   protected combat: PlayerCombatView | undefined;
   protected source: string | undefined;
+  protected allyTargets: string[] = [];
+  protected enemyTargets: string[] = [];
 
   constructor(
     private identityService: IdentityService,
@@ -88,7 +91,81 @@ export class CombatComponent implements OnInit {
   }
 
   hoverCard(card: CardInstanceWithModifiersView | undefined) {
-    this.source = card?.character;
+    this.source = undefined;
+    this.allyTargets = [];
+    this.enemyTargets = [];
+
+    if (!card || !this.combat) {
+      return;
+    }
+
+    this.source = card.character;
+    const allyTargets = ActionCardTargetUtils.getAllyTargets(
+      card.card.target,
+      card.character ===
+        this.combat.player.frontCharacter.character.identity.name
+        ? 'front'
+        : 'back',
+    );
+
+    switch (allyTargets) {
+      case 'none':
+        break;
+      case 'front':
+        this.allyTargets.push(
+          this.combat.player.frontCharacter.character.identity.name,
+        );
+        break;
+      case 'back':
+        if (this.combat.player.backCharacter) {
+          this.allyTargets.push(
+            this.combat.player.backCharacter.character.identity.name,
+          );
+        }
+        break;
+      case 'both':
+        this.allyTargets.push(
+          this.combat.player.frontCharacter.character.identity.name,
+        );
+
+        if (this.combat.player.backCharacter) {
+          this.allyTargets.push(
+            this.combat.player.backCharacter.character.identity.name,
+          );
+        }
+        break;
+    }
+
+    const enemyTargets = ActionCardTargetUtils.getEnemyTargets(
+      card.card.target,
+    );
+    switch (enemyTargets) {
+      case 'none':
+        break;
+      case 'front':
+        this.enemyTargets.push(
+          this.combat.opponent.frontCharacter.character.identity.name,
+        );
+        break;
+      case 'back':
+        if (this.combat.opponent.backCharacter) {
+          this.enemyTargets.push(
+            this.combat.opponent.backCharacter.character.identity.name,
+          );
+        }
+        break;
+      case 'both':
+        this.enemyTargets.push(
+          this.combat.opponent.frontCharacter.character.identity.name,
+        );
+
+        if (this.combat.opponent.backCharacter) {
+          this.enemyTargets.push(
+            this.combat.opponent.backCharacter.character.identity.name,
+          );
+        }
+        break;
+    }
   }
 
   protected readonly CombatSide = CombatSide;

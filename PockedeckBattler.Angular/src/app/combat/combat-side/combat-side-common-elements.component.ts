@@ -34,6 +34,12 @@ export class CombatSideCommonElementsComponent {
   public highlightSource: string | undefined;
 
   @Input()
+  public highlightEnemies: string[] = [];
+
+  @Input()
+  public highlightAllies: string[] = [];
+
+  @Input()
   public invert: boolean = false;
 
   protected aps: ApState[] = [];

@@ -21,30 +21,27 @@ public class PublishCombatNotificationToSignalRClients : INotificationHandler<Co
 
     public async Task Handle(CombatNotification notification, CancellationToken cancellationToken)
     {
-
-        Func<ICombatsHubClient, Task> action = notification.Event switch
+        Func<ICombatsHubClient, CombatSide, Task> action = notification.Event switch
         {
-            CombatEvent.Created => hubClient => hubClient.CombatCreated(notification.Combat.PlayerView(CombatSide.Left)),
-            CombatEvent.TurnStarted => hubClient => hubClient.CombatTurnStarted(notification.Combat.PlayerView(CombatSide.Left)),
-            CombatEvent.PhaseStarted => hubClient => hubClient.CombatPhaseStarted(notification.Combat.PlayerView(CombatSide.Left)),
-            CombatEvent.Ended => hubClient => hubClient.CombatEnded(notification.Combat.PlayerView(CombatSide.Left)),
-            _ => throw new ArgumentOutOfRangeException()
+            CombatEvent.Created => (hubClient, side) => hubClient.CombatCreated(notification.Combat.PlayerView(side)),
+            CombatEvent.Ended => (hubClient, side) => hubClient.CombatEnded(notification.Combat.PlayerView(side)),
+            _ => (hubClient, side) => hubClient.CombatUpdated(notification.Combat.PlayerView(side))
         };
 
         await Notify(notification.Combat, action, cancellationToken);
     }
 
-    public async Task Notify(CombatWithMetadata combat, Func<ICombatsHubClient, Task> notify, CancellationToken cancellationToken)
+    public async Task Notify(CombatWithMetadata combat, Func<ICombatsHubClient, CombatSide, Task> notify, CancellationToken cancellationToken)
     {
         if (IsConnected(combat.LeftPlayerName, out string? leftId))
         {
-            await notify(_hub.Clients.Client(leftId));
+            await notify(_hub.Clients.Client(leftId), CombatSide.Left);
 
         }
 
         if (IsConnected(combat.RightPlayerName, out string? rightId))
         {
-            await notify(_hub.Clients.Client(rightId));
+            await notify(_hub.Clients.Client(rightId), CombatSide.Right);
         }
     }
 

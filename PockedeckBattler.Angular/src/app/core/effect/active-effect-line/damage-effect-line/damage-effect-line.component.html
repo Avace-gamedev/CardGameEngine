@@ -1,7 +1,8 @@
-<div class="hstack gap-1">
-  <app-element-icon [element]="effect?.element"></app-element-icon>
+<div class="hstack gap-1 align-content-center">
+  <app-asset-icon icon="screen-impact" size="sm"></app-asset-icon>
   {{ effect?.amount ?? "?" }}
   damage
+  <app-element-icon class="mx-1" [element]="effect?.element"></app-element-icon>
   <ng-container *ngIf="effect && effect.lifeStealRatio == 1">
     (lifesteal)
   </ng-container>

@@ -1,0 +1,17 @@
+<div
+  #container
+  [class.visible]="!!url"
+  [attr.aria-label]="'icon-' + icon"
+  [ngStyle]="{
+    display: 'inline-block',
+    maskImage: 'url(' + url + ')',
+    '-webkit-mask-image': 'url(' + url + ')',
+    '-webkig-mask-size': 'cover',
+    '-webkit-mask-position': 'center',
+    'width.px': sizeInPx,
+    'height.px': sizeInPx,
+    'lineHeight.px': sizeInPx,
+    backgroundColor: cssColor,
+    transform: cssTransform
+  }"
+></div>

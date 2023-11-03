@@ -13,7 +13,6 @@ export class CharacterImgComponent {
   }
   set character(value: CharacterView | undefined) {
     this._character = value;
-    this.update();
   }
   private _character: CharacterView | undefined;
 
@@ -36,8 +35,6 @@ export class CharacterImgComponent {
   public pressed: EventEmitter<MouseEvent> = new EventEmitter<MouseEvent>();
 
   protected characterBeingDragged: boolean = false;
-  protected imgPath: string | undefined;
-  protected bgMode: 'light' | 'dark' = 'dark';
 
   protected get imgSize(): number {
     switch (this.size) {
@@ -78,36 +75,6 @@ export class CharacterImgComponent {
   protected ondrop($event: DragEvent) {
     this.characterBeingDragged = false;
     this.dropped.emit($event);
-  }
-
-  private update() {
-    this.updateImgPath();
-    this.updateBgMode();
-  }
-
-  private updateImgPath() {
-    if (!this._character) {
-      this.imgPath = undefined;
-      return;
-    }
-
-    this.imgPath = '/assets/imgs/' + this._character.identity.name + '-256.png';
-  }
-
-  private updateBgMode() {
-    if (!this._character) {
-      return;
-    }
-
-    switch (this._character.identity.name) {
-      case 'bulbasaur':
-      case 'squirtle':
-        this.bgMode = 'dark';
-        break;
-      case 'charmander':
-        this.bgMode = 'light';
-        break;
-    }
   }
 }
 

@@ -10,9 +10,8 @@ public class CharacterCombatState
     readonly List<PassiveEffectInstance> _passiveEffects = new();
     readonly List<TriggeredEffectInstance> _triggeredEffects = new();
 
-    public CharacterCombatState(CombatInstance combat, CombatSide side, Character character)
+    public CharacterCombatState(CombatSide side, Character character)
     {
-        Combat = combat;
         Side = side;
         Character = character;
 
@@ -21,7 +20,6 @@ public class CharacterCombatState
         IsDead = false;
     }
 
-    public CombatInstance Combat { get; }
     public CombatSide Side { get; }
     public Character Character { get; }
     public CharacterStatistics Stats => Character.Stats;

@@ -3,12 +3,12 @@ using CardGame.Engine.Combats;
 using MediatR;
 using Microsoft.AspNetCore.SignalR;
 using PockedeckBattler.Server.Rest.Combats.Notifications;
+using PockedeckBattler.Server.Stores.Combats;
 using PockedeckBattler.Server.Views;
 
 namespace PockedeckBattler.Server.SignalR.Combats.Notifications;
 
-public class PublishCombatNotificationToSignalRClients
-    : INotificationHandler<CombatCreated>, INotificationHandler<CombatStarted>, INotificationHandler<CombatUpdated>, INotificationHandler<CombatOver>
+public class PublishCombatNotificationToSignalRClients : INotificationHandler<CombatNotification>
 {
     readonly IHubConnections _connections;
     readonly IHubContext<CombatsHub, ICombatsHubClient> _hub;
@@ -19,57 +19,32 @@ public class PublishCombatNotificationToSignalRClients
         _hub = hub;
     }
 
-    public async Task Handle(CombatCreated notification, CancellationToken cancellationToken)
+    public async Task Handle(CombatNotification notification, CancellationToken cancellationToken)
     {
-        if (IsConnected(notification.Combat.LeftPlayerName, out string? leftId))
-        {
-            await _hub.Clients.Client(leftId).CombatCreated(notification.Combat.PlayerView(CombatSide.Left));
-        }
 
-        if (IsConnected(notification.Combat.RightPlayerName, out string? rightId))
+        Func<ICombatsHubClient, Task> action = notification.Event switch
         {
-            await _hub.Clients.Client(rightId).CombatCreated(notification.Combat.PlayerView(CombatSide.Right));
-        }
+            CombatEvent.Created => hubClient => hubClient.CombatCreated(notification.Combat.PlayerView(CombatSide.Left)),
+            CombatEvent.TurnStarted => hubClient => hubClient.CombatTurnStarted(notification.Combat.PlayerView(CombatSide.Left)),
+            CombatEvent.PhaseStarted => hubClient => hubClient.CombatPhaseStarted(notification.Combat.PlayerView(CombatSide.Left)),
+            CombatEvent.Ended => hubClient => hubClient.CombatEnded(notification.Combat.PlayerView(CombatSide.Left)),
+            _ => throw new ArgumentOutOfRangeException()
+        };
+
+        await Notify(notification.Combat, action, cancellationToken);
     }
 
-
-    public async Task Handle(CombatOver notification, CancellationToken cancellationToken)
+    public async Task Notify(CombatWithMetadata combat, Func<ICombatsHubClient, Task> notify, CancellationToken cancellationToken)
     {
-        if (IsConnected(notification.Combat.LeftPlayerName, out string? leftId))
+        if (IsConnected(combat.LeftPlayerName, out string? leftId))
         {
-            await _hub.Clients.Client(leftId).CombatOver(notification.Combat.PlayerView(CombatSide.Left));
+            await notify(_hub.Clients.Client(leftId));
+
         }
 
-        if (IsConnected(notification.Combat.RightPlayerName, out string? rightId))
+        if (IsConnected(combat.RightPlayerName, out string? rightId))
         {
-            await _hub.Clients.Client(rightId).CombatOver(notification.Combat.PlayerView(CombatSide.Right));
-        }
-    }
-
-    public async Task Handle(CombatStarted notification, CancellationToken cancellationToken)
-    {
-        if (IsConnected(notification.Combat.LeftPlayerName, out string? leftId))
-        {
-            await _hub.Clients.Client(leftId).CombatStarted(notification.Combat.PlayerView(CombatSide.Left));
-        }
-
-        if (IsConnected(notification.Combat.RightPlayerName, out string? rightId))
-        {
-            await _hub.Clients.Client(rightId).CombatStarted(notification.Combat.PlayerView(CombatSide.Right));
-        }
-    }
-
-
-    public async Task Handle(CombatUpdated notification, CancellationToken cancellationToken)
-    {
-        if (IsConnected(notification.Combat.LeftPlayerName, out string? leftId))
-        {
-            await _hub.Clients.Client(leftId).CombatUpdated(notification.Combat.PlayerView(CombatSide.Left));
-        }
-
-        if (IsConnected(notification.Combat.RightPlayerName, out string? rightId))
-        {
-            await _hub.Clients.Client(rightId).CombatUpdated(notification.Combat.PlayerView(CombatSide.Right));
+            await notify(_hub.Clients.Client(rightId));
         }
     }
 

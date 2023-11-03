@@ -1,518 +1,225 @@
-﻿using CardGame.Engine.Characters;
-using CardGame.Engine.Combats.Ai;
+﻿using CardGame.Engine.Combats.Ai;
 using CardGame.Engine.Combats.Exceptions;
 using CardGame.Engine.Combats.Resolve;
-using CardGame.Engine.Extensions;
+using CardGame.Engine.Combats.State;
 
 namespace CardGame.Engine.Combats;
 
 public class CombatInstance
 {
-    readonly CombatAi? _leftAi;
-    readonly CombatAi? _rightAi;
-
-    public CombatInstance(IReadOnlyList<Character> leftCharacters, IReadOnlyList<Character> rightCharacters, CombatOptions options)
+    public CombatInstance(CombatState state, CombatOptions options)
     {
-        if (leftCharacters.Count == 0)
-        {
-            throw new Exception("Expected at least one character (left side)");
-        }
-
-        if (rightCharacters.Count == 0)
-        {
-            throw new Exception("Expected at least one character (right side)");
-        }
+        State = state;
         Options = options;
 
-        Character? backLeftCharacter = leftCharacters.ElementAtOrDefault(1);
-        Character? backRightCharacter = rightCharacters.ElementAtOrDefault(1);
-
-        CharacterCombatState frontLeft = new(this, CombatSide.Left, leftCharacters[0]);
-        CharacterCombatState? backLeft = backLeftCharacter == null ? null : new CharacterCombatState(this, CombatSide.Left, backLeftCharacter);
-        CharacterCombatState frontRight = new(this, CombatSide.Right, rightCharacters[0]);
-        CharacterCombatState? backRight = backRightCharacter == null ? null : new CharacterCombatState(this, CombatSide.Right, backRightCharacter);
-
-        LeftSide = new CombatSideInstance(this, CombatSide.Left, frontLeft, backLeft);
-        RightSide = new CombatSideInstance(this, CombatSide.Right, frontRight, backRight);
-
-        if (options.LeftSideAi != null)
-        {
-            _leftAi = CombatAiFactory.CreateInstance(this, CombatSide.Left, options.LeftSideAi);
-        }
-
-        if (options.RightSideAi != null)
-        {
-            _rightAi = CombatAiFactory.CreateInstance(this, CombatSide.Right, options.RightSideAi);
-        }
-
-        Ongoing = false;
-        Over = false;
-
-        Turn = 0;
-        Side = CombatSide.None;
-        Phase = CombatSideTurnPhase.None;
+        StartGlobalTurn(1);
+        StartSideTurn(Options.StartingSide);
     }
 
-    public CombatSideInstance LeftSide { get; }
-    public CombatSideInstance RightSide { get; }
-    public CombatSideInstance CurrentSide => GetSide(Side);
-    public CombatSideInstance OtherSide => GetSide(Side.OtherSide());
-
+    public CombatState State { get; }
     public CombatOptions Options { get; }
+    public CombatAi? LeftAi { get; private set; }
+    public CombatAi? RightAi { get; private set; }
 
-    public bool Ongoing { get; private set; }
-    public bool Over { get; private set; }
-    public int Turn { get; private set; }
-    public int MaxAp { get; private set; }
-    public CombatSide Side { get; private set; }
-    public CombatSideTurnPhase Phase { get; private set; }
-    public CombatSide Winner { get; private set; }
-    public bool LeftIsAi => _leftAi != null;
-    public bool RightIsAi => _rightAi != null;
-
-    public event EventHandler? Started;
-    public event EventHandler? Updated;
-    public event EventHandler? Ended;
-
-    public void Start()
+    public void PlayCard(CombatSide side, int index)
     {
-        AssertNotStarted();
-        AssertNotOver();
+        State.AssertOngoing();
+        State.AssertSideCanPlay(side);
 
-        Ongoing = true;
-        Phase = CombatSideTurnPhase.None;
-
-        LeftSide.OnStart();
-        RightSide.OnStart();
-
-        Started?.Invoke(this, EventArgs.Empty);
-
-        StartTurn(1);
-        StartSideTurn();
-
-        Updated?.Invoke(this, EventArgs.Empty);
-    }
-
-    public void EndSideTurnAndStartNextOne(CombatSide side)
-    {
-        AssertOngoing();
-        AssertSideCanPlay(side);
-
-        EndSideTurn();
-
-        if (Side == CombatSide.None)
+        CombatSideState sideState = State.GetSide(side);
+        ActionCardInstance? card = sideState.Hand.ElementAtOrDefault(index);
+        if (card == null)
         {
-            StartTurn(Turn + 1);
+            throw new InvalidMoveException($"Could not find card at index {index}");
         }
 
-        if (Over)
+        sideState.ConsumeAp(card.ApCost);
+
+        sideState.ReturnCardFromHandToDeck(index);
+
+        card.Resolve(State);
+
+        RemoveDeadCharactersIfAny();
+
+        if (CheckWinCondition(out CombatSide winner))
         {
-            return;
+            EndCombat(winner);
+        }
+    }
+
+    public void EndTurn(CombatSide side)
+    {
+        State.AssertOngoing();
+        State.AssertNotOver();
+        State.AssertSideCanPlay(side);
+
+        EndSideTurn(side);
+
+        CombatSide newSide = State.Side;
+        if (State.Side == CombatSide.None)
+        {
+            StartGlobalTurn(State.Turn + 1);
+            newSide = Options.StartingSide;
         }
 
-        StartSideTurn();
+        StartSideTurn(newSide);
     }
 
-    public void PlayCardAt(CombatSide side, int index)
+    public void SetAi(CombatSide side, CombatAiOptions options)
     {
-        AssertOngoing();
-        AssertSideCanPlay(side);
+        CombatAi ai = CombatAiFactory.CreateInstance(this, side, options);
 
-        CurrentSide.PlayCardAt(index);
-
-        Updated?.Invoke(this, EventArgs.Empty);
-
-        CheckWinCondition();
-    }
-
-    public CombatSideInstance GetSide(CombatSide side)
-    {
-        return side switch
+        switch (side)
         {
-            CombatSide.Left => LeftSide,
-            CombatSide.Right => RightSide,
-            _ => throw new ArgumentOutOfRangeException(nameof(Side), Side, null)
-        };
+            case CombatSide.Left:
+                LeftAi = ai;
+                break;
+            case CombatSide.Right:
+                RightAi = ai;
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(side), side, null);
+        }
     }
 
-    public CharacterCombatState? GetCharacter(CombatSide side, CombatPosition position)
+    void StartGlobalTurn(int turn)
     {
-        CombatSideInstance combatSide = side switch
-        {
-            CombatSide.Left => LeftSide,
-            CombatSide.Right => RightSide,
-            _ => throw new ArgumentOutOfRangeException(nameof(side), side, null)
-        };
-
-        return position switch
-        {
-            CombatPosition.Front => combatSide.Front,
-            CombatPosition.Back => combatSide.Back,
-            _ => throw new ArgumentOutOfRangeException(nameof(position), position, null)
-        };
+        int turnAp = Math.Min(Options.StartingAp + turn - 1, Options.MaxAp);
+        State.StartTurn(1, turnAp);
     }
 
-    public IEnumerable<CharacterCombatState> GetAllCharacters(CombatSide side)
+    void StartSideTurn(CombatSide side)
     {
-        CombatSideInstance combatSide = side switch
-        {
-            CombatSide.Left => LeftSide,
-            CombatSide.Right => RightSide,
-            _ => throw new ArgumentOutOfRangeException(nameof(side), side, null)
-        };
-
-        return combatSide.Both;
-    }
-
-    void StartTurn(int i)
-    {
-        Turn = i;
-        Side = Options.StartingSide;
-        MaxAp = Math.Min(Options.StartingAp + Turn - 1, Options.MaxAp);
-
-        Updated?.Invoke(this, EventArgs.Empty);
-    }
-
-    void StartSideTurn()
-    {
-        AssertOngoing();
-        AssertNotOver();
-        AssertSideTurnNotStartedYet();
-
-        Phase = CombatSideTurnPhase.StartOfTurn;
+        State.StartPhaseOfSide(side, CombatSideTurnPhase.StartOfTurn);
 
         StartOfTurnResolver.Resolve(this);
 
-        if (CheckWinCondition())
+        if (CheckWinCondition(out CombatSide winner))
         {
+            EndCombat(winner);
             return;
         }
 
-        Phase = CombatSideTurnPhase.Draw;
+        State.StartPhaseOfSide(side, CombatSideTurnPhase.Draw);
 
-        Phase = CombatSideTurnPhase.Play;
+        CombatSideState sideState = State.GetSide(side);
+        int handSize = sideState.GetAllCharacters().Count() switch
+        {
+            1 => Options.HandSizeWithOneCharacter, 2 => Options.HandSizeWithBothCharacters,
+            _ => throw new ArgumentOutOfRangeException()
+        };
+        while (sideState.Hand.Count < handSize)
+        {
+            sideState.DrawRandomCardFromDeckToHand();
+        }
 
-        CurrentSide.StartTurn();
+        State.StartPhaseOfSide(side, CombatSideTurnPhase.Play);
 
-        Updated?.Invoke(this, EventArgs.Empty);
+        sideState.SetAp(State.MaxAp);
 
         RunAiIfNecessary();
-
-        Updated?.Invoke(this, EventArgs.Empty);
     }
 
-    void EndSideTurn()
+    void EndSideTurn(CombatSide side)
     {
-        AssertSideTurnStarted();
-
-        Phase = CombatSideTurnPhase.EndOfTurn;
+        State.StartPhaseOfSide(side, CombatSideTurnPhase.EndOfTurn);
 
         EndOfTurnResolver.Resolve(this);
 
-        Updated?.Invoke(this, EventArgs.Empty);
-
-        if (CheckWinCondition())
+        if (CheckWinCondition(out CombatSide winner))
         {
+            EndCombat(winner);
             return;
         }
 
-        CurrentSide.EndTurn();
-
-        Phase = CombatSideTurnPhase.None;
-        Side = NextSide();
-
-        Updated?.Invoke(this, EventArgs.Empty);
+        CombatSide nextSide = GetNextSide(side);
+        State.StartPhaseOfSide(nextSide, CombatSideTurnPhase.None);
     }
 
-    CombatSide NextSide()
+    void EndCombat(CombatSide winner)
     {
-        if (Side == CombatSide.None)
-        {
-            return Options.StartingSide;
-        }
-
-        return Side == Options.StartingSide ? Side.OtherSide() : CombatSide.None;
+        State.EndCombat(winner);
     }
 
-    bool CheckWinCondition()
+    bool CheckWinCondition(out CombatSide winner)
     {
-        LeftSide.RemoveDeadCreatures();
-        RightSide.RemoveDeadCreatures();
-
-        bool leftLost = LeftSide.Lost;
-        bool rightLost = RightSide.Lost;
+        bool leftLost = !State.LeftSide.GetAllCharacters().Any();
+        bool rightLost = !State.RightSide.GetAllCharacters().Any();
 
         if (leftLost && rightLost)
         {
-            EndCombat(CombatSide.None);
+            winner = CombatSide.None;
             return true;
         }
 
         if (leftLost)
         {
-            EndCombat(CombatSide.Right);
+            winner = CombatSide.Right;
             return true;
         }
 
         if (rightLost)
         {
-            EndCombat(CombatSide.Left);
+            winner = CombatSide.Left;
             return true;
         }
 
+        winner = CombatSide.None;
         return false;
     }
 
-    void EndCombat(CombatSide winner)
+    CombatSide GetNextSide(CombatSide side)
     {
-        Ongoing = false;
-        Over = true;
-        Winner = winner;
+        if (side == CombatSide.None)
+        {
+            return Options.StartingSide;
+        }
 
-        Ended?.Invoke(this, EventArgs.Empty);
+        return side == Options.StartingSide ? side.OtherSide() : CombatSide.None;
+    }
+
+    void RemoveDeadCharactersIfAny()
+    {
+        RemoveDeadCharactersIfAny(State.LeftSide);
+        RemoveDeadCharactersIfAny(State.RightSide);
+    }
+
+    static void RemoveDeadCharactersIfAny(CombatSideState side)
+    {
+        if (side.Back is { IsDead: true })
+        {
+            side.RemoveCharacterAndItsCards(CombatPosition.Back);
+        }
+
+        if (side.Front is { IsDead: true })
+        {
+            side.RemoveCharacterAndItsCards(CombatPosition.Front);
+        }
     }
 
     void RunAiIfNecessary()
     {
-        CombatAi? ai = Side switch
+        CombatAi? ai = State.Side switch
         {
-            CombatSide.Left => _leftAi,
-            CombatSide.Right => _rightAi,
+            CombatSide.Left => LeftAi,
+            CombatSide.Right => RightAi,
             _ => null
         };
 
         if (ai != null)
         {
-            CombatSide side = Side;
+            CombatSide side = State.Side;
             try
             {
                 ai.PlayTurn();
             }
             finally
             {
-                if (Ongoing && Side == side)
+                if (State.Ongoing && State.Side == side)
                 {
-                    EndSideTurnAndStartNextOne(side);
+                    EndTurn(side);
                 }
             }
         }
     }
-
-    public class CombatSideInstance
-    {
-        readonly List<ActionCardInstance> _deck;
-        readonly List<ActionCardInstance> _hand;
-        int _ap;
-
-        public CombatSideInstance(CombatInstance combat, CombatSide side, CharacterCombatState front, CharacterCombatState? back = null)
-        {
-            Combat = combat;
-            Side = side;
-            Front = front;
-            Back = back;
-
-            _ap = 0;
-
-            _hand = new List<ActionCardInstance>();
-
-            _deck = new List<ActionCardInstance>();
-            _deck.AddRange(front.Character.Deck.Select(c => new ActionCardInstance(c, front)));
-            if (back != null)
-            {
-                _deck.AddRange(back.Character.Deck.Select(c => new ActionCardInstance(c, back)));
-            }
-
-            ShuffleDeck();
-        }
-
-        public CombatInstance Combat { get; }
-        public CombatSide Side { get; }
-
-        public CharacterCombatState Front { get; private set; }
-        public CharacterCombatState? Back { get; private set; }
-        public IEnumerable<CharacterCombatState> Both => new[] { Front, Back }.Where(c => c != null).Select(c => c!);
-
-        public int Ap => Combat.Side == Side ? _ap : Combat.MaxAp;
-
-        public IReadOnlyList<ActionCardInstance> Hand => _hand;
-        public IReadOnlyList<ActionCardInstance> Deck => _deck;
-
-        public bool Lost => Front.IsDead && (Back == null || Back.IsDead);
-        public bool NoMovesLeft => _hand.All(c => c.ApCost > Ap);
-
-        internal void OnStart()
-        {
-            DrawHand();
-        }
-
-        internal void StartTurn()
-        {
-            RestoreAps();
-            DrawHand();
-        }
-
-        internal void EndTurn()
-        {
-            DrawHand();
-        }
-
-        internal void PlayCardAt(int index)
-        {
-            ActionCardInstance? card = _hand.ElementAtOrDefault(index);
-            if (card == null)
-            {
-                throw new InvalidMoveException($"Could not find card at index {index}");
-            }
-
-            ConsumeAp(card.ApCost);
-
-            _hand.RemoveAt(index);
-
-            int randomPosition = Random.Shared.Next(0, Deck.Count + 1);
-            _deck.Insert(randomPosition, card);
-
-            card.Resolve();
-        }
-
-        internal bool DrawCard()
-        {
-            ActionCardInstance? card = _deck.FirstOrDefault();
-            if (card == null)
-            {
-                return false;
-            }
-
-            _hand.Add(card);
-            _deck.RemoveAt(0);
-
-            return true;
-        }
-
-        internal void Swap()
-        {
-            if (Back == null)
-            {
-                return;
-            }
-
-            (Front, Back) = (Back, Front);
-        }
-
-        internal void RemoveDeadCreatures()
-        {
-            if (Back is { IsDead: true })
-            {
-                _hand.RemoveAll(c => c.Character.Character.Identity.Name == Back.Character.Identity.Name);
-                _deck.RemoveAll(c => c.Character.Character.Identity.Name == Back.Character.Identity.Name);
-
-                Back = null;
-            }
-
-            if (Front.IsDead)
-            {
-                if (Back == null)
-                {
-                    // Side has lost
-                    return;
-                }
-
-                _hand.RemoveAll(c => c.Character.Character.Identity.Name == Front.Character.Identity.Name);
-                _deck.RemoveAll(c => c.Character.Character.Identity.Name == Front.Character.Identity.Name);
-
-                Front = Back;
-                Back = null;
-            }
-        }
-
-        void ShuffleDeck()
-        {
-            Random.Shared.Shuffle(_deck);
-        }
-
-        void ConsumeAp(int ap)
-        {
-            if (ap <= 0)
-            {
-                return;
-            }
-
-            if (ap > Ap)
-            {
-                throw new InvalidMoveException("Not enough Ap");
-            }
-
-            _ap -= ap;
-        }
-
-        void RestoreAps()
-        {
-            _ap = Combat.MaxAp;
-        }
-
-        void DrawHand()
-        {
-            int nCards = Back == null ? Combat.Options.HandSizeWithOneCharacter : Combat.Options.HandSizeWithBothCharacters;
-            while (_hand.Count < nCards)
-            {
-                if (!DrawCard())
-                {
-                    break;
-                }
-            }
-        }
-    }
-
-    #region Assertions
-
-    void AssertNotStarted()
-    {
-        if (Ongoing)
-        {
-            throw new InvalidMoveException("Already started");
-        }
-    }
-
-    void AssertOngoing()
-    {
-        if (!Ongoing)
-        {
-            AssertNotOver();
-
-            throw new InvalidMoveException("Combat not started yet");
-        }
-    }
-
-    void AssertSideCanPlay(CombatSide side)
-    {
-        if (Side != side || Phase != CombatSideTurnPhase.Play)
-        {
-            throw new InvalidMoveException("Not your turn");
-        }
-    }
-
-    void AssertSideTurnStarted()
-    {
-        if (Phase == CombatSideTurnPhase.None)
-        {
-            throw new InvalidMoveException("Side turn not started yet");
-        }
-    }
-
-    void AssertSideTurnNotStartedYet()
-    {
-        if (Phase != CombatSideTurnPhase.None)
-        {
-            throw new InvalidMoveException("Side turn already started");
-        }
-    }
-
-    void AssertNotOver()
-    {
-        if (Over)
-        {
-            throw new InvalidMoveException("Combat already over");
-        }
-    }
-
-    #endregion
 }

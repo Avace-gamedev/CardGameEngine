@@ -2,6 +2,7 @@
 using CardGame.Engine.Characters;
 using CardGame.Engine.Combats;
 using CardGame.Engine.Combats.Exceptions;
+using CardGame.Engine.Combats.State;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -27,146 +28,132 @@ public class SimpleCombatTest
         _rightCard = ActionCard.Damage("Some Card", 3, ActionCardTarget.FrontOpponent, 5, Element.Neutral);
         _rightCharacter = new Character(new CharacterIdentity("right", "Right"), new CharacterStatistics { MaxHealth = 10 }, new[] { _rightCard });
 
-        _combat = new CombatInstance(
-            new[] { _leftCharacter },
-            new[] { _rightCharacter },
-            new CombatOptions { HandSizeWithBothCharacters = 2, StartingAp = 4, StartingSide = CombatSide.Left }
-        );
+        CombatState state = CombatState.Create(new[] { _leftCharacter }, new[] { _rightCharacter });
+
+        _combat = new CombatInstance(state, new CombatOptions { HandSizeWithBothCharacters = 2, StartingAp = 4, StartingSide = CombatSide.Left });
     }
 
     [TestMethod]
     public void ShouldStartCombat()
     {
-        _combat.Ongoing.Should().BeFalse();
+        _combat.State.Ongoing.Should().BeTrue();
+        _combat.State.Over.Should().BeFalse();
+        _combat.State.Turn.Should().Be(1);
+        _combat.State.Side.Should().Be(CombatSide.Left);
+        _combat.State.Phase.Should().Be(CombatSideTurnPhase.Play);
 
-        _combat.Start();
-
-        _combat.Ongoing.Should().BeTrue();
-        _combat.Over.Should().BeFalse();
-        _combat.Turn.Should().Be(1);
-        _combat.Side.Should().Be(CombatSide.Left);
-        _combat.Phase.Should().Be(CombatSideTurnPhase.Play);
-
-        _combat.CurrentSide.Side.Should().Be(CombatSide.Left);
-        _combat.CurrentSide.Front.Character.Should().Be(_leftCharacter);
-        _combat.CurrentSide.Front.Health.Should().Be(9);
-        _combat.CurrentSide.Back.Should().BeNull();
-        _combat.CurrentSide.Ap.Should().Be(4);
-        _combat.CurrentSide.NoMovesLeft.Should().BeFalse();
-        _combat.CurrentSide.Lost.Should().BeFalse();
-        _combat.CurrentSide.Hand.Should()
+        _combat.State.CurrentSide.Side.Should().Be(CombatSide.Left);
+        _combat.State.CurrentSide.Front.Should().NotBeNull();
+        _combat.State.CurrentSide.Front!.Character.Should().Be(_leftCharacter);
+        _combat.State.CurrentSide.Front.Health.Should().Be(9);
+        _combat.State.CurrentSide.Back.Should().BeNull();
+        _combat.State.CurrentSide.Ap.Should().Be(4);
+        _combat.State.CurrentSide.Hand.Should()
             .Satisfy(c => c.Card == _leftCard1 && c.Character.Character == _leftCharacter, c => c.Card == _leftCard2 && c.Character.Character == _leftCharacter);
-        _combat.CurrentSide.Deck.Should().BeEmpty();
+        _combat.State.CurrentSide.Deck.Should().BeEmpty();
 
-        _combat.OtherSide.Side.Should().Be(CombatSide.Right);
-        _combat.OtherSide.Front.Character.Should().Be(_rightCharacter);
-        _combat.OtherSide.Front.Health.Should().Be(10);
-        _combat.OtherSide.Back.Should().BeNull();
-        _combat.OtherSide.Ap.Should().Be(0);
-        _combat.OtherSide.Lost.Should().BeFalse();
-        _combat.OtherSide.Hand.Should().BeEmpty();
-        _combat.OtherSide.Deck.Should().Satisfy(c => c.Card == _rightCard && c.Character.Character == _rightCharacter);
+        _combat.State.OtherSide.Side.Should().Be(CombatSide.Right);
+        _combat.State.OtherSide.Front.Should().NotBeNull();
+        _combat.State.OtherSide.Front!.Character.Should().Be(_rightCharacter);
+        _combat.State.OtherSide.Front.Health.Should().Be(10);
+        _combat.State.OtherSide.Back.Should().BeNull();
+        _combat.State.OtherSide.Ap.Should().Be(0);
+        _combat.State.OtherSide.Hand.Should().BeEmpty();
+        _combat.State.OtherSide.Deck.Should().Satisfy(c => c.Card == _rightCard && c.Character.Character == _rightCharacter);
     }
 
     [TestMethod]
     public void ShouldPlayCard()
     {
-        _combat.Start();
-        _combat.PlayCardAt(CombatSide.Left, 0);
+        _combat.PlayCard(CombatSide.Left, 0);
 
-        _combat.CurrentSide.Ap.Should().Be(1);
-        _combat.CurrentSide.NoMovesLeft.Should().BeTrue();
-        _combat.OtherSide.Front.Health.Should().Be(5);
+        _combat.State.CurrentSide.Ap.Should().Be(1);
+        _combat.State.OtherSide.Front.Should().NotBeNull();
+        _combat.State.OtherSide.Front!.Health.Should().Be(5);
     }
 
     [TestMethod]
     public void ShouldEndSideTurn()
     {
-        _combat.Start();
-        _combat.EndSideTurnAndStartNextOne(CombatSide.Left);
+        _combat.EndTurn(CombatSide.Left);
 
-        _combat.Ongoing.Should().BeTrue();
-        _combat.Over.Should().BeFalse();
-        _combat.Turn.Should().Be(1);
-        _combat.Side.Should().Be(CombatSide.Right);
-        _combat.Phase.Should().Be(CombatSideTurnPhase.Play);
+        _combat.State.Ongoing.Should().BeTrue();
+        _combat.State.Over.Should().BeFalse();
+        _combat.State.Turn.Should().Be(1);
+        _combat.State.Side.Should().Be(CombatSide.Right);
+        _combat.State.Phase.Should().Be(CombatSideTurnPhase.Play);
 
-        _combat.CurrentSide.Side.Should().Be(CombatSide.Right);
-        _combat.CurrentSide.Front.Character.Should().Be(_rightCharacter);
-        _combat.CurrentSide.Front.Health.Should().Be(10);
-        _combat.CurrentSide.Back.Should().BeNull();
-        _combat.CurrentSide.Ap.Should().Be(4);
-        _combat.CurrentSide.Lost.Should().BeFalse();
-        _combat.CurrentSide.Hand.Should().Satisfy(c => c.Card == _rightCard && c.Character.Character == _rightCharacter);
-        _combat.CurrentSide.Deck.Should().BeEmpty();
+        _combat.State.CurrentSide.Side.Should().Be(CombatSide.Right);
+        _combat.State.CurrentSide.Front.Should().NotBeNull();
+        _combat.State.CurrentSide.Front!.Character.Should().Be(_rightCharacter);
+        _combat.State.CurrentSide.Front.Health.Should().Be(10);
+        _combat.State.CurrentSide.Back.Should().BeNull();
+        _combat.State.CurrentSide.Ap.Should().Be(4);
+        _combat.State.CurrentSide.Hand.Should().Satisfy(c => c.Card == _rightCard && c.Character.Character == _rightCharacter);
+        _combat.State.CurrentSide.Deck.Should().BeEmpty();
 
-        _combat.OtherSide.Side.Should().Be(CombatSide.Left);
-        _combat.OtherSide.Front.Character.Should().Be(_leftCharacter);
-        _combat.OtherSide.Front.Health.Should().Be(9);
-        _combat.OtherSide.Back.Should().BeNull();
-        _combat.OtherSide.Ap.Should().Be(4);
-        _combat.OtherSide.NoMovesLeft.Should().BeFalse();
-        _combat.OtherSide.Lost.Should().BeFalse();
-        _combat.OtherSide.Hand.Should()
+        _combat.State.OtherSide.Side.Should().Be(CombatSide.Left);
+        _combat.State.OtherSide.Front.Should().NotBeNull();
+        _combat.State.OtherSide.Front!.Character.Should().Be(_leftCharacter);
+        _combat.State.OtherSide.Front.Health.Should().Be(9);
+        _combat.State.OtherSide.Back.Should().BeNull();
+        _combat.State.OtherSide.Ap.Should().Be(4);
+        _combat.State.OtherSide.Hand.Should()
             .Satisfy(c => c.Card == _leftCard1 && c.Character.Character == _leftCharacter, c => c.Card == _leftCard2 && c.Character.Character == _leftCharacter);
-        _combat.OtherSide.Deck.Should().BeEmpty();
+        _combat.State.OtherSide.Deck.Should().BeEmpty();
     }
 
     [TestMethod]
     public void ShouldEndTurn()
     {
-        _combat.Start();
-        _combat.EndSideTurnAndStartNextOne(CombatSide.Left);
-        _combat.EndSideTurnAndStartNextOne(CombatSide.Right);
+        _combat.EndTurn(CombatSide.Left);
+        _combat.EndTurn(CombatSide.Right);
 
-        _combat.Ongoing.Should().BeTrue();
-        _combat.Over.Should().BeFalse();
-        _combat.Turn.Should().Be(2);
-        _combat.Side.Should().Be(CombatSide.Left);
-        _combat.Phase.Should().Be(CombatSideTurnPhase.Play);
+        _combat.State.Ongoing.Should().BeTrue();
+        _combat.State.Over.Should().BeFalse();
+        _combat.State.Turn.Should().Be(2);
+        _combat.State.Side.Should().Be(CombatSide.Left);
+        _combat.State.Phase.Should().Be(CombatSideTurnPhase.Play);
 
-        _combat.CurrentSide.Side.Should().Be(CombatSide.Left);
-        _combat.CurrentSide.Front.Character.Should().Be(_leftCharacter);
-        _combat.CurrentSide.Front.Health.Should().Be(9);
-        _combat.CurrentSide.Back.Should().BeNull();
-        _combat.CurrentSide.Ap.Should().Be(5);
-        _combat.CurrentSide.NoMovesLeft.Should().BeFalse();
-        _combat.CurrentSide.Lost.Should().BeFalse();
-        _combat.CurrentSide.Hand.Should()
+        _combat.State.CurrentSide.Side.Should().Be(CombatSide.Left);
+        _combat.State.CurrentSide.Front.Should().NotBeNull();
+        _combat.State.CurrentSide.Front!.Character.Should().Be(_leftCharacter);
+        _combat.State.CurrentSide.Front.Health.Should().Be(9);
+        _combat.State.CurrentSide.Back.Should().BeNull();
+        _combat.State.CurrentSide.Ap.Should().Be(5);
+        _combat.State.CurrentSide.Hand.Should()
             .Satisfy(c => c.Card == _leftCard1 && c.Character.Character == _leftCharacter, c => c.Card == _leftCard2 && c.Character.Character == _leftCharacter);
-        _combat.CurrentSide.Deck.Should().BeEmpty();
+        _combat.State.CurrentSide.Deck.Should().BeEmpty();
 
-        _combat.OtherSide.Side.Should().Be(CombatSide.Right);
-        _combat.OtherSide.Front.Character.Should().Be(_rightCharacter);
-        _combat.OtherSide.Front.Health.Should().Be(10);
-        _combat.OtherSide.Back.Should().BeNull();
-        _combat.OtherSide.Ap.Should().Be(4);
-        _combat.OtherSide.Lost.Should().BeFalse();
-        _combat.OtherSide.Hand.Should().Satisfy(c => c.Card == _rightCard && c.Character.Character == _rightCharacter);
-        _combat.OtherSide.Deck.Should().BeEmpty();
+        _combat.State.OtherSide.Side.Should().Be(CombatSide.Right);
+        _combat.State.OtherSide.Front.Should().NotBeNull();
+        _combat.State.OtherSide.Front!.Character.Should().Be(_rightCharacter);
+        _combat.State.OtherSide.Front.Health.Should().Be(10);
+        _combat.State.OtherSide.Back.Should().BeNull();
+        _combat.State.OtherSide.Ap.Should().Be(4);
+        _combat.State.OtherSide.Hand.Should().Satisfy(c => c.Card == _rightCard && c.Character.Character == _rightCharacter);
+        _combat.State.OtherSide.Deck.Should().BeEmpty();
     }
 
     [TestMethod]
     public void ShouldKillOpponentAndEndCombat()
     {
-        _combat.Start();
-        _combat.PlayCardAt(CombatSide.Left, 0);
-        _combat.EndSideTurnAndStartNextOne(CombatSide.Left);
-        _combat.EndSideTurnAndStartNextOne(CombatSide.Right);
-        _combat.PlayCardAt(CombatSide.Left, 0);
+        _combat.PlayCard(CombatSide.Left, 0);
+        _combat.EndTurn(CombatSide.Left);
+        _combat.EndTurn(CombatSide.Right);
+        _combat.PlayCard(CombatSide.Left, 0);
 
-        _combat.Ongoing.Should().BeFalse();
-        _combat.Over.Should().BeTrue();
-        _combat.Winner.Should().Be(CombatSide.Left);
+        _combat.State.Ongoing.Should().BeFalse();
+        _combat.State.Over.Should().BeTrue();
+        _combat.State.Winner.Should().Be(CombatSide.Left);
     }
 
     [TestMethod]
     public void ShouldNotPlayCardIfNotEnoughAp()
     {
-        _combat.Start();
-        _combat.PlayCardAt(CombatSide.Left, 0);
+        _combat.PlayCard(CombatSide.Left, 0);
 
-        Action playCardWithoutEnoughAp = () => _combat.PlayCardAt(CombatSide.Left, 0);
+        Action playCardWithoutEnoughAp = () => _combat.PlayCard(CombatSide.Left, 0);
 
         playCardWithoutEnoughAp.Should().Throw<InvalidMoveException>();
     }
@@ -174,9 +161,7 @@ public class SimpleCombatTest
     [TestMethod]
     public void ShouldNotPlayNonExistingCard()
     {
-        _combat.Start();
-
-        Action playCardOutOfRange = () => _combat.PlayCardAt(CombatSide.Left, 5);
+        Action playCardOutOfRange = () => _combat.PlayCard(CombatSide.Left, 5);
 
         playCardOutOfRange.Should().Throw<InvalidMoveException>();
     }
@@ -184,9 +169,7 @@ public class SimpleCombatTest
     [TestMethod]
     public void ShouldNotPlayCardIfNotYourTurn()
     {
-        _combat.Start();
-
-        Action playCardOutOfRange = () => _combat.PlayCardAt(CombatSide.Right, 0);
+        Action playCardOutOfRange = () => _combat.PlayCard(CombatSide.Right, 0);
 
         playCardOutOfRange.Should().Throw<InvalidMoveException>();
     }

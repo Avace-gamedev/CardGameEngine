@@ -176,7 +176,7 @@ public class CombatsController : ControllerBase
             return NotFound();
         }
 
-        combat.Instance.PlayCardAt(side, index);
+        combat.Instance.PlayCard(side, index);
 
         await _combatsService.SaveCombat(combat);
         return NoContent();
@@ -191,7 +191,7 @@ public class CombatsController : ControllerBase
             return NotFound();
         }
 
-        combat.Instance.EndSideTurnAndStartNextOne(side);
+        combat.Instance.EndTurn(side);
 
         await _combatsService.SaveCombat(combat);
         return NoContent();

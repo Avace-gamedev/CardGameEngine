@@ -2,6 +2,7 @@
 using CardGame.Engine.Characters;
 using CardGame.Engine.Combats;
 using CardGame.Engine.Combats.Ai;
+using CardGame.Engine.Combats.State;
 using MediatR;
 using PockedeckBattler.Server.GameContent.Characters;
 using PockedeckBattler.Server.Rest.Combats.Exceptions;
@@ -60,32 +61,32 @@ public class CombatsService : ICombatService
         Character? rightFrontCharacter = config.RightFrontCharacter == null ? null : Characters.RequireByName(config.RightFrontCharacter);
         Character? rightBackCharacter = config.RightBackCharacter == null ? null : Characters.RequireByName(config.RightBackCharacter);
 
-        CombatInstance combatInstance = new(
+        CombatState combatState = CombatState.Create(
             new[] { leftFrontCharacter, leftBackCharacter }.Where(c => c != null).Select(c => c!).ToArray(),
-            new[] { rightFrontCharacter, rightBackCharacter }.Where(c => c != null).Select(c => c!).ToArray(),
+            new[] { rightFrontCharacter, rightBackCharacter }.Where(c => c != null).Select(c => c!).ToArray()
+        );
+
+        CombatInstance combatInstance = new(
+            combatState,
             new CombatOptions
             {
                 RightSideAi = config.RightPlayerIsAi ? new CombatAiOptions() : null
             }
         );
-        combatInstance.Start();
 
         CombatWithMetadata combat = new(config.Id, config.LeftPlayerName, config.RightPlayerName, combatInstance, config);
         await SaveCombat(combat, cancellationToken);
 
         Register(combat);
 
-        await _mediator.Publish(new CombatCreated(combat), cancellationToken);
+        await _mediator.Publish(new CombatNotification(combat, CombatEvent.Created), cancellationToken);
 
         return combat;
     }
 
     public async Task SaveCombat(CombatWithMetadata combat, CancellationToken cancellationToken = default)
     {
-        string key = GetKey(combat.Id);
-        bool created = !await _store.Exists(key, cancellationToken);
-
-        await _store.Save(key, combat, cancellationToken);
+        await _store.Save(GetKey(combat.Id), combat, cancellationToken);
     }
 
     public async Task<CombatWithMetadata?> GetCombat(Guid id, CancellationToken cancellationToken = default)
@@ -150,9 +151,9 @@ public class CombatsService : ICombatService
     {
         _registered[combat.Id] = combat;
 
-        combat.Instance.Started += (_, _) => _mediator.Publish(new CombatStarted(combat));
-        combat.Instance.Updated += (_, _) => _mediator.Publish(new CombatUpdated(combat));
-        combat.Instance.Ended += (_, _) => _mediator.Publish(new CombatOver(combat));
+        combat.Instance.State.TurnStarted += (_, _) => _mediator.Publish(new CombatNotification(combat, CombatEvent.TurnStarted));
+        combat.Instance.State.PhaseStarted += (_, _) => _mediator.Publish(new CombatNotification(combat, CombatEvent.PhaseStarted));
+        combat.Instance.State.Ended += (_, _) => _mediator.Publish(new CombatNotification(combat, CombatEvent.Ended));
     }
 
     static string GetKey(Guid id)

@@ -1701,7 +1701,9 @@ export interface IBaseCombatView {
 export class PlayerCombatView extends BaseCombatView implements IPlayerCombatView {
     id!: string;
     player!: PlayerSideView;
+    playerIsAi!: boolean;
     opponent!: CombatSideView;
+    opponentIsAi!: boolean;
 
     constructor(data?: IPlayerCombatView) {
         super(data);
@@ -1716,7 +1718,9 @@ export class PlayerCombatView extends BaseCombatView implements IPlayerCombatVie
         if (_data) {
             this.id = _data["id"];
             this.player = _data["player"] ? PlayerSideView.fromJS(_data["player"]) : new PlayerSideView();
+            this.playerIsAi = _data["playerIsAi"];
             this.opponent = _data["opponent"] ? CombatSideView.fromJS(_data["opponent"]) : new CombatSideView();
+            this.opponentIsAi = _data["opponentIsAi"];
         }
     }
 
@@ -1731,7 +1735,9 @@ export class PlayerCombatView extends BaseCombatView implements IPlayerCombatVie
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["player"] = this.player ? this.player.toJSON() : <any>undefined;
+        data["playerIsAi"] = this.playerIsAi;
         data["opponent"] = this.opponent ? this.opponent.toJSON() : <any>undefined;
+        data["opponentIsAi"] = this.opponentIsAi;
         super.toJSON(data);
         return data;
     }
@@ -1740,12 +1746,13 @@ export class PlayerCombatView extends BaseCombatView implements IPlayerCombatVie
 export interface IPlayerCombatView extends IBaseCombatView {
     id: string;
     player: PlayerSideView;
+    playerIsAi: boolean;
     opponent: CombatSideView;
+    opponentIsAi: boolean;
 }
 
 export class CombatSideView implements ICombatSideView {
     playerName!: string;
-    isAi!: boolean;
     side!: CombatSide;
     ap!: number;
     handSize!: number;
@@ -1768,7 +1775,6 @@ export class CombatSideView implements ICombatSideView {
     init(_data?: any) {
         if (_data) {
             this.playerName = _data["playerName"];
-            this.isAi = _data["isAi"];
             this.side = _data["side"];
             this.ap = _data["ap"];
             this.handSize = _data["handSize"];
@@ -1788,7 +1794,6 @@ export class CombatSideView implements ICombatSideView {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["playerName"] = this.playerName;
-        data["isAi"] = this.isAi;
         data["side"] = this.side;
         data["ap"] = this.ap;
         data["handSize"] = this.handSize;
@@ -1801,7 +1806,6 @@ export class CombatSideView implements ICombatSideView {
 
 export interface ICombatSideView {
     playerName: string;
-    isAi: boolean;
     side: CombatSide;
     ap: number;
     handSize: number;

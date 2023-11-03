@@ -1,4 +1,5 @@
 ﻿using CardGame.Engine.Combats;
+using CardGame.Engine.Combats.State;
 
 namespace CardGame.Engine.Cards.ActionCard;
 
@@ -20,27 +21,27 @@ public enum ActionCardTarget
 
 public static class CardTargetExtensions
 {
-    public static IEnumerable<CharacterCombatState> GetTargets(this ActionCardTarget target, CharacterCombatState source)
+    public static IEnumerable<CharacterCombatState> GetTargets(this CombatState combat, CharacterCombatState source, ActionCardTarget target)
     {
-        CombatInstance combat = source.Combat;
-
         IEnumerable<CharacterCombatState?> characters = target switch
         {
             ActionCardTarget.None => Enumerable.Empty<CharacterCombatState?>(),
             ActionCardTarget.Self => new[] { source },
-            ActionCardTarget.OtherAlly => combat.GetAllCharacters(source.Side),
+            ActionCardTarget.OtherAlly => combat.GetSide(source.Side).GetAllCharacters(),
             ActionCardTarget.FrontOpponent => new[]
             {
-                combat.GetCharacter(source.Side.OtherSide(), CombatPosition.Front)
+                combat.GetSide(source.Side.OtherSide()).GetCharacter(CombatPosition.Front)
             },
             ActionCardTarget.BackOpponent => new[]
             {
-                combat.GetCharacter(source.Side.OtherSide(), CombatPosition.Back) ?? combat.GetCharacter(source.Side.OtherSide(), CombatPosition.Front)
+                combat.GetSide(source.Side.OtherSide()).GetCharacter(CombatPosition.Back)
+                ?? combat.GetSide(source.Side.OtherSide()).GetCharacter(CombatPosition.Front)
             },
-            ActionCardTarget.AllOpponents => combat.GetAllCharacters(source.Side.OtherSide()),
-            ActionCardTarget.FrontAlly => new[] { combat.GetCharacter(source.Side, CombatPosition.Front) },
-            ActionCardTarget.BackAlly => new[] { combat.GetCharacter(source.Side, CombatPosition.Back) ?? combat.GetCharacter(source.Side, CombatPosition.Front) },
-            ActionCardTarget.AllAllies => combat.GetAllCharacters(source.Side),
+            ActionCardTarget.AllOpponents => combat.GetSide(source.Side.OtherSide()).GetAllCharacters(),
+            ActionCardTarget.FrontAlly => new[] { combat.GetSide(source.Side).GetCharacter(CombatPosition.Front) },
+            ActionCardTarget.BackAlly => new[]
+                { combat.GetSide(source.Side).GetCharacter(CombatPosition.Back) ?? combat.GetSide(source.Side).GetCharacter(CombatPosition.Front) },
+            ActionCardTarget.AllAllies => combat.GetSide(source.Side).GetAllCharacters(),
             _ => throw new ArgumentOutOfRangeException(nameof(target), target, null)
         };
 

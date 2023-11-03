@@ -6,6 +6,7 @@
     <app-combat-side-common-elements
       [combat]="combat"
       [side]="combat.opponent"
+      [isAi]="combat.opponentIsAi"
       [highlightEnemies]="enemyTargets"
       [invert]="true"
     ></app-combat-side-common-elements>
@@ -14,6 +15,7 @@
     <app-combat-side-common-elements
       [combat]="combat"
       [side]="combat.player"
+      [isAi]="combat.playerIsAi"
       [highlightAllies]="allyTargets"
       [highlightSource]="source"
     ></app-combat-side-common-elements>

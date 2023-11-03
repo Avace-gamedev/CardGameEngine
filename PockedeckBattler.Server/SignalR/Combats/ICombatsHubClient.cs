@@ -9,7 +9,7 @@ public interface ICombatsHubClient : IHubClient
     Task CombatInPreparationDeleted(CombatInPreparationView view);
 
     Task CombatCreated(PlayerCombatView view);
-    Task CombatStarted(PlayerCombatView view);
-    Task CombatUpdated(PlayerCombatView view);
-    Task CombatOver(PlayerCombatView view);
+    Task CombatTurnStarted(PlayerCombatView view);
+    Task CombatPhaseStarted(PlayerCombatView view);
+    Task CombatEnded(PlayerCombatView view);
 }

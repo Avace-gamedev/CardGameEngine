@@ -28,6 +28,9 @@ export class CombatSideCommonElementsComponent {
   private _side: CombatSideView | undefined;
 
   @Input()
+  public isAi: boolean = false;
+
+  @Input()
   public highlightSource: string | undefined;
 
   @Input()

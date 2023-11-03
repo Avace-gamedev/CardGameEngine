@@ -27,8 +27,12 @@ public class PlayerCombatView : BaseCombatView
     [Required]
     public PlayerSideView Player { get; }
 
+    public bool PlayerIsAi { get; init; }
+
     [Required]
     public CombatSideView Opponent { get; }
+
+    public bool OpponentIsAi { get; init; }
 }
 
 public static class PlayerCombatViewMappingExtensions
@@ -51,17 +55,25 @@ public static class PlayerCombatViewMappingExtensions
 
         return new PlayerCombatView(
             combat.Id,
-            combat.Instance.GetSide(side).PlayerView(sidePlayerName),
-            combat.Instance.GetSide(side.OtherSide()).View(otherSidePlayerName),
-            combat.Instance.Turn,
-            combat.Instance.MaxAp,
-            combat.Instance.Side,
-            combat.Instance.Phase
+            combat.Instance.State.GetSide(side).PlayerView(sidePlayerName),
+            combat.Instance.State.GetSide(side.OtherSide()).View(otherSidePlayerName),
+            combat.Instance.State.Turn,
+            combat.Instance.State.MaxAp,
+            combat.Instance.State.Side,
+            combat.Instance.State.Phase
         )
         {
-            Ongoing = combat.Instance.Ongoing,
-            Over = combat.Instance.Over,
-            Winner = combat.Instance.Winner
+            PlayerIsAi = side switch
+            {
+                CombatSide.Left => combat.Instance.LeftAi != null, CombatSide.Right => combat.Instance.RightAi != null
+            },
+            OpponentIsAi = side switch
+            {
+                CombatSide.Left => combat.Instance.RightAi != null, CombatSide.Right => combat.Instance.LeftAi != null
+            },
+            Ongoing = combat.Instance.State.Ongoing,
+            Over = combat.Instance.State.Over,
+            Winner = combat.Instance.State.Winner
         };
     }
 }

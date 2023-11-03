@@ -1,4 +1,5 @@
 ﻿using CardGame.Engine.Cards.ActionCard;
+using CardGame.Engine.Combats.State;
 
 namespace CardGame.Engine.Combats;
 
@@ -15,9 +16,9 @@ public class ActionCardInstance
 
     public int ApCost => Card.ApCost - Character.StatsModifier.ApCostAdditiveModifier;
 
-    public void Resolve()
+    public void Resolve(CombatState combat)
     {
-        IEnumerable<CharacterCombatState> targets = Card.Target.GetTargets(Character);
+        IEnumerable<CharacterCombatState> targets = combat.GetTargets(Character, Card.Target);
         Card.Resolve(Character, targets);
     }
 }

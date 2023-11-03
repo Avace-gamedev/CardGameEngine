@@ -18,7 +18,6 @@ public class CombatNotification : INotification
 public enum CombatEvent
 {
     Created,
-    TurnStarted,
-    PhaseStarted,
+    Updated,
     Ended
 }

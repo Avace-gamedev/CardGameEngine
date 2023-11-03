@@ -66,13 +66,12 @@ public class CombatsService : ICombatService
             new[] { rightFrontCharacter, rightBackCharacter }.Where(c => c != null).Select(c => c!).ToArray()
         );
 
-        CombatInstance combatInstance = new(
-            combatState,
-            new CombatOptions
-            {
-                RightSideAi = config.RightPlayerIsAi ? new CombatAiOptions() : null
-            }
-        );
+        CombatInstance combatInstance = new(combatState, new CombatOptions());
+
+        if (config.RightPlayerIsAi)
+        {
+            combatInstance.SetAi(CombatSide.Right, new CombatAiOptions());
+        }
 
         CombatInstanceWithMetadata combat = new(config.Id, config.LeftPlayerName, config.RightPlayerName, combatInstance, config);
         await SaveCombat(combat, cancellationToken);
@@ -151,9 +150,25 @@ public class CombatsService : ICombatService
     {
         _registered[combat.Id] = combat;
 
-        combat.Instance.State.TurnStarted += (_, _) => _mediator.Publish(new CombatNotification(combat, CombatEvent.TurnStarted));
-        combat.Instance.State.PhaseStarted += (_, _) => _mediator.Publish(new CombatNotification(combat, CombatEvent.PhaseStarted));
+        combat.Instance.State.TurnStarted += (_, _) => _mediator.Publish(new CombatNotification(combat, CombatEvent.Updated));
+        combat.Instance.State.PhaseStarted += (_, _) => _mediator.Publish(new CombatNotification(combat, CombatEvent.Updated));
         combat.Instance.State.Ended += (_, _) => _mediator.Publish(new CombatNotification(combat, CombatEvent.Ended));
+
+        combat.Instance.State.LeftSide.CardDrawn += (_, _) => _mediator.Publish(new CombatNotification(combat, CombatEvent.Updated));
+        combat.Instance.State.LeftSide.CardReturned += (_, _) => _mediator.Publish(new CombatNotification(combat, CombatEvent.Updated));
+        combat.Instance.State.LeftSide.CardDiscarded += (_, _) => _mediator.Publish(new CombatNotification(combat, CombatEvent.Updated));
+        combat.Instance.State.LeftSide.DeckShuffled += (_, _) => _mediator.Publish(new CombatNotification(combat, CombatEvent.Updated));
+        combat.Instance.State.LeftSide.CharacterPositionChanged += (_, _) => _mediator.Publish(new CombatNotification(combat, CombatEvent.Updated));
+        combat.Instance.State.LeftSide.CharacterRemoved += (_, _) => _mediator.Publish(new CombatNotification(combat, CombatEvent.Updated));
+        combat.Instance.State.LeftSide.ApChanged += (_, _) => _mediator.Publish(new CombatNotification(combat, CombatEvent.Updated));
+
+        combat.Instance.State.RightSide.CardDrawn += (_, _) => _mediator.Publish(new CombatNotification(combat, CombatEvent.Updated));
+        combat.Instance.State.RightSide.CardReturned += (_, _) => _mediator.Publish(new CombatNotification(combat, CombatEvent.Updated));
+        combat.Instance.State.RightSide.CardDiscarded += (_, _) => _mediator.Publish(new CombatNotification(combat, CombatEvent.Updated));
+        combat.Instance.State.RightSide.DeckShuffled += (_, _) => _mediator.Publish(new CombatNotification(combat, CombatEvent.Updated));
+        combat.Instance.State.RightSide.CharacterPositionChanged += (_, _) => _mediator.Publish(new CombatNotification(combat, CombatEvent.Updated));
+        combat.Instance.State.RightSide.CharacterRemoved += (_, _) => _mediator.Publish(new CombatNotification(combat, CombatEvent.Updated));
+        combat.Instance.State.RightSide.ApChanged += (_, _) => _mediator.Publish(new CombatNotification(combat, CombatEvent.Updated));
     }
 
     static string GetKey(Guid id)

@@ -37,7 +37,7 @@ public class PlayerCombatView : BaseCombatView
 
 public static class PlayerCombatViewMappingExtensions
 {
-    public static PlayerCombatView PlayerView(this CombatWithMetadata combat, CombatSide side)
+    public static PlayerCombatView PlayerView(this CombatInstanceWithMetadata combat, CombatSide side)
     {
         string sidePlayerName = side switch
         {

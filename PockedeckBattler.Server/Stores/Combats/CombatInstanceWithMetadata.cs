@@ -3,9 +3,9 @@ using PockedeckBattler.Server.Stores.CombatsInPreparation;
 
 namespace PockedeckBattler.Server.Stores.Combats;
 
-public class CombatWithMetadata
+public class CombatInstanceWithMetadata
 {
-    public CombatWithMetadata(Guid id, string leftPlayerName, string rightPlayerName, CombatInstance instance, CombatInPreparation? configuration = null)
+    public CombatInstanceWithMetadata(Guid id, string leftPlayerName, string rightPlayerName, CombatInstance instance, CombatInPreparation? configuration = null)
     {
         Id = id;
         LeftPlayerName = leftPlayerName;

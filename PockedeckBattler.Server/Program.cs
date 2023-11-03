@@ -47,7 +47,7 @@ builder.Services.AddSingleton<IHubConnections, HubConnectionsInMemory>();
 
 builder.Services.AddSingleton<IHubConnections, HubConnectionsInMemory>();
 
-builder.Services.AddSingleton<IStore<CombatWithMetadata>, MemoryStore<CombatWithMetadata>>();
+builder.Services.AddSingleton<IStore<CombatInstanceWithMetadata>, MemoryStore<CombatInstanceWithMetadata>>();
 builder.Services.AddSingleton<ICombatService, CombatsService>();
 
 builder.Services.AddSingleton<IStore<CombatInPreparation>, CombatInPreparationFileStore>();

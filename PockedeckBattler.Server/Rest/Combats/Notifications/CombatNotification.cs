@@ -5,13 +5,13 @@ namespace PockedeckBattler.Server.Rest.Combats.Notifications;
 
 public class CombatNotification : INotification
 {
-    public CombatNotification(CombatWithMetadata combat, CombatEvent @event)
+    public CombatNotification(CombatInstanceWithMetadata combat, CombatEvent @event)
     {
         Combat = combat;
         Event = @event;
     }
 
-    public CombatWithMetadata Combat { get; }
+    public CombatInstanceWithMetadata Combat { get; }
     public CombatEvent Event { get; }
 }
 

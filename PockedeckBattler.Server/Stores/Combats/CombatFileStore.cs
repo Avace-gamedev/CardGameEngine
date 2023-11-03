@@ -3,7 +3,7 @@ using PockedeckBattler.Server.Stores.CombatsInPreparation;
 
 namespace PockedeckBattler.Server.Stores.Combats;
 
-public class CombatFileStore : SerializedDataStore<CombatWithMetadata, SerializableCombatWithMetadata>
+public class CombatFileStore : SerializedDataStore<CombatInstanceWithMetadata, SerializableCombatWithMetadata>
 {
     public CombatFileStore(ILogger<CombatFileStore> logger, ILogger<JsonFileStore<SerializableCombatWithMetadata>> innerStoreLogger) : base(
         new JsonFileStore<SerializableCombatWithMetadata>(GetDirectory(), innerStoreLogger, null, ".cbt"),
@@ -17,12 +17,12 @@ public class CombatFileStore : SerializedDataStore<CombatWithMetadata, Serializa
         return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "PockeDeckBattler", "FileStores", "Combats");
     }
 
-    protected override SerializableCombatWithMetadata Serialize(CombatWithMetadata value)
+    protected override SerializableCombatWithMetadata Serialize(CombatInstanceWithMetadata value)
     {
         return SerializableCombatWithMetadata.From(value);
     }
 
-    protected override CombatWithMetadata? Deserialize(SerializableCombatWithMetadata serializedValue)
+    protected override CombatInstanceWithMetadata? Deserialize(SerializableCombatWithMetadata serializedValue)
     {
         return serializedValue.Restore();
     }
@@ -36,7 +36,7 @@ public class SerializableCombatWithMetadata
     public string? RightPlayerName { get; init; }
     public SerializableCombatInstance? Instance { get; init; }
 
-    public CombatWithMetadata? Restore()
+    public CombatInstanceWithMetadata? Restore()
     {
         if (!Id.HasValue || string.IsNullOrWhiteSpace(LeftPlayerName) || string.IsNullOrWhiteSpace(RightPlayerName) || Instance == null)
         {
@@ -49,10 +49,10 @@ public class SerializableCombatWithMetadata
             return null;
         }
 
-        return new CombatWithMetadata(Id.Value, LeftPlayerName, RightPlayerName, instance, Configuration);
+        return new CombatInstanceWithMetadata(Id.Value, LeftPlayerName, RightPlayerName, instance, Configuration);
     }
 
-    public static SerializableCombatWithMetadata From(CombatWithMetadata combat)
+    public static SerializableCombatWithMetadata From(CombatInstanceWithMetadata combat)
     {
         return new SerializableCombatWithMetadata
         {

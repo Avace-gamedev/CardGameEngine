@@ -18,17 +18,17 @@ public class CombatsService : ICombatService
     readonly IMediator _mediator;
 
     // cache combat instances because we use register to their event handlers
-    readonly Dictionary<Guid, CombatWithMetadata> _registered = new();
+    readonly Dictionary<Guid, CombatInstanceWithMetadata> _registered = new();
 
-    readonly IStore<CombatWithMetadata> _store;
+    readonly IStore<CombatInstanceWithMetadata> _store;
 
-    public CombatsService(IStore<CombatWithMetadata> store, IMediator mediator)
+    public CombatsService(IStore<CombatInstanceWithMetadata> store, IMediator mediator)
     {
         _store = store;
         _mediator = mediator;
     }
 
-    public async Task<CombatWithMetadata> CreateCombat(CombatInPreparation config, CancellationToken cancellationToken = default)
+    public async Task<CombatInstanceWithMetadata> CreateCombat(CombatInPreparation config, CancellationToken cancellationToken = default)
     {
         if (config.LeftFrontCharacter == null && config.LeftBackCharacter == null)
         {
@@ -74,7 +74,7 @@ public class CombatsService : ICombatService
             }
         );
 
-        CombatWithMetadata combat = new(config.Id, config.LeftPlayerName, config.RightPlayerName, combatInstance, config);
+        CombatInstanceWithMetadata combat = new(config.Id, config.LeftPlayerName, config.RightPlayerName, combatInstance, config);
         await SaveCombat(combat, cancellationToken);
 
         Register(combat);
@@ -84,14 +84,14 @@ public class CombatsService : ICombatService
         return combat;
     }
 
-    public async Task SaveCombat(CombatWithMetadata combat, CancellationToken cancellationToken = default)
+    public async Task SaveCombat(CombatInstanceWithMetadata combat, CancellationToken cancellationToken = default)
     {
         await _store.Save(GetKey(combat.Id), combat, cancellationToken);
     }
 
-    public async Task<CombatWithMetadata?> GetCombat(Guid id, CancellationToken cancellationToken = default)
+    public async Task<CombatInstanceWithMetadata?> GetCombat(Guid id, CancellationToken cancellationToken = default)
     {
-        if (_registered.TryGetValue(id, out CombatWithMetadata? combat))
+        if (_registered.TryGetValue(id, out CombatInstanceWithMetadata? combat))
         {
             return combat;
         }
@@ -106,12 +106,12 @@ public class CombatsService : ICombatService
         return combat;
     }
 
-    public async IAsyncEnumerable<CombatWithMetadata> GetCombatsInvolvingPlayer(
+    public async IAsyncEnumerable<CombatInstanceWithMetadata> GetCombatsInvolvingPlayer(
         string player,
         [EnumeratorCancellation] CancellationToken cancellationToken = default
     )
     {
-        await foreach (CombatWithMetadata combat in GetAll(cancellationToken))
+        await foreach (CombatInstanceWithMetadata combat in GetAll(cancellationToken))
         {
             if (combat.LeftPlayerName == player || combat.RightPlayerName == player)
             {
@@ -123,14 +123,14 @@ public class CombatsService : ICombatService
     /// <summary>
     ///     Return all combats using both the cached values in <see cref="_registered" /> and the new ones from <see cref="_store" />
     /// </summary>
-    async IAsyncEnumerable<CombatWithMetadata> GetAll([EnumeratorCancellation] CancellationToken cancellationToken)
+    async IAsyncEnumerable<CombatInstanceWithMetadata> GetAll([EnumeratorCancellation] CancellationToken cancellationToken)
     {
-        foreach (CombatWithMetadata combat in _registered.Values)
+        foreach (CombatInstanceWithMetadata combat in _registered.Values)
         {
             yield return combat;
         }
 
-        await foreach (CombatWithMetadata combat in _store.LoadAll(cancellationToken))
+        await foreach (CombatInstanceWithMetadata combat in _store.LoadAll(cancellationToken))
         {
             if (IsRegistered(combat))
             {
@@ -142,12 +142,12 @@ public class CombatsService : ICombatService
         }
     }
 
-    bool IsRegistered(CombatWithMetadata combat)
+    bool IsRegistered(CombatInstanceWithMetadata combat)
     {
         return _registered.ContainsKey(combat.Id);
     }
 
-    void Register(CombatWithMetadata combat)
+    void Register(CombatInstanceWithMetadata combat)
     {
         _registered[combat.Id] = combat;
 

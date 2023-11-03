@@ -31,7 +31,7 @@ public class PublishCombatNotificationToSignalRClients : INotificationHandler<Co
         await Notify(notification.Combat, action, cancellationToken);
     }
 
-    public async Task Notify(CombatWithMetadata combat, Func<ICombatsHubClient, CombatSide, Task> notify, CancellationToken cancellationToken)
+    public async Task Notify(CombatInstanceWithMetadata combat, Func<ICombatsHubClient, CombatSide, Task> notify, CancellationToken cancellationToken)
     {
         if (IsConnected(combat.LeftPlayerName, out string? leftId))
         {

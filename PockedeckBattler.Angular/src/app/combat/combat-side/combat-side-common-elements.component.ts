@@ -31,6 +31,9 @@ export class CombatSideCommonElementsComponent {
   private _side: CombatSideView | undefined;
 
   @Input()
+  public highlightSource: string | undefined;
+
+  @Input()
   public invert: boolean = false;
 
   protected aps: ApState[] = [];

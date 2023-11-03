@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, filter, from, map, of, switchMap } from 'rxjs';
 import {
+  CardInstanceWithModifiersView,
   CombatSide,
   CombatsService,
   PlayerCombatView,
@@ -16,6 +17,7 @@ import { IdentityService } from '../core/authentication/services/identity.servic
 })
 export class CombatComponent implements OnInit {
   protected combat: PlayerCombatView | undefined;
+  protected source: string | undefined;
 
   constructor(
     private identityService: IdentityService,
@@ -83,6 +85,10 @@ export class CombatComponent implements OnInit {
     this.combatsService
       .endTurn(this.combat.id, this.identityService.getIdentity())
       .subscribe();
+  }
+
+  hoverCard(card: CardInstanceWithModifiersView | undefined) {
+    this.source = card?.character;
   }
 
   protected readonly CombatSide = CombatSide;

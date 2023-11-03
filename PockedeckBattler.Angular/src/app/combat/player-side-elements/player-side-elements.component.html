@@ -3,6 +3,7 @@
     <div class="flex-fill hstack justify-content-center gap-2">
       <button
         class="btn m-0 p-0"
+        [class.highlight]="hoveredCharacter === card.character"
         style="height: 100%; width: 175px"
         [class.btn-disabled]="disabled || card.card.apCost > combat.player.ap"
         [disabled]="disabled || card.card.apCost > combat.player.ap"
@@ -13,6 +14,8 @@
           [card]="card"
           size="sm"
           [characters]="characters"
+          (mouseenter)="mouseEnter(card)"
+          (mouseleave)="mouseLeave(card)"
         >
         </app-action-card-instance>
       </button>

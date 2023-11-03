@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import {
+  CardInstanceWithModifiersView,
   CharactersService,
   CharacterView,
   CombatSide,
@@ -16,7 +17,14 @@ export class PlayerSideElementsComponent implements OnInit {
   public combat: PlayerCombatView | undefined;
 
   @Input()
-  public disabled: boolean = false;
+  get disabled(): boolean {
+    return this._disabled;
+  }
+  set disabled(value: boolean) {
+    this._disabled = value;
+    this.clearMouseHover();
+  }
+  private _disabled: boolean = false;
 
   @Output()
   public play: EventEmitter<number> = new EventEmitter<number>();
@@ -24,7 +32,12 @@ export class PlayerSideElementsComponent implements OnInit {
   @Output()
   public endTurn: EventEmitter<void> = new EventEmitter<void>();
 
+  @Output()
+  public hover: EventEmitter<CardInstanceWithModifiersView | undefined> =
+    new EventEmitter<CardInstanceWithModifiersView | undefined>();
+
   protected characters: CharacterView[] = [];
+  protected hoveredCharacter: string | undefined;
 
   constructor(private charactersService: CharactersService) {}
 
@@ -32,6 +45,22 @@ export class PlayerSideElementsComponent implements OnInit {
     this.charactersService
       .getAll()
       .subscribe((characters) => (this.characters = characters));
+  }
+
+  protected mouseEnter(card: CardInstanceWithModifiersView) {
+    this.hoveredCharacter = card.character;
+    this.hover.emit(card);
+  }
+
+  protected mouseLeave(card: CardInstanceWithModifiersView) {
+    if (this.hoveredCharacter === card.character) {
+      this.clearMouseHover();
+    }
+  }
+
+  private clearMouseHover() {
+    this.hoveredCharacter = undefined;
+    this.hover.emit(undefined);
   }
 
   protected readonly CombatSide = CombatSide;

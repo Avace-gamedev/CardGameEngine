@@ -13,6 +13,7 @@
     <app-combat-side-common-elements
       [combat]="combat"
       [side]="combat.player"
+      [highlightSource]="source"
     ></app-combat-side-common-elements>
   </div>
   <div
@@ -31,6 +32,7 @@
       [disabled]="combat.currentSide !== combat.player.side || combat.over"
       (play)="play($event)"
       (endTurn)="endTurn()"
+      (hover)="hoverCard($event)"
     >
     </app-player-side-elements>
   </div>

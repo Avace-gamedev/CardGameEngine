@@ -15,6 +15,13 @@
         >
           Back
         </span>
+
+        <div
+          class="pe-none position-absolute top-0 bottom-0 start-0 end-0"
+          [class.highlightSource]="
+            highlightSource === side.backCharacter.character.identity.name
+          "
+        ></div>
       </div>
       <div class="position-relative" *ngIf="side.frontCharacter">
         <app-combat-character-img
@@ -27,6 +34,12 @@
         >
           Front
         </span>
+        <div
+          class="pe-none position-absolute top-0 bottom-0 start-0 end-0"
+          [class.highlightSource]="
+            highlightSource === side.frontCharacter.character.identity.name
+          "
+        ></div>
       </div>
     </div>
     <div

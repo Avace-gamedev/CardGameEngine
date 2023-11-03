@@ -1,6 +1,5 @@
 import { Component, Input } from '@angular/core';
 import { PassiveStatsModifierView, StatEffect } from '../../../../api/pockedeck-battler-api-client';
-import { AssetIcon } from '../../../icons/asset-icon/asset-icons';
 
 @Component({
   selector: 'app-stats-passive-effect-line',
@@ -41,34 +40,11 @@ export class StatsPassiveEffectLineComponent {
         break;
     }
 
-    let icon: AssetIcon;
-    switch (this.effect.effect) {
-      case StatEffect.IncreaseApCost:
-        icon = 'dice-increase';
-        break;
-      case StatEffect.ReduceApCost:
-        icon = 'dice-decrease';
-        break;
-      case StatEffect.IncreaseDamage:
-        icon = 'biceps';
-        break;
-      case StatEffect.ReduceDamage:
-        icon = 'broken-axe';
-        break;
-      case StatEffect.IncreaseResistance:
-        icon = 'shield-reflect';
-        break;
-      case StatEffect.ReduceResistance:
-        icon = 'cracked-shield';
-        break;
-    }
-
-    this.display = { icon, name, value: this.effect.amount, duration: this.effect.duration };
+    this.display = { name, value: this.effect.amount, duration: this.effect.duration };
   }
 }
 
 interface ModifierToDisplay {
-  readonly icon: AssetIcon;
   readonly value: number;
   readonly name: string;
   readonly duration: number;

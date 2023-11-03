@@ -1,7 +1,7 @@
 <div class="vstack" *ngIf="effect && display">
   <div class="hstack gap-2 align-items-start" *ngIf="display.value !== 0">
     <app-stat-effect-icon [effect]="effect.effect" size="sm" class="pt-1"></app-stat-effect-icon>
-    <div class="vstack">
+    <div class="d-flex flex-wrap gap-2">
       <div class="text-nowrap">
         {{ display.value | sign }}
         {{ display.name }}

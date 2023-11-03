@@ -1,0 +1,9 @@
+<div class="h-100 position-relative">
+  <app-action-card [card]="card?.card" [size]="size"></app-action-card>
+  <app-character-img
+    class="position-absolute bottom-0 end-0 m-2"
+    [character]="character"
+    size="sm"
+    *ngIf="character"
+  ></app-character-img>
+</div>

@@ -9,7 +9,12 @@
         (click)="play.emit(i)"
         *ngFor="let card of combat.player.hand; let i = index"
       >
-        <app-action-card [card]="card.baseCard" size="sm"> </app-action-card>
+        <app-action-card-instance
+          [card]="card"
+          size="sm"
+          [characters]="characters"
+        >
+        </app-action-card-instance>
       </button>
     </div>
 

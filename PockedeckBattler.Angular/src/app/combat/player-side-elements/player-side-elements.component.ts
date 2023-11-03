@@ -1,5 +1,7 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import {
+  CharactersService,
+  CharacterView,
   CombatSide,
   PlayerCombatView,
 } from '../../api/pockedeck-battler-api-client';
@@ -9,7 +11,7 @@ import {
   templateUrl: './player-side-elements.component.html',
   styleUrls: ['./player-side-elements.component.css'],
 })
-export class PlayerSideElementsComponent {
+export class PlayerSideElementsComponent implements OnInit {
   @Input()
   public combat: PlayerCombatView | undefined;
 
@@ -21,6 +23,16 @@ export class PlayerSideElementsComponent {
 
   @Output()
   public endTurn: EventEmitter<void> = new EventEmitter<void>();
+
+  protected characters: CharacterView[] = [];
+
+  constructor(private charactersService: CharactersService) {}
+
+  ngOnInit() {
+    this.charactersService
+      .getAll()
+      .subscribe((characters) => (this.characters = characters));
+  }
 
   protected readonly CombatSide = CombatSide;
 }

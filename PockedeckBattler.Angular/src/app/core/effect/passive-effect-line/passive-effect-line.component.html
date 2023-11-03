@@ -1,7 +1,8 @@
 <div class="hstack gap-1 text-nowrap">
   <ng-container [ngSwitch]="type">
     <ng-container *ngSwitchCase="PassiveEffectType.Stats">
-      <app-stats-passive-effect-line [effect]="$any(effect)"> </app-stats-passive-effect-line>
+      <app-stats-passive-effect-line [effect]="$any(effect)" [overrideDuration]="overrideDuration">
+      </app-stats-passive-effect-line>
     </ng-container>
     <ng-container *ngSwitchDefault> __passive_effect__ {{ effect?.toJSON()?.type }} </ng-container>
   </ng-container>

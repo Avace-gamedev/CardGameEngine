@@ -18,6 +18,9 @@ export class PassiveEffectLineComponent {
   }
   private _effect: PassiveEffectView | undefined;
 
+  @Input()
+  public overrideDuration: number | undefined;
+
   protected type: PassiveEffectType | undefined;
 
   private update() {

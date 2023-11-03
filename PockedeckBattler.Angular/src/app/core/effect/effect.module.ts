@@ -27,6 +27,6 @@ import { SharedModule } from '../../shared/shared.module';
     AddTriggeredEffectLineComponent,
   ],
   imports: [SharedModule, IconsModule, NgbTooltip],
-  exports: [ActiveEffectLineComponent, PassiveEffectLineComponent],
+  exports: [ActiveEffectLineComponent, PassiveEffectLineComponent, TriggeredEffectLineComponent],
 })
 export class EffectModule {}

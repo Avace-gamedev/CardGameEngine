@@ -10,4 +10,8 @@
     [effect]="effect"
     *ngFor="let effect of character?.passiveEffects"
   ></app-passive-effect-instance>
+  <app-triggered-effect-instance
+    [effect]="effect"
+    *ngFor="let effect of character?.triggeredEffects"
+  ></app-triggered-effect-instance>
 </ng-template>

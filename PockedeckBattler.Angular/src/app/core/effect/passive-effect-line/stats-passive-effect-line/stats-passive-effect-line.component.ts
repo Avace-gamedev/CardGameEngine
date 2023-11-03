@@ -16,6 +16,9 @@ export class StatsPassiveEffectLineComponent {
   }
   private _effect: PassiveStatsModifierView | undefined;
 
+  @Input()
+  public overrideDuration: number | undefined;
+
   protected display: ModifierToDisplay | undefined;
 
   private update() {
@@ -40,7 +43,7 @@ export class StatsPassiveEffectLineComponent {
         break;
     }
 
-    this.display = { name, value: this.effect.amount, duration: this.effect.duration };
+    this.display = { name, value: this.effect.amount, duration: this.overrideDuration ?? this.effect.duration };
   }
 }
 

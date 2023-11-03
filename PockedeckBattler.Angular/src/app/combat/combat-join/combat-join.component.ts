@@ -5,12 +5,10 @@ import {
   CombatsService,
   UpdateCombatInPreparationRequest,
 } from '../../api/pockedeck-battler-api-client';
-import '../../common-pages/not-found/redirect';
 import { IdentityService } from '../../core/authentication/services/identity.service';
 
 @Component({
   templateUrl: './combat-join.component.html',
-  styleUrls: ['./combat-join.component.css'],
 })
 export class CombatJoinComponent implements OnInit {
   protected error: string | undefined;

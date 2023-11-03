@@ -12,7 +12,6 @@ import { CardType } from '../../core-common/utils/types';
 @Component({
   selector: 'app-action-card-chip',
   templateUrl: './action-card-chip.component.html',
-  styleUrls: ['./action-card-chip.component.css'],
 })
 export class ActionCardChipComponent {
   @Input()

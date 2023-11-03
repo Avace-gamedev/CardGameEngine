@@ -5,7 +5,6 @@ import { CharacterView } from '../../../api/pockedeck-battler-api-client';
 @Component({
   selector: 'app-character-img',
   templateUrl: './character-img.component.html',
-  styleUrls: ['./character-img.component.css'],
 })
 export class CharacterImgComponent {
   @Input()

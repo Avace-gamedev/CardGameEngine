@@ -4,7 +4,6 @@ import { AddPassiveEffectView } from '../../../../api/pockedeck-battler-api-clie
 @Component({
   selector: 'app-add-passive-effect-line',
   templateUrl: './add-passive-effect-line.component.html',
-  styleUrls: ['./add-passive-effect-line.component.css'],
 })
 export class AddPassiveEffectLineComponent {
   @Input()

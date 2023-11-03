@@ -4,7 +4,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 @Component({
   selector: 'app-not-found',
   templateUrl: './not-found.component.html',
-  styleUrls: ['./not-found.component.css'],
 })
 export class NotFoundComponent {
   protected url: string | undefined;
@@ -20,3 +19,14 @@ export class NotFoundComponent {
     });
   }
 }
+
+declare module '@angular/router' {
+  interface Router {
+    to404(): Promise<boolean>;
+  }
+}
+
+Router.prototype.to404 = function (): Promise<boolean> {
+  const url = this.url;
+  return this.navigate(['/', '404'], { queryParams: { url } });
+};

@@ -6,7 +6,6 @@ import '../../../core/extensions/string-extensions';
 @Component({
   selector: 'app-combat-empty-side',
   templateUrl: './combat-empty-side.component.html',
-  styleUrls: ['./combat-empty-side.component.css'],
 })
 export class CombatEmptySideComponent {
   @Input()

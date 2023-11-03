@@ -6,7 +6,6 @@ import { CombatCharacterImageSize } from '../../core/character/character-img/cha
 @Component({
   selector: 'app-combat-character-img',
   templateUrl: './combat-character-img.component.html',
-  styleUrls: ['./combat-character-img.component.css'],
 })
 export class CombatCharacterImgComponent {
   @Input()

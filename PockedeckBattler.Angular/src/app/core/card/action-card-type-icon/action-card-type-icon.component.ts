@@ -6,7 +6,6 @@ import { CardType } from '../../core-common/utils/types';
 @Component({
   selector: 'app-action-card-type-icon',
   templateUrl: './action-card-type-icon.component.html',
-  styleUrls: ['./action-card-type-icon.component.css'],
 })
 export class ActionCardTypeIconComponent {
   @Input()

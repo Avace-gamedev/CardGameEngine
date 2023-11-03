@@ -12,7 +12,6 @@ import { AlertType } from '../alerts.service';
 @Component({
   selector: 'app-self-closing-alert',
   templateUrl: './self-closing-alert.component.html',
-  styleUrls: ['./self-closing-alert.component.css'],
 })
 export class SelfClosingAlertComponent implements OnInit {
   @ViewChild('alert', { static: false })

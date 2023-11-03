@@ -8,7 +8,6 @@ import { ActionCardSize } from '../../core/card/action-card/action-card.componen
 @Component({
   selector: 'app-action-card-instance',
   templateUrl: './action-card-instance.component.html',
-  styleUrls: ['./action-card-instance.component.css'],
 })
 export class ActionCardInstanceComponent {
   @Input()

@@ -18,7 +18,6 @@ import { CombatSideConfiguration } from './combat-configure-side/combat-configur
 @UntilDestroy()
 @Component({
   templateUrl: './combat-configure.component.html',
-  styleUrls: ['./combat-configure.component.css'],
 })
 export class CombatConfigureComponent implements OnInit {
   protected characters: CharacterView[] = [];

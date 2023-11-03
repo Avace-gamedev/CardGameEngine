@@ -6,7 +6,6 @@ import { PassiveEffectType } from '../../core-common/utils/types';
 @Component({
   selector: 'app-passive-effect-line',
   templateUrl: './passive-effect-line.component.html',
-  styleUrls: ['./passive-effect-line.component.css'],
 })
 export class PassiveEffectLineComponent {
   @Input()

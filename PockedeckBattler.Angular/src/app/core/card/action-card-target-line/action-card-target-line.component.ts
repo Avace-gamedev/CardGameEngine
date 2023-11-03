@@ -4,7 +4,6 @@ import { ActionCardTarget } from '../../../api/pockedeck-battler-api-client';
 @Component({
   selector: 'app-action-card-target-line',
   templateUrl: './action-card-target-line.component.html',
-  styleUrls: ['./action-card-target-line.component.css'],
 })
 export class ActionCardTargetLineComponent {
   @Input()

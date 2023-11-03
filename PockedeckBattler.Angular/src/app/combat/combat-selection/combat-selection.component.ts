@@ -10,7 +10,6 @@ import { IdentityService } from '../../core/authentication/services/identity.ser
 
 @Component({
   templateUrl: './combat-selection.component.html',
-  styleUrls: ['./combat-selection.component.css'],
 })
 export class CombatSelectionComponent implements OnInit {
   protected combats: PlayerCombatView[] = [];

@@ -5,7 +5,6 @@ import { IdentityService } from '../../core/authentication/services/identity.ser
 
 @Component({
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css'],
 })
 export class LoginComponent {
   protected name: string | undefined;

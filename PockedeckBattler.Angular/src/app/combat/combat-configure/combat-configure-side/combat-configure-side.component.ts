@@ -7,7 +7,6 @@ import {
 @Component({
   selector: 'app-combat-configure-side',
   templateUrl: './combat-configure-side.component.html',
-  styleUrls: ['./combat-configure-side.component.css'],
 })
 export class CombatConfigureSideComponent {
   @Input()

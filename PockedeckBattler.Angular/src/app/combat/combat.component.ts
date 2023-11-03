@@ -14,7 +14,6 @@ import { ActionCardTargetUtils } from './utils/utils';
 @Component({
   selector: 'app-combat',
   templateUrl: './combat.component.html',
-  styleUrls: ['./combat.component.css'],
 })
 export class CombatComponent implements OnInit {
   protected combat: PlayerCombatView | undefined;

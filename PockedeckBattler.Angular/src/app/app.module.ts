@@ -13,14 +13,7 @@ import { CoreModule } from './core/core.module';
 
 @NgModule({
   declarations: [AppComponent, NotFoundComponent, LoginComponent],
-  imports: [
-    BrowserModule,
-    CoreModule,
-    AppRoutingModule,
-    NgbModule,
-    FormsModule,
-    AlertModule,
-  ],
+  imports: [BrowserModule, CoreModule, AppRoutingModule, NgbModule, FormsModule, AlertModule],
   providers: [
     {
       provide: APP_BASE_HREF,

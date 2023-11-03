@@ -33,8 +33,9 @@ export class PlayerSideElementsComponent implements OnInit {
   public endTurn: EventEmitter<void> = new EventEmitter<void>();
 
   @Output()
-  public hover: EventEmitter<CardInstanceWithModifiersView | undefined> =
-    new EventEmitter<CardInstanceWithModifiersView | undefined>();
+  public hover: EventEmitter<CardInstanceWithModifiersView | undefined> = new EventEmitter<
+    CardInstanceWithModifiersView | undefined
+  >();
 
   protected characters: CharacterView[] = [];
   protected hoveredCharacter: string | undefined;
@@ -42,9 +43,7 @@ export class PlayerSideElementsComponent implements OnInit {
   constructor(private charactersService: CharactersService) {}
 
   ngOnInit() {
-    this.charactersService
-      .getAll()
-      .subscribe((characters) => (this.characters = characters));
+    this.charactersService.getAll().subscribe((characters) => (this.characters = characters));
   }
 
   protected mouseEnter(card: CardInstanceWithModifiersView) {

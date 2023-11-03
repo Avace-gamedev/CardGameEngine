@@ -14,15 +14,14 @@
     <section *ngIf="size !== 'sm'">
       <div class="fw-bold">Description</div>
       <div>
-        {{ card?.description ?? "???" }}
+        {{ card?.description ?? '???' }}
       </div>
     </section>
 
     <section>
       <div class="hstack gap-1">
         <span class="fw-bold">Target</span> -
-        <app-action-card-target-line [target]="card?.target">
-        </app-action-card-target-line>
+        <app-action-card-target-line [target]="card?.target"> </app-action-card-target-line>
       </div>
     </section>
 
@@ -30,9 +29,7 @@
       <div>
         <div class="fw-bold">Effects</div>
         <div class="vstack">
-          <app-active-effect-line
-            [effect]="card?.mainEffect"
-          ></app-active-effect-line>
+          <app-active-effect-line [effect]="card?.mainEffect"></app-active-effect-line>
           <ng-container *ngIf="card?.additionalEffects">
             <app-active-effect-line
               [effect]="effect"

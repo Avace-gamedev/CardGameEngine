@@ -1,75 +1,40 @@
 <ng-container *ngIf="combat && side">
   <div class="h-100 container-fluid hstack" [class.flex-row-reverse]="invert">
-    <div
-      class="hstack w-50 justify-content-around"
-      [class.flex-row-reverse]="invert"
-    >
+    <div class="hstack w-50 justify-content-around" [class.flex-row-reverse]="invert">
       <div class="position-relative" *ngIf="side.backCharacter">
-        <app-combat-character-img
-          [character]="side.backCharacter"
-          footer="Back"
-          size="xl"
-        ></app-combat-character-img>
+        <app-combat-character-img [character]="side.backCharacter" footer="Back" size="xl"></app-combat-character-img>
 
         <div
           class="pe-none position-absolute top-0 bottom-0 start-0 end-0"
-          [class.highlight-source]="
-            highlightSource === side.backCharacter.character.identity.name
-          "
+          [class.highlight-source]="highlightSource === side.backCharacter.character.identity.name"
         ></div>
         <div
           class="pe-none position-absolute top-0 bottom-0 start-0 end-0"
-          [class.highlight-enemy]="
-            highlightEnemies.includes(
-              side.backCharacter.character.identity.name
-            )
-          "
+          [class.highlight-enemy]="highlightEnemies.includes(side.backCharacter.character.identity.name)"
         ></div>
         <div
           class="pe-none position-absolute top-0 bottom-0 start-0 end-0"
-          [class.highlight-ally]="
-            highlightAllies.includes(side.backCharacter.character.identity.name)
-          "
+          [class.highlight-ally]="highlightAllies.includes(side.backCharacter.character.identity.name)"
         ></div>
       </div>
       <div class="position-relative" *ngIf="side.frontCharacter">
-        <app-combat-character-img
-          [character]="side.frontCharacter"
-          footer="Front"
-          size="xl"
-        ></app-combat-character-img>
+        <app-combat-character-img [character]="side.frontCharacter" footer="Front" size="xl"></app-combat-character-img>
         <div
           class="pe-none position-absolute top-0 bottom-0 start-0 end-0"
-          [class.highlight-source]="
-            highlightSource === side.frontCharacter.character.identity.name
-          "
+          [class.highlight-source]="highlightSource === side.frontCharacter.character.identity.name"
         ></div>
         <div
           class="pe-none position-absolute top-0 bottom-0 start-0 end-0"
-          [class.highlight-enemy]="
-            highlightEnemies.includes(
-              side.frontCharacter.character.identity.name
-            )
-          "
+          [class.highlight-enemy]="highlightEnemies.includes(side.frontCharacter.character.identity.name)"
         ></div>
         <div
           class="pe-none position-absolute top-0 bottom-0 start-0 end-0"
-          [class.highlight-ally]="
-            highlightAllies.includes(
-              side.frontCharacter.character.identity.name
-            )
-          "
+          [class.highlight-ally]="highlightAllies.includes(side.frontCharacter.character.identity.name)"
         ></div>
       </div>
     </div>
-    <div
-      class="w-50 vstack justify-content-end"
-      [class.flex-column-reverse]="invert"
-    >
-      <div
-        class="hstack m-4 gap-4 align-items-center justify-content-end"
-        [class.flex-row-reverse]="invert"
-      >
+    <div class="w-50 vstack justify-content-end" [class.flex-column-reverse]="invert">
+      <div class="hstack m-4 gap-4 align-items-center justify-content-end" [class.flex-row-reverse]="invert">
         <div class="hstack gap-2">
           <app-action-points-icon></app-action-points-icon>
           <div class="me-2">{{ side.ap }}/{{ combat.maxAp }}</div>

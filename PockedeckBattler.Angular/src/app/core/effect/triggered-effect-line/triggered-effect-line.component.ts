@@ -1,9 +1,5 @@
 import { Component, Input } from '@angular/core';
-import {
-  TriggeredEffectView,
-  TriggerMoment,
-  TurnTriggerView,
-} from '../../../api/pockedeck-battler-api-client';
+import { TriggeredEffectView, TriggerMoment, TurnTriggerView } from '../../../api/pockedeck-battler-api-client';
 
 @Component({
   selector: 'app-triggered-effect-line',

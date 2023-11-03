@@ -21,9 +21,7 @@
         [name]="combat.rightPlayerName"
         [characters]="characters"
         [readonly]="side !== CombatSide.Right && !combat.rightPlayerIsAi"
-        [enableNameEdition]="
-          side !== CombatSide.Right && combat.rightPlayerIsAi
-        "
+        [enableNameEdition]="side !== CombatSide.Right && combat.rightPlayerIsAi"
         (update)="sendUpdate(CombatSide.Right, $event)"
         (leave)="leave(CombatSide.Right)"
         *ngIf="combat.rightPlayerName || combat.rightPlayerIsAi"

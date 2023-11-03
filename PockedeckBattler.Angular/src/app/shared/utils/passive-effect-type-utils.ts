@@ -1,7 +1,4 @@
-import {
-  PassiveEffectView,
-  PassiveStatsModifierView,
-} from '../../api/pockedeck-battler-api-client';
+import { PassiveEffectView, PassiveStatsModifierView } from '../../api/pockedeck-battler-api-client';
 import { PassiveEffectType } from './types';
 
 export class PassiveEffectTypeUtils {

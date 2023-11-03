@@ -22,7 +22,7 @@ export class ModalsService {
       catchError((_) => {
         // dismissed
         return of(void 0);
-      }),
+      })
     );
   }
 }

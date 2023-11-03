@@ -9,22 +9,7 @@ import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   declarations: [],
-  imports: [
-    SharedModule,
-    ApiModule,
-    ModalsModule,
-    CharacterModule,
-    CardModule,
-    EffectModule,
-  ],
-  exports: [
-    ApiModule,
-    SharedModule,
-    ModalsModule,
-    IconsModule,
-    CharacterModule,
-    CardModule,
-    EffectModule,
-  ],
+  imports: [SharedModule, ApiModule, ModalsModule, CharacterModule, CardModule, EffectModule],
+  exports: [ApiModule, SharedModule, ModalsModule, IconsModule, CharacterModule, CardModule, EffectModule],
 })
 export class CoreModule {}

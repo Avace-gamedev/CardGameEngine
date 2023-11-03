@@ -3,7 +3,7 @@ import { ActionCardTarget } from '../../api/pockedeck-battler-api-client';
 export class ActionCardTargetUtils {
   static getAllyTargets(
     target: ActionCardTarget,
-    sourcePosition: 'front' | 'back',
+    sourcePosition: 'front' | 'back'
   ): 'none' | 'front' | 'back' | 'both' {
     switch (target) {
       case ActionCardTarget.Self:
@@ -23,9 +23,7 @@ export class ActionCardTargetUtils {
         return 'none';
     }
   }
-  static getEnemyTargets(
-    target: ActionCardTarget,
-  ): 'none' | 'front' | 'back' | 'both' {
+  static getEnemyTargets(target: ActionCardTarget): 'none' | 'front' | 'back' | 'both' {
     switch (target) {
       case ActionCardTarget.FrontOpponent:
         return 'front';

@@ -21,9 +21,7 @@ export class ActiveEffectLineComponent {
   protected effectType: ActiveEffectType | undefined;
 
   private update() {
-    this.effectType = this.effect
-      ? ActiveEffectTypeUtils.getType(this.effect)
-      : undefined;
+    this.effectType = this.effect ? ActiveEffectTypeUtils.getType(this.effect) : undefined;
   }
 
   protected readonly ActiveEffectType = ActiveEffectType;

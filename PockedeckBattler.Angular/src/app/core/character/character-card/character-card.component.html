@@ -12,20 +12,20 @@
     <header class="hstack gap-2">
       <app-character-img [character]="character"></app-character-img>
       <div class="fs-4 text-nowrap">
-        {{ character?.identity?.displayName ?? "???" }}
+        {{ character?.identity?.displayName ?? '???' }}
       </div>
     </header>
 
     <section>
       <div class="fw-bold">Description</div>
-      <div>{{ character?.identity?.description ?? "???" }}</div>
+      <div>{{ character?.identity?.description ?? '???' }}</div>
     </section>
 
     <section>
       <div class="fw-bold">Statistics</div>
       <div>
         <span class="fw-bold">HP:</span>
-        {{ character?.statistics?.maxHealth ?? "???" }}
+        {{ character?.statistics?.maxHealth ?? '???' }}
       </div>
     </section>
 

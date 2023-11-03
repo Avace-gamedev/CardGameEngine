@@ -1,31 +1,13 @@
-import {
-  HttpErrorResponse,
-  HttpEvent,
-  HttpHandler,
-  HttpInterceptor,
-  HttpRequest,
-} from '@angular/common/http';
+import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import {
-  catchError,
-  from,
-  map,
-  Observable,
-  of,
-  switchMap,
-  take,
-  throwError,
-} from 'rxjs';
+import { catchError, from, map, Observable, of, switchMap, take, throwError } from 'rxjs';
 import { AlertsService } from '../core/alert/alerts.service';
 
 @Injectable()
 export class ExceptionInterceptor implements HttpInterceptor {
   constructor(private alertsService: AlertsService) {}
 
-  intercept(
-    request: HttpRequest<unknown>,
-    next: HttpHandler,
-  ): Observable<HttpEvent<unknown>> {
+  intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     return next.handle(request).pipe(
       catchError((err) => {
         console.error('Error in HTTP request', err);
@@ -37,9 +19,9 @@ export class ExceptionInterceptor implements HttpInterceptor {
               this.alertsService.danger(reason);
             }
           }),
-          switchMap((_) => throwError(() => err)),
+          switchMap((_) => throwError(() => err))
         );
-      }),
+      })
     );
   }
 
@@ -49,18 +31,14 @@ export class ExceptionInterceptor implements HttpInterceptor {
         map((err) => {
           const parsed = JSON.parse(err);
           return this.getReasonFromProblemDetails(parsed);
-        }),
+        })
       );
     }
 
     return of(undefined);
   }
 
-  private getReasonFromProblemDetails(err: {
-    status: number;
-    title?: string;
-    detail?: string;
-  }): string | undefined {
+  private getReasonFromProblemDetails(err: { status: number; title?: string; detail?: string }): string | undefined {
     if (err.detail) {
       if (err.title) {
         return `${err.title}: ${err.detail}`;

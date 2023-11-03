@@ -1,10 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, from, of, switchMap } from 'rxjs';
-import {
-  CombatsService,
-  UpdateCombatInPreparationRequest,
-} from '../../api/pockedeck-battler-api-client';
+import { CombatsService, UpdateCombatInPreparationRequest } from '../../api/pockedeck-battler-api-client';
 import { IdentityService } from '../../core/authentication/services/identity.service';
 
 @Component({
@@ -17,7 +14,7 @@ export class CombatJoinComponent implements OnInit {
     private identityService: IdentityService,
     private combatsService: CombatsService,
     private activatedRoute: ActivatedRoute,
-    private router: Router,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -38,7 +35,7 @@ export class CombatJoinComponent implements OnInit {
             new UpdateCombatInPreparationRequest({
               playerName: identity,
               ready: false,
-            }),
+            })
           );
         }),
         catchError((err) => {
@@ -46,7 +43,7 @@ export class CombatJoinComponent implements OnInit {
           this.error = 'Could not join combat, does it exist?';
           return of(void 0);
         }),
-        switchMap(() => this.router.toCombatConfiguration(id)),
+        switchMap(() => this.router.toCombatConfiguration(id))
       )
       .subscribe();
   }

@@ -12,10 +12,7 @@ export class SignalRService {
   private connections: { [hub: string]: signalR.HubConnection } = {};
   private methods: { [hub: string]: { [method: string]: Subject<any[]> } } = {};
 
-  constructor(
-    @Inject(API_BASE_URL) private apiBaseUrl: string,
-    private identityService: IdentityService,
-  ) {}
+  constructor(@Inject(API_BASE_URL) private apiBaseUrl: string, private identityService: IdentityService) {}
 
   public listenRaw(hub: string, method: string): Observable<any[]> {
     if (!this.methods[hub]) {
@@ -35,7 +32,7 @@ export class SignalRService {
   public listen<T>(hub: string, method: string, parser: (arg: any) => T) {
     return this.listenRaw(hub, method).pipe(
       map((arg) => parser(arg)),
-      finalize(() => this.destroy(hub, method)),
+      finalize(() => this.destroy(hub, method))
     );
   }
 
@@ -54,14 +51,7 @@ export class SignalRService {
       .withAutomaticReconnect()
       .build();
 
-    connection
-      .start()
-      .then(() =>
-        connection.invoke(
-          'DeclareIdentity',
-          this.identityService.getIdentity(),
-        ),
-      );
+    connection.start().then(() => connection.invoke('DeclareIdentity', this.identityService.getIdentity()));
 
     this.connections[hub] = connection;
     return connection;

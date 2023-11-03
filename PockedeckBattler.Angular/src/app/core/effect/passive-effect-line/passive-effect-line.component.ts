@@ -21,9 +21,7 @@ export class PassiveEffectLineComponent {
   protected type: PassiveEffectType | undefined;
 
   private update() {
-    this.type = this._effect
-      ? PassiveEffectTypeUtils.getType(this._effect)
-      : undefined;
+    this.type = this._effect ? PassiveEffectTypeUtils.getType(this._effect) : undefined;
   }
 
   protected readonly PassiveEffectType = PassiveEffectType;

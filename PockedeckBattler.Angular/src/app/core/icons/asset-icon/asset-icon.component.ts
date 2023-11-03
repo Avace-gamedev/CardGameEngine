@@ -1,19 +1,10 @@
-import {
-  AfterViewInit,
-  ChangeDetectorRef,
-  Component,
-  ElementRef,
-  Input,
-  ViewChild,
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { AssetIcon } from './asset-icons';
 
 @Component({
   selector: 'app-asset-icon',
   templateUrl: './asset-icon.component.html',
-  styles: [
-    ':host { display: inline-flex; align-items: baseline; justify-content: center }',
-  ],
+  styles: [':host { display: inline-flex; align-items: baseline; justify-content: center }'],
 })
 export class AssetIconComponent implements AfterViewInit {
   @ViewChild('container', { static: true })
@@ -164,20 +155,10 @@ type HexColor = `#${string}`;
 type RgbColor = `rgb(${number}, ${number}, ${number})`;
 type RgbaColor = `rgba(${number}, ${number}, ${number}, ${number})`;
 
-export type AssetIconColor =
-  | KnownColor
-  | CssVarColor
-  | HexColor
-  | RgbColor
-  | RgbaColor;
+export type AssetIconColor = KnownColor | CssVarColor | HexColor | RgbColor | RgbaColor;
 
-const isCssVarColor = (color: AssetIconColor): color is CssVarColor =>
-  color.startsWith('--');
-const isHexColor = (color: AssetIconColor): color is HexColor =>
-  color[0] === '#';
-const isRgbColor = (color: AssetIconColor): color is RgbColor =>
-  color.startsWith('rgb');
-const isRgbaColor = (color: AssetIconColor): color is RgbaColor =>
-  color.startsWith('rgba');
-const isKnownColor = (color: AssetIconColor): color is KnownColor =>
-  !isCssVarColor(color);
+const isCssVarColor = (color: AssetIconColor): color is CssVarColor => color.startsWith('--');
+const isHexColor = (color: AssetIconColor): color is HexColor => color[0] === '#';
+const isRgbColor = (color: AssetIconColor): color is RgbColor => color.startsWith('rgb');
+const isRgbaColor = (color: AssetIconColor): color is RgbaColor => color.startsWith('rgba');
+const isKnownColor = (color: AssetIconColor): color is KnownColor => !isCssVarColor(color);

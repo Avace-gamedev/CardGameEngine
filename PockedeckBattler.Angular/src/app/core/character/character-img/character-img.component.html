@@ -3,9 +3,7 @@
     class="border border-1 d-flex align-items-center justify-content-center position-relative"
     [class.border-4]="characterBeingDragged"
     [ngStyle]="{ 'width.px': imgSize, 'height.px': imgSize }"
-    [ngbPopover]="
-      size === 'sm' && character && enablePopoverDetails ? popover : null
-    "
+    [ngbPopover]="size === 'sm' && character && enablePopoverDetails ? popover : null"
     container="body"
     triggers="mouseenter:mouseleave"
     [placement]="popoverPlacement"
@@ -14,18 +12,8 @@
     (dragleave)="dragleave()"
     (drop)="ondrop($event)"
   >
-    <span
-      class="fw-bold pe-none user-select-none"
-      [ngClass]="fontSizeClass"
-      *ngIf="!character"
-    >
-      ?
-    </span>
-    <span
-      class="fw-bold pe-none user-select-none"
-      [ngClass]="fontSizeClass"
-      *ngIf="character"
-    >
+    <span class="fw-bold pe-none user-select-none" [ngClass]="fontSizeClass" *ngIf="!character"> ? </span>
+    <span class="fw-bold pe-none user-select-none" [ngClass]="fontSizeClass" *ngIf="character">
       {{ character.identity.displayName.substring(0, 2) }}
     </span>
 
@@ -54,18 +42,12 @@
       </ng-container>
     </ng-container>
 
-    <div
-      class="position-absolute bottom-0 start-0 end-0 text-center small"
-      *ngIf="footer"
-    >
+    <div class="position-absolute bottom-0 start-0 end-0 text-center small" *ngIf="footer">
       {{ footer }}
     </div>
   </div>
 </div>
 
 <ng-template #popover>
-  <app-character-card
-    [character]="character"
-    [contentOnly]="true"
-  ></app-character-card>
+  <app-character-card [character]="character" [contentOnly]="true"></app-character-card>
 </ng-template>

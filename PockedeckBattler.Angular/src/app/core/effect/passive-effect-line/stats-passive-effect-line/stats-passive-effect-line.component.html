@@ -5,11 +5,7 @@
         {{ modifier.value | sign }}
         {{ modifier.name }}
       </div>
-      <app-turns-icon
-        [value]="modifier.duration"
-        [enableTooltip]="true"
-        size="sm"
-      ></app-turns-icon>
+      <app-turns-icon [value]="modifier.duration" [enableTooltip]="true" size="sm"></app-turns-icon>
     </div>
   </ng-container>
 </div>

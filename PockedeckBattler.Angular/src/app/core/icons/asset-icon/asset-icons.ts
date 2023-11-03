@@ -17,4 +17,4 @@ export const assetIcons = [
   'shield',
   'heal',
 ] as const;
-export type AssetIcon = (typeof assetIcons)[number];
+export type AssetIcon = typeof assetIcons[number];

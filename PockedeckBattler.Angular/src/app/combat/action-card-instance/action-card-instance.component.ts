@@ -1,8 +1,5 @@
 import { Component, Input } from '@angular/core';
-import {
-  CardInstanceWithModifiersView,
-  CharacterView,
-} from '../../api/pockedeck-battler-api-client';
+import { CardInstanceWithModifiersView, CharacterView } from '../../api/pockedeck-battler-api-client';
 import { ActionCardSize } from '../../core/card/action-card/action-card.component';
 
 @Component({
@@ -41,8 +38,6 @@ export class ActionCardInstanceComponent {
       return;
     }
 
-    this.character = this._characters.find(
-      (c) => c.identity.name === this._card!.character,
-    );
+    this.character = this._characters.find((c) => c.identity.name === this._card!.character);
   }
 }

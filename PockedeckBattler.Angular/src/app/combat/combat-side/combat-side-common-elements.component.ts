@@ -1,8 +1,5 @@
 import { Component, Input } from '@angular/core';
-import {
-  BaseCombatView,
-  CombatSideView,
-} from '../../api/pockedeck-battler-api-client';
+import { BaseCombatView, CombatSideView } from '../../api/pockedeck-battler-api-client';
 
 @Component({
   selector: 'app-combat-side-common-elements',

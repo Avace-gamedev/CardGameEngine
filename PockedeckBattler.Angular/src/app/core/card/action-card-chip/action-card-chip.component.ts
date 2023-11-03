@@ -39,16 +39,10 @@ export class ActionCardChipComponent {
   protected isTriggered: boolean = false;
 
   private update() {
-    const type = this._card
-      ? ActionCardTypeUtils.getType(this._card)
-      : CardType.None;
+    const type = this._card ? ActionCardTypeUtils.getType(this._card) : CardType.None;
 
-    this.bgColorCssVariable = this.card
-      ? ActionCardTypeUtils.computeBgColor(this.card)
-      : undefined;
-    this.textColorCssVariable = this.card
-      ? ActionCardTypeUtils.computeTextColor(this.card)
-      : undefined;
+    this.bgColorCssVariable = this.card ? ActionCardTypeUtils.computeBgColor(this.card) : undefined;
+    this.textColorCssVariable = this.card ? ActionCardTypeUtils.computeTextColor(this.card) : undefined;
     this.damage = this.computeDamage();
     this.isTriggered = this.card?.mainEffect instanceof AddTriggeredEffectView;
   }

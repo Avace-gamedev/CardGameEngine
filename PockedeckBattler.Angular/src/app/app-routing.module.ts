@@ -20,13 +20,11 @@ const routes: Routes = [
       },
       {
         path: 'home',
-        loadChildren: () =>
-          import('./home/home.module').then((m) => m.HomeModule),
+        loadChildren: () => import('./home/home.module').then((m) => m.HomeModule),
       },
       {
         path: 'combat',
-        loadChildren: () =>
-          import('./combat/combat.module').then((m) => m.CombatModule),
+        loadChildren: () => import('./combat/combat.module').then((m) => m.CombatModule),
       },
       {
         path: '404',

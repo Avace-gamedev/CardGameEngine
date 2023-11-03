@@ -12,18 +12,13 @@
     <app-random-effect-line [effect]="$any(effect)"></app-random-effect-line>
   </ng-container>
   <ng-container *ngSwitchCase="ActiveEffectType.AddPassive">
-    <app-add-passive-effect-line [effect]="$any(effect)">
-    </app-add-passive-effect-line>
+    <app-add-passive-effect-line [effect]="$any(effect)"> </app-add-passive-effect-line>
   </ng-container>
   <ng-container *ngSwitchCase="ActiveEffectType.AddTriggered">
-    <app-add-triggered-effect-line [effect]="$any(effect)">
-    </app-add-triggered-effect-line>
+    <app-add-triggered-effect-line [effect]="$any(effect)"> </app-add-triggered-effect-line>
   </ng-container>
   <ng-container *ngSwitchDefault>
-    <ng-template
-      [ngTemplateOutlet]="unknownLine"
-      [ngTemplateOutletContext]="{ $implicit: effect }"
-    ></ng-template>
+    <ng-template [ngTemplateOutlet]="unknownLine" [ngTemplateOutletContext]="{ $implicit: effect }"></ng-template>
   </ng-container>
 </ng-container>
 

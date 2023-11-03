@@ -7,18 +7,8 @@ import { AssetIconComponent } from './asset-icon/asset-icon.component';
 import { ActionPointsIconComponent } from './action-points-icon/action-points-icon.component';
 
 @NgModule({
-  declarations: [
-    ElementIconComponent,
-    ActionPointsIconComponent,
-    TurnsIconComponent,
-    AssetIconComponent,
-  ],
+  declarations: [ElementIconComponent, ActionPointsIconComponent, TurnsIconComponent, AssetIconComponent],
   imports: [CommonModule, NgbTooltip, NgOptimizedImage],
-  exports: [
-    ElementIconComponent,
-    ActionPointsIconComponent,
-    TurnsIconComponent,
-    AssetIconComponent,
-  ],
+  exports: [ElementIconComponent, ActionPointsIconComponent, TurnsIconComponent, AssetIconComponent],
 })
 export class IconsModule {}

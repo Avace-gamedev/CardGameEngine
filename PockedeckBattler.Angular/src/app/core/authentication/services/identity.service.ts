@@ -17,9 +17,7 @@ export class IdentityService {
 
   constructor() {
     const currentIdentity = this.getIdentityOrUndefined();
-    this.identitySubject = new BehaviorSubject<string | undefined>(
-      currentIdentity,
-    );
+    this.identitySubject = new BehaviorSubject<string | undefined>(currentIdentity);
   }
 
   public isAuthenticated(): boolean {

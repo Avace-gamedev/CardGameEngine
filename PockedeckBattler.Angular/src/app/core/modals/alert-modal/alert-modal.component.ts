@@ -15,11 +15,7 @@ export class AlertModalComponent {
   @Input()
   public closeLabel: string | undefined;
 
-  protected alertString: string = oneOf([
-    'Alert!',
-    'Wait a minute...',
-    'Is this for real?!',
-  ]);
+  protected alertString: string = oneOf(['Alert!', 'Wait a minute...', 'Is this for real?!']);
 
   constructor(protected modal: NgbActiveModal) {}
 }

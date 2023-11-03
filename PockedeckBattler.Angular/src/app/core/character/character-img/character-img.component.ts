@@ -63,8 +63,7 @@ export class CharacterImgComponent {
 
   protected dragenter($event: DragEvent) {
     if ($event.dataTransfer) {
-      this.characterBeingDragged =
-        $event.dataTransfer.types.includes('text/plain');
+      this.characterBeingDragged = $event.dataTransfer.types.includes('text/plain');
     }
   }
 

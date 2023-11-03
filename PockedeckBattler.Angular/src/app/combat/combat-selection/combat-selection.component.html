@@ -1,9 +1,7 @@
 <section class="container">
   <h1>
     Combats
-    <button class="btn btn-secondary" (click)="create()">
-      <i class="bi bi-plus"></i> Create
-    </button>
+    <button class="btn btn-secondary" (click)="create()"><i class="bi bi-plus"></i> Create</button>
   </h1>
   <div class="list-group">
     <a
@@ -11,24 +9,11 @@
       (click)="select(combat)"
       *ngFor="let combat of combatsInPreparation"
     >
-      <ng-container
-        *ngTemplateOutlet="
-          combatInPreparationEntry;
-          context: { $implicit: combat }
-        "
-      >
-      </ng-container>
+      <ng-container *ngTemplateOutlet="combatInPreparationEntry; context: { $implicit: combat }"> </ng-container>
     </a>
     <ng-container *ngFor="let combat of combats">
-      <a
-        class="list-group-item list-group-item-action"
-        (click)="select(combat)"
-        *ngIf="!combat.over"
-      >
-        <ng-container
-          *ngTemplateOutlet="combatEntry; context: { $implicit: combat }"
-        >
-        </ng-container>
+      <a class="list-group-item list-group-item-action" (click)="select(combat)" *ngIf="!combat.over">
+        <ng-container *ngTemplateOutlet="combatEntry; context: { $implicit: combat }"> </ng-container>
       </a>
     </ng-container>
   </div>
@@ -37,14 +22,8 @@
     <h2>History</h2>
     <div class="list-group">
       <ng-container *ngFor="let combat of combats">
-        <a
-          class="list-group-item list-group-item-action"
-          (click)="select(combat)"
-          *ngIf="combat.over"
-        >
-          <ng-container
-            *ngTemplateOutlet="combatEntry; context: { $implicit: combat }"
-          ></ng-container>
+        <a class="list-group-item list-group-item-action" (click)="select(combat)" *ngIf="combat.over">
+          <ng-container *ngTemplateOutlet="combatEntry; context: { $implicit: combat }"></ng-container>
         </a>
       </ng-container>
     </div>
@@ -59,11 +38,7 @@
       *ngIf="combat.over && combat.winner === combat.player.side"
     ></i>
 
-    <i
-      class="bi bi-x"
-      [ngbTooltip]="'You LOST!'"
-      *ngIf="combat.over && combat.winner !== combat.player.side"
-    ></i>
+    <i class="bi bi-x" [ngbTooltip]="'You LOST!'" *ngIf="combat.over && combat.winner !== combat.player.side"></i>
 
     {{ combat.player.playerName }} v. {{ combat.opponent.playerName }}
 
@@ -77,7 +52,7 @@
   <div class="hstack gap-2">
     <i class="bi bi-hourglass-split" ngbTooltip="In preparation"></i>
 
-    {{ combat.leftPlayerName }} v. {{ combat.rightPlayerName ?? "???" }}
+    {{ combat.leftPlayerName }} v. {{ combat.rightPlayerName ?? '???' }}
 
     <div class="flex-fill"></div>
 

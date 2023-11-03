@@ -31,27 +31,19 @@ export class CombatConfigureComponent implements OnInit {
     private charactersService: CharactersService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    private modalsService: ModalsService,
+    private modalsService: ModalsService
   ) {}
 
   ngOnInit() {
     const identity = this.identityService.getIdentity();
 
     this.signalRService
-      .listen<CombatInPreparationView>(
-        'combats',
-        'CombatInPreparationChanged',
-        CombatInPreparationView.fromJS,
-      )
+      .listen<CombatInPreparationView>('combats', 'CombatInPreparationChanged', CombatInPreparationView.fromJS)
       .pipe(untilDestroyed(this))
       .subscribe((combat) => (this.combat = combat));
 
     this.signalRService
-      .listen<CombatInPreparationView>(
-        'combats',
-        'CombatInPreparationDeleted',
-        CombatInPreparationView.fromJS,
-      )
+      .listen<CombatInPreparationView>('combats', 'CombatInPreparationDeleted', CombatInPreparationView.fromJS)
       .pipe(untilDestroyed(this))
       .subscribe((combat) => this.onDeleted(combat));
 
@@ -81,11 +73,7 @@ export class CombatConfigureComponent implements OnInit {
             this.side = CombatSide.None;
           }
         }),
-        switchMap(() =>
-          this.charactersService
-            .getAll()
-            .pipe(map((characters) => (this.characters = characters))),
-        ),
+        switchMap(() => this.charactersService.getAll().pipe(map((characters) => (this.characters = characters))))
       )
       .subscribe();
   }
@@ -100,10 +88,7 @@ export class CombatConfigureComponent implements OnInit {
       .subscribe((combatId) => this.router.toCombat(combatId).then());
   }
 
-  protected sendUpdate(
-    side: CombatSide,
-    configuration: CombatSideConfiguration,
-  ) {
+  protected sendUpdate(side: CombatSide, configuration: CombatSideConfiguration) {
     if (!this.combat) {
       return;
     }
@@ -113,8 +98,7 @@ export class CombatConfigureComponent implements OnInit {
     if (
       !(this.combat.rightPlayerIsAi && side === CombatSide.Right) &&
       ((identity == this.combat.leftPlayerName && side !== CombatSide.Left) ||
-        (identity == this.combat.rightPlayerName &&
-          side !== CombatSide.Right) ||
+        (identity == this.combat.rightPlayerName && side !== CombatSide.Right) ||
         configuration.playerName !== identity)
     ) {
       return;
@@ -123,10 +107,7 @@ export class CombatConfigureComponent implements OnInit {
     const isAi = side === CombatSide.Right && this.combat.rightPlayerIsAi;
 
     this.combatsService
-      .updateCombatInPreparation(
-        this.combat.id,
-        new UpdateCombatInPreparationRequest({ ...configuration, isAi }),
-      )
+      .updateCombatInPreparation(this.combat.id, new UpdateCombatInPreparationRequest({ ...configuration, isAi }))
       .subscribe();
   }
 
@@ -142,7 +123,7 @@ export class CombatConfigureComponent implements OnInit {
           isAi: true,
           playerName: 'Sancho',
           ready: false,
-        }),
+        })
       )
       .subscribe();
   }
@@ -166,9 +147,7 @@ export class CombatConfigureComponent implements OnInit {
       return;
     }
 
-    this.combatsService
-      .leaveCombatInPreparation(this.combat.id, name)
-      .subscribe(() => this.router.toCombatSelection());
+    this.combatsService.leaveCombatInPreparation(this.combat.id, name).subscribe(() => this.router.toCombatSelection());
   }
 
   private onDeleted(combat: CombatInPreparationView) {
@@ -195,8 +174,6 @@ declare module '@angular/router' {
   }
 }
 
-Router.prototype.toCombatConfiguration = function (
-  id: string,
-): Promise<boolean> {
+Router.prototype.toCombatConfiguration = function (id: string): Promise<boolean> {
   return this.navigate(['/', 'combat', 'configure', id]);
 };

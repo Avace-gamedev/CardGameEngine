@@ -1,11 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { finalize, forkJoin, ignoreElements, map, Observable } from 'rxjs';
-import {
-  CombatInPreparationView,
-  CombatsService,
-  PlayerCombatView,
-} from '../../api/pockedeck-battler-api-client';
+import { CombatInPreparationView, CombatsService, PlayerCombatView } from '../../api/pockedeck-battler-api-client';
 import { IdentityService } from '../../core/authentication/services/identity.service';
 
 @Component({
@@ -19,7 +15,7 @@ export class CombatSelectionComponent implements OnInit {
   constructor(
     private combatController: CombatsService,
     private identityService: IdentityService,
-    private router: Router,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -38,7 +34,7 @@ export class CombatSelectionComponent implements OnInit {
       .pipe(
         map((newCombat) => {
           this.router.toCombatConfiguration(newCombat.id).then();
-        }),
+        })
       )
       .subscribe();
   }
@@ -59,16 +55,16 @@ export class CombatSelectionComponent implements OnInit {
       this.combatController.getCombatsOfPlayer(player).pipe(
         map((combats) => {
           this.combats = combats;
-        }),
+        })
       ),
       this.combatController.getCombatsInPreparationOfPlayer(player).pipe(
         map((combats) => {
           this.combatsInPreparation = combats;
-        }),
+        })
       ),
     ]).pipe(
       ignoreElements(),
-      finalize(() => (this.refreshing = false)),
+      finalize(() => (this.refreshing = false))
     );
   }
 }

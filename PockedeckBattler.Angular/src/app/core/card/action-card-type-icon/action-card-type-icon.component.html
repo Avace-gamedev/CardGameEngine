@@ -3,11 +3,7 @@
     <i class="bi bi-dot"></i>
   </ng-container>
   <ng-container *ngSwitchCase="CardType.Damage">
-    <app-asset-icon
-      icon="screen-impact"
-      size="sm"
-      [pxOffsetY]="2"
-    ></app-asset-icon>
+    <app-asset-icon icon="screen-impact" size="sm" [pxOffsetY]="2"></app-asset-icon>
   </ng-container>
   <ng-container *ngSwitchCase="CardType.Heal">
     <app-asset-icon icon="heal" size="sm" [pxOffsetY]="2"></app-asset-icon>

@@ -12,7 +12,7 @@ export class LoginComponent {
   constructor(
     private identityService: IdentityService,
     private activatedRoute: ActivatedRoute,
-    private router: Router,
+    private router: Router
   ) {}
 
   login() {
@@ -27,7 +27,7 @@ export class LoginComponent {
         switchMap((paramMap) => {
           const redirect = paramMap.get('redirect') ?? '/';
           return from(this.router.navigateByUrl(redirect));
-        }),
+        })
       )
       .subscribe();
   }

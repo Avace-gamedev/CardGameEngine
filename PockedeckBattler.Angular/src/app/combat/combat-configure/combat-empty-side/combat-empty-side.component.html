@@ -1,11 +1,7 @@
 <div class="h-100 vstack align-items-center justify-content-center">
   <h3 class="hstack justify-content-center gap-2">
     Invite a friend
-    <button
-      class="btn btn-outline-secondary"
-      ngbTooltip="Copy"
-      (click)="copyUrl()"
-    >
+    <button class="btn btn-outline-secondary" ngbTooltip="Copy" (click)="copyUrl()">
       <i class="bi bi-clipboard"></i>
     </button>
   </h3>
@@ -16,7 +12,5 @@
 
   <h2>OR</h2>
 
-  <button class="btn btn-outline-secondary fs-3" (click)="requestAi.emit()">
-    Play against AI
-  </button>
+  <button class="btn btn-outline-secondary fs-3" (click)="requestAi.emit()">Play against AI</button>
 </div>

@@ -83,7 +83,7 @@ public class CombatInstance
     void StartGlobalTurn(int turn)
     {
         int turnAp = Math.Min(Options.StartingAp + turn - 1, Options.MaxAp);
-        State.StartTurn(1, turnAp);
+        State.StartTurn(turn, turnAp);
     }
 
     void StartSideTurn(CombatSide side)

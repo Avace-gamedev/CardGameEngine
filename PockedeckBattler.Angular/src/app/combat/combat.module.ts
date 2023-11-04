@@ -15,7 +15,6 @@ import { CombatSelectionComponent } from './combat-selection/combat-selection.co
 import { CombatSideCommonElementsComponent } from './combat-side/combat-side-common-elements.component';
 import { CombatComponent } from './combat.component';
 import { GenericUiModule } from './generic-ui/generic-ui.module';
-import { OpponentSideElementsComponent } from './opponent-side-elements/opponent-side-elements.component';
 import { PlayerSideElementsComponent } from './player-side-elements/player-side-elements.component';
 import { CharacterCombatEffectsComponent } from './combat-character-img/character-combat-effects/character-combat-effects.component';
 import { CombatEffectComponent } from './combat-character-img/character-combat-effects/combat-effect/combat-effect.component';
@@ -35,7 +34,6 @@ import { CombatCommonElementsComponent } from './combat-common-elements/combat-c
     CombatSideCommonElementsComponent,
     CombatCharacterImgComponent,
     PlayerSideElementsComponent,
-    OpponentSideElementsComponent,
     ActionCardInstanceComponent,
     CharacterCombatEffectsComponent,
     CombatEffectComponent,

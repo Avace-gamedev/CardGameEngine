@@ -1,7 +1,4 @@
 <div class="h-100 container-lg vstack" *ngIf="combat">
-  <div class="flex-grow-1">
-    <app-opponent-side-elements [combat]="combat"></app-opponent-side-elements>
-  </div>
   <div [ngStyle]="{ 'height.%': 35 }">
     <app-combat-side-common-elements
       [combat]="combat"
@@ -27,17 +24,8 @@
       [highlightSource]="source"
     ></app-combat-side-common-elements>
   </div>
-  <div
-    class="position-absolute top-0 bottom-0 start-0 end-0 d-flex align-items-center justify-content-center pe-none vstack"
-    *ngIf="combat.over"
-  >
-    <div>Combat over</div>
-    <div class="fw-bold fs-2">
-      {{ combat.winner === combat.player.side ? 'You WON!' : 'You LOST!' }}
-    </div>
-    <a class="pe-auto" [routerLink]="['..', 'selection']">Go back</a>
-  </div>
-  <div [ngStyle]="{ 'height.%': 20 }">
+
+  <div class="flex-fill">
     <app-player-side-elements
       [combat]="combat"
       [disabled]="combat.currentSide !== combat.player.side || combat.over"

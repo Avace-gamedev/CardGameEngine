@@ -1,6 +1,21 @@
-<div class="hstack gap-2" *ngIf="combat">
+<div class="hstack gap-2 position-relative" *ngIf="combat">
   <i class="fw-bold fs-4" *ngIf="currentPlayer">{{ currentPlayer }}</i>
 
+  <button class="btn btn-outline-secondary" [routerLink]="['..', 'selection']" *ngIf="combat.over">Leave</button>
+
   <div class="flex-fill"></div>
+
+  <div
+    class="position-absolute top-0 bottom-0 start-0 end-0 d-flex flex-column justify-content-center align-items-center pe-none"
+    *ngIf="combat.over"
+  >
+    <span class="pe-auto">Combat over</span>
+    <span class="fw-bold fs-2 pe-auto">
+      {{ combat.winner === combat.player.side ? 'You WON!' : 'You LOST!' }}
+    </span>
+  </div>
+
+  <div class="flex-fill"></div>
+
   <h2>Turn {{ combat.turn }}</h2>
 </div>

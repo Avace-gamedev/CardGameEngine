@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { BaseCombatView, CombatSide, TurnTriggerView } from '../../api/pockedeck-battler-api-client';
+import { CombatSide, PlayerCombatView, TurnTriggerView } from '../../api/pockedeck-battler-api-client';
 
 @Component({
   selector: 'app-combat-common-elements',
@@ -7,14 +7,14 @@ import { BaseCombatView, CombatSide, TurnTriggerView } from '../../api/pockedeck
 })
 export class CombatCommonElementsComponent {
   @Input()
-  get combat(): BaseCombatView | undefined {
+  get combat(): PlayerCombatView | undefined {
     return this._combat;
   }
-  set combat(value: BaseCombatView | undefined) {
+  set combat(value: PlayerCombatView | undefined) {
     this._combat = value;
     this.update();
   }
-  private _combat: BaseCombatView | undefined;
+  private _combat: PlayerCombatView | undefined;
 
   protected currentPlayer: string | undefined;
 

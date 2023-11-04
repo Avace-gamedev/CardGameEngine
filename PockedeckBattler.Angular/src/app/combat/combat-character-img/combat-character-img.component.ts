@@ -22,6 +22,9 @@ export class CombatCharacterImgComponent {
   public footer: string | undefined;
 
   @Input()
+  public invert: boolean = false;
+
+  @Input()
   get innerShadow(): CombatCharacterShadow | undefined {
     return this._innerShadow;
   }

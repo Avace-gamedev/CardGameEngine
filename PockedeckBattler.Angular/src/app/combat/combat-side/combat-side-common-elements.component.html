@@ -17,6 +17,7 @@
             ? { blurInRem: 3, color: 'color-mix(in srgb, var(--ally-color) 17.5%, transparent)' }
             : undefined
         "
+        [invert]="invert"
         *ngIf="side.backCharacter"
       ></app-combat-character-img>
       <app-combat-character-img
@@ -35,6 +36,7 @@
             ? { blurInRem: 3, color: 'color-mix(in srgb, var(--ally-color) 17.5%, transparent)' }
             : undefined
         "
+        [invert]="invert"
         *ngIf="side.frontCharacter"
       ></app-combat-character-img>
     </div>

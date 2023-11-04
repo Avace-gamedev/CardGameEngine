@@ -5,7 +5,7 @@ using NJsonSchema.Converters;
 
 namespace PockedeckBattler.Server.Views.Effects.Active;
 
-[JsonConverter(typeof(JsonInheritanceConverter), "type")]
+[JsonConverter(typeof(JsonInheritanceConverter), "$type")]
 [KnownType(typeof(DamageEffectView))]
 [KnownType(typeof(HealEffectView))]
 [KnownType(typeof(ShieldEffectView))]

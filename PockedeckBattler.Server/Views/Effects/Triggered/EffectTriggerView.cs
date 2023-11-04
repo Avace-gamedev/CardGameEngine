@@ -5,7 +5,7 @@ using NJsonSchema.Converters;
 
 namespace PockedeckBattler.Server.Views.Effects.Triggered;
 
-[JsonConverter(typeof(JsonInheritanceConverter), "type")]
+[JsonConverter(typeof(JsonInheritanceConverter), "$type")]
 [KnownType(typeof(TurnTriggerView))]
 public class EffectTriggerView
 {

@@ -1,4 +1,6 @@
 ﻿using CardGame.Engine.Combats;
+using CardGame.Engine.Combats.Damages;
+using CardGame.Engine.Combats.Modifiers;
 
 namespace CardGame.Engine.Effects.Active;
 
@@ -16,9 +18,14 @@ public class DamageEffect : ActiveEffect
 
     public override void Resolve(CharacterCombatState source, IEnumerable<CharacterCombatState> targets)
     {
+        AttackDamage attackDamage = new(Amount);
+
+        CharacterStatsModifier sourceModifiers = source.GetStatsModifier();
+        AttackDamage actualAttackDamage = sourceModifiers.ModifyAttackToDeal(attackDamage);
+
         foreach (CharacterCombatState target in targets)
         {
-            DamageReceived damage = target.Damage(Amount);
+            DamageReceived damage = target.Damage(actualAttackDamage);
 
             int stolenHp = (int)(damage.Health * LifeStealRatio);
             if (stolenHp > 0)

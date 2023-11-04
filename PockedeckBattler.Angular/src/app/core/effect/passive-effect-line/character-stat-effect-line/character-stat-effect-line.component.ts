@@ -27,6 +27,16 @@ export class CharacterStatEffectLineComponent {
       return;
     }
 
+    let sign;
+    switch (this.effect.type) {
+      case CharacterStatEffectType.IncreaseResistance:
+        sign = 1;
+        break;
+      case CharacterStatEffectType.ReduceResistance:
+        sign = -1;
+        break;
+    }
+
     let name: string;
     switch (this.effect.type) {
       case CharacterStatEffectType.IncreaseResistance:
@@ -35,7 +45,7 @@ export class CharacterStatEffectLineComponent {
         break;
     }
 
-    this.display = { name, value: this.effect.amount, duration: this.overrideDuration ?? this.effect.duration };
+    this.display = { name, value: sign * this.effect.amount, duration: this.overrideDuration ?? this.effect.duration };
   }
 }
 

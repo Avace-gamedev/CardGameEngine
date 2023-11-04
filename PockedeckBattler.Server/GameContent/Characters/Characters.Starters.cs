@@ -39,7 +39,7 @@ public static partial class Characters
                 "Reduces the foe's Attack.",
                 3,
                 ActionCardTarget.AllOpponents,
-                new AddPassiveEffect(PassiveEffect.CardStatEffect(CardStatEffectType.ReduceDamage, -10, 3))
+                new AddPassiveEffect(PassiveEffect.CardStatEffect(CardStatEffectType.ReduceDamage, 10, 3))
             ),
             ActionCard.Damage(
                 "Inferno",
@@ -69,7 +69,7 @@ public static partial class Characters
                 "Wags the tail to lower the foe's Defense.",
                 3,
                 ActionCardTarget.AllOpponents,
-                new AddPassiveEffect(PassiveEffect.CharacterStatEffect(CharacterStatEffectType.ReduceResistance, -10, 3))
+                new AddPassiveEffect(PassiveEffect.CharacterStatEffect(CharacterStatEffectType.ReduceResistance, 10, 3))
             ),
             ActionCard.Shield("Protect", "Use its shell to protect against next attacks.", 3, ActionCardTarget.Self, 44),
             ActionCard.Damage("Hydro Pump", "Blasts water at high power to strike the foe.", 7, ActionCardTarget.FrontOpponent, 45, Element.Water)

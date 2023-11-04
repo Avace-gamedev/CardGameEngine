@@ -27,6 +27,18 @@ export class CardStatEffectLineComponent {
       return;
     }
 
+    let sign;
+    switch (this.effect.type) {
+      case CardStatEffectType.IncreaseApCost:
+      case CardStatEffectType.IncreaseDamage:
+        sign = 1;
+        break;
+      case CardStatEffectType.ReduceApCost:
+      case CardStatEffectType.ReduceDamage:
+        sign = -1;
+        break;
+    }
+
     let name: string;
     switch (this.effect.type) {
       case CardStatEffectType.IncreaseApCost:
@@ -39,7 +51,7 @@ export class CardStatEffectLineComponent {
         break;
     }
 
-    this.display = { name, value: this.effect.amount, duration: this.overrideDuration ?? this.effect.duration };
+    this.display = { name, value: sign * this.effect.amount, duration: this.overrideDuration ?? this.effect.duration };
   }
 }
 

@@ -1,4 +1,5 @@
 ﻿using CardGame.Engine.Characters;
+using CardGame.Engine.Combats.Damages;
 using CardGame.Engine.Combats.Modifiers;
 using CardGame.Engine.Effects.Passive;
 using CardGame.Engine.Effects.Passive.Stats;
@@ -39,23 +40,23 @@ public class CharacterCombatState
             : CharacterStatsModifier.None;
     }
 
-    public DamageReceived Damage(int amount)
+    public DamageReceived Damage(AttackDamage attack)
     {
-        if (IsDead)
+        if (IsDead || attack.Amount <= 0)
         {
             return new DamageReceived(0, 0);
         }
 
         CharacterStatsModifier modifiers = GetStatsModifier();
-        int damage = modifiers.ComputeActualDamage(amount);
+        AttackDamage modifiedAttack = modifiers.ModifyReceivedAttack(attack);
 
-        if (damage > Shield)
+        if (modifiedAttack.Amount > Shield)
         {
             int shieldDamage = Shield;
 
             SetShield(0);
 
-            int healthDamage = damage - shieldDamage;
+            int healthDamage = modifiedAttack.Amount - shieldDamage;
 
             if (healthDamage > Health)
             {
@@ -66,8 +67,8 @@ public class CharacterCombatState
 
             return new DamageReceived(healthDamage, shieldDamage);
         }
-        SetShield(Shield - damage);
-        return new DamageReceived(0, damage);
+        SetShield(Shield - modifiedAttack.Amount);
+        return new DamageReceived(0, modifiedAttack.Amount);
     }
 
     public HealReceived Heal(int amount)

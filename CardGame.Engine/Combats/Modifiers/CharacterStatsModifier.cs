@@ -1,4 +1,6 @@
-﻿namespace CardGame.Engine.Combats.Modifiers;
+﻿using CardGame.Engine.Combats.Damages;
+
+namespace CardGame.Engine.Combats.Modifiers;
 
 public class CharacterStatsModifier
 {
@@ -6,9 +8,14 @@ public class CharacterStatsModifier
 
     public int ResistanceAdditiveModifier { get; init; }
 
-    public int ComputeActualDamage(int amount)
+    public AttackDamage ModifyAttackToDeal(AttackDamage attackDamage)
     {
-        return amount + ResistanceAdditiveModifier;
+        return attackDamage;
+    }
+
+    public AttackDamage ModifyReceivedAttack(AttackDamage attackDamage)
+    {
+        return new AttackDamage(attackDamage.Amount + ResistanceAdditiveModifier);
     }
 
     public static CharacterStatsModifier Combine(CharacterStatsModifier modifier1, CharacterStatsModifier modifier2)

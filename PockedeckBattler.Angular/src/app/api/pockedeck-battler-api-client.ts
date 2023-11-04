@@ -1258,8 +1258,10 @@ export interface ICharacterStatsEffectView extends IPassiveEffectView {
 }
 
 export enum CharacterStatEffectType {
-    IncreaseResistance = "increaseResistance",
-    ReduceResistance = "reduceResistance",
+    IncreaseAllDamages = "increaseAllDamages",
+    ReduceAllDamages = "reduceAllDamages",
+    IncreaseAllResistances = "increaseAllResistances",
+    ReduceAllResistances = "reduceAllResistances",
 }
 
 export class CardStatsEffectView extends PassiveEffectView implements ICardStatsEffectView {

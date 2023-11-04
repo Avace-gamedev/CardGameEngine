@@ -17,8 +17,10 @@ public class CharacterStatEffect : PassiveEffect
     {
         return Type switch
         {
-            CharacterStatEffectType.IncreaseResistance => new CharacterStatsModifier { ResistanceAdditiveModifier = Amount },
-            CharacterStatEffectType.ReduceResistance => new CharacterStatsModifier { ResistanceAdditiveModifier = -Amount },
+            CharacterStatEffectType.IncreaseAllDamages => new CharacterStatsModifier { AllDamagesAdditiveModifier = Amount },
+            CharacterStatEffectType.ReduceAllDamages => new CharacterStatsModifier { AllDamagesAdditiveModifier = -Amount },
+            CharacterStatEffectType.IncreaseAllResistances => new CharacterStatsModifier { AllResistancesAdditiveModifier = Amount },
+            CharacterStatEffectType.ReduceAllResistances => new CharacterStatsModifier { AllResistancesAdditiveModifier = -Amount },
             _ => throw new ArgumentOutOfRangeException()
         };
     }
@@ -26,6 +28,8 @@ public class CharacterStatEffect : PassiveEffect
 
 public enum CharacterStatEffectType
 {
-    IncreaseResistance,
-    ReduceResistance
+    IncreaseAllDamages,
+    ReduceAllDamages,
+    IncreaseAllResistances,
+    ReduceAllResistances
 }

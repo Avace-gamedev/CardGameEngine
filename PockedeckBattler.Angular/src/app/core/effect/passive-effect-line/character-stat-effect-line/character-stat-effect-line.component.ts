@@ -29,19 +29,25 @@ export class CharacterStatEffectLineComponent {
 
     let sign;
     switch (this.effect.type) {
-      case CharacterStatEffectType.IncreaseResistance:
+      case CharacterStatEffectType.IncreaseAllResistances:
+      case CharacterStatEffectType.IncreaseAllDamages:
         sign = 1;
         break;
-      case CharacterStatEffectType.ReduceResistance:
+      case CharacterStatEffectType.ReduceAllResistances:
+      case CharacterStatEffectType.ReduceAllDamages:
         sign = -1;
         break;
     }
 
     let name: string;
     switch (this.effect.type) {
-      case CharacterStatEffectType.IncreaseResistance:
-      case CharacterStatEffectType.ReduceResistance:
-        name = 'resistance';
+      case CharacterStatEffectType.IncreaseAllDamages:
+      case CharacterStatEffectType.ReduceAllDamages:
+        name = 'damages';
+        break;
+      case CharacterStatEffectType.IncreaseAllResistances:
+      case CharacterStatEffectType.ReduceAllResistances:
+        name = 'resistances';
         break;
     }
 

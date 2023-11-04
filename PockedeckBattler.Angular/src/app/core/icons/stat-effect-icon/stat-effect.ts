@@ -14,9 +14,13 @@ export class StatEffectUtils {
         return 'biceps';
       case CardStatEffectType.ReduceDamage:
         return 'broken-axe';
-      case CharacterStatEffectType.IncreaseResistance:
+      case CharacterStatEffectType.IncreaseAllDamages:
+        return 'biceps';
+      case CharacterStatEffectType.ReduceAllDamages:
+        return 'broken-axe';
+      case CharacterStatEffectType.IncreaseAllResistances:
         return 'shield';
-      case CharacterStatEffectType.ReduceResistance:
+      case CharacterStatEffectType.ReduceAllResistances:
         return 'cracked-shield';
     }
   }
@@ -30,13 +34,17 @@ export class StatEffectUtils {
       case CardStatEffectType.ReduceApCost:
         return 'AP Cost decrease';
       case CardStatEffectType.IncreaseDamage:
-        return 'Damage increase';
+        return 'Increase card damage';
       case CardStatEffectType.ReduceDamage:
-        return 'Damage decrease';
-      case CharacterStatEffectType.IncreaseResistance:
-        return 'Resistance increase';
-      case CharacterStatEffectType.ReduceResistance:
-        return 'Resistance decrease';
+        return 'Decrease card damage';
+      case CharacterStatEffectType.IncreaseAllDamages:
+        return 'Increase all damages';
+      case CharacterStatEffectType.ReduceAllDamages:
+        return 'Decrease all damages';
+      case CharacterStatEffectType.IncreaseAllResistances:
+        return 'Increase all resistances';
+      case CharacterStatEffectType.ReduceAllResistances:
+        return 'Decrease all resistances';
     }
   }
 }

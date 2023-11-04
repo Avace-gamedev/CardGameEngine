@@ -46,13 +46,16 @@ public class CharacterCombatState
             return new DamageReceived(0, 0);
         }
 
-        if (amount > Shield)
+        CharacterStatsModifier modifiers = GetStatsModifier();
+        int damage = modifiers.ComputeActualDamage(amount);
+
+        if (damage > Shield)
         {
             int shieldDamage = Shield;
 
             SetShield(0);
 
-            int healthDamage = amount - shieldDamage;
+            int healthDamage = damage - shieldDamage;
 
             if (healthDamage > Health)
             {
@@ -63,8 +66,8 @@ public class CharacterCombatState
 
             return new DamageReceived(healthDamage, shieldDamage);
         }
-        SetShield(Shield - amount);
-        return new DamageReceived(0, amount);
+        SetShield(Shield - damage);
+        return new DamageReceived(0, damage);
     }
 
     public HealReceived Heal(int amount)

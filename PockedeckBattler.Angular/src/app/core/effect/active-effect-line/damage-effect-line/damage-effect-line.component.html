@@ -1,7 +1,7 @@
 <div class="hstack gap-1 align-content-center">
   {{ effect?.amount ?? '?' }}
   damage
-  <app-element-icon class="mx-1" [element]="effect?.element"></app-element-icon>
+  <app-element-icon class="mx-1" [element]="effect?.element > 0 ? effect?.element : 0"></app-element-icon>
   <app-asset-icon
     icon="fangs"
     size="sm"

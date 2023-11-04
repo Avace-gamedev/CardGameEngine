@@ -18,5 +18,6 @@ export enum ActiveEffectType {
 
 export enum PassiveEffectType {
   None = 'non',
-  Stats = 'stats',
+  CharacterStats = 'character-stats',
+  CardStats = 'card-stats',
 }

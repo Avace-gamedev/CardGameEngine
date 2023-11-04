@@ -5,7 +5,8 @@ import { TurnsIconComponent } from './turns-icon/turns-icon.component';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 import { AssetIconComponent } from './asset-icon/asset-icon.component';
 import { ActionPointsIconComponent } from './action-points-icon/action-points-icon.component';
-import { StatEffectIconComponent } from './stat-effect-icon/stat-effect-icon.component';
+import { CharacterStatsEffectIconComponent } from './stat-effect-icon/character-stats-effect-icon.component';
+import { CardStatsEffectIconComponent } from './stat-effect-icon/card-stats-effect-icon.component';
 
 @NgModule({
   declarations: [
@@ -13,7 +14,8 @@ import { StatEffectIconComponent } from './stat-effect-icon/stat-effect-icon.com
     ActionPointsIconComponent,
     TurnsIconComponent,
     AssetIconComponent,
-    StatEffectIconComponent,
+    CharacterStatsEffectIconComponent,
+    CardStatsEffectIconComponent,
   ],
   imports: [CommonModule, NgbTooltip, NgOptimizedImage],
   exports: [
@@ -21,7 +23,8 @@ import { StatEffectIconComponent } from './stat-effect-icon/stat-effect-icon.com
     ActionPointsIconComponent,
     TurnsIconComponent,
     AssetIconComponent,
-    StatEffectIconComponent,
+    CharacterStatsEffectIconComponent,
+    CardStatsEffectIconComponent,
   ],
 })
 export class IconsModule {}

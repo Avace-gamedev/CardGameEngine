@@ -10,7 +10,7 @@ public class PlayerSideView : CombatSideView
         string playerName,
         CombatSide side,
         int ap,
-        CardInstanceWithModifiersView[] hand,
+        CardInstanceWithModificationsView[] hand,
         CharacterCombatView? frontCharacter,
         CharacterCombatView? backCharacter = null
     ) : base(playerName, side, ap, frontCharacter, backCharacter)
@@ -20,7 +20,7 @@ public class PlayerSideView : CombatSideView
     }
 
     [Required]
-    public CardInstanceWithModifiersView[] Hand { get; }
+    public CardInstanceWithModificationsView[] Hand { get; }
 }
 
 public static class PlayerSideViewMappingExtensions

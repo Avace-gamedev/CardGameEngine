@@ -6,8 +6,9 @@ using NJsonSchema.Converters;
 
 namespace PockedeckBattler.Server.Views.Effects.Passive;
 
-[JsonConverter(typeof(JsonInheritanceConverter), "type")]
-[KnownType(typeof(PassiveStatsModifierView))]
+[JsonConverter(typeof(JsonInheritanceConverter), "$type")]
+[KnownType(typeof(CharacterStatsEffectView))]
+[KnownType(typeof(CardStatsEffectView))]
 public class PassiveEffectView
 {
     public PassiveEffectView(int duration)
@@ -24,7 +25,8 @@ public static class PassiveEffectViewMappingExtensions
     {
         return effect switch
         {
-            PassiveStatsModifier passiveStatsModifier => passiveStatsModifier.View(),
+            CharacterStatEffect characterStatsModifier => characterStatsModifier.View(),
+            CardStatEffect cardStatsModifier => cardStatsModifier.View(),
             _ => throw new ArgumentOutOfRangeException(nameof(effect))
         };
     }

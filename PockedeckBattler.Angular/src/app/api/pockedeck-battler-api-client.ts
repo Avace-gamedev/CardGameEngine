@@ -971,32 +971,32 @@ export abstract class ActiveEffectView implements IActiveEffectView {
 
     static fromJS(data: any): ActiveEffectView {
         data = typeof data === 'object' ? data : {};
-        if (data["type"] === "DamageEffectView") {
+        if (data["$type"] === "DamageEffectView") {
             let result = new DamageEffectView();
             result.init(data);
             return result;
         }
-        if (data["type"] === "HealEffectView") {
+        if (data["$type"] === "HealEffectView") {
             let result = new HealEffectView();
             result.init(data);
             return result;
         }
-        if (data["type"] === "ShieldEffectView") {
+        if (data["$type"] === "ShieldEffectView") {
             let result = new ShieldEffectView();
             result.init(data);
             return result;
         }
-        if (data["type"] === "AddPassiveEffectView") {
+        if (data["$type"] === "AddPassiveEffectView") {
             let result = new AddPassiveEffectView();
             result.init(data);
             return result;
         }
-        if (data["type"] === "AddTriggeredEffectView") {
+        if (data["$type"] === "AddTriggeredEffectView") {
             let result = new AddTriggeredEffectView();
             result.init(data);
             return result;
         }
-        if (data["type"] === "RandomEffectView") {
+        if (data["$type"] === "RandomEffectView") {
             let result = new RandomEffectView();
             result.init(data);
             return result;
@@ -1006,7 +1006,7 @@ export abstract class ActiveEffectView implements IActiveEffectView {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["type"] = this._discriminator;
+        data["$type"] = this._discriminator;
         return data;
     }
 }
@@ -1192,8 +1192,13 @@ export class PassiveEffectView implements IPassiveEffectView {
 
     static fromJS(data: any): PassiveEffectView {
         data = typeof data === 'object' ? data : {};
-        if (data["type"] === "PassiveStatsModifierView") {
-            let result = new PassiveStatsModifierView();
+        if (data["$type"] === "CharacterStatsEffectView") {
+            let result = new CharacterStatsEffectView();
+            result.init(data);
+            return result;
+        }
+        if (data["$type"] === "CardStatsEffectView") {
+            let result = new CardStatsEffectView();
             result.init(data);
             return result;
         }
@@ -1204,7 +1209,7 @@ export class PassiveEffectView implements IPassiveEffectView {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["type"] = this._discriminator;
+        data["$type"] = this._discriminator;
         data["duration"] = this.duration;
         return data;
     }
@@ -1214,51 +1219,92 @@ export interface IPassiveEffectView {
     duration: number;
 }
 
-export class PassiveStatsModifierView extends PassiveEffectView implements IPassiveStatsModifierView {
-    effect!: StatEffect;
+export class CharacterStatsEffectView extends PassiveEffectView implements ICharacterStatsEffectView {
+    type!: CharacterStatEffectType;
     amount!: number;
 
-    constructor(data?: IPassiveStatsModifierView) {
+    constructor(data?: ICharacterStatsEffectView) {
         super(data);
-        this._discriminator = "PassiveStatsModifierView";
+        this._discriminator = "CharacterStatsEffectView";
     }
 
     override init(_data?: any) {
         super.init(_data);
         if (_data) {
-            this.effect = _data["effect"];
+            this.type = _data["type"];
             this.amount = _data["amount"];
         }
     }
 
-    static override fromJS(data: any): PassiveStatsModifierView {
+    static override fromJS(data: any): CharacterStatsEffectView {
         data = typeof data === 'object' ? data : {};
-        let result = new PassiveStatsModifierView();
+        let result = new CharacterStatsEffectView();
         result.init(data);
         return result;
     }
 
     override toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["effect"] = this.effect;
+        data["type"] = this.type;
         data["amount"] = this.amount;
         super.toJSON(data);
         return data;
     }
 }
 
-export interface IPassiveStatsModifierView extends IPassiveEffectView {
-    effect: StatEffect;
+export interface ICharacterStatsEffectView extends IPassiveEffectView {
+    type: CharacterStatEffectType;
     amount: number;
 }
 
-export enum StatEffect {
+export enum CharacterStatEffectType {
+    IncreaseResistance = "increaseResistance",
+    ReduceResistance = "reduceResistance",
+}
+
+export class CardStatsEffectView extends PassiveEffectView implements ICardStatsEffectView {
+    type!: CardStatEffectType;
+    amount!: number;
+
+    constructor(data?: ICardStatsEffectView) {
+        super(data);
+        this._discriminator = "CardStatsEffectView";
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.type = _data["type"];
+            this.amount = _data["amount"];
+        }
+    }
+
+    static override fromJS(data: any): CardStatsEffectView {
+        data = typeof data === 'object' ? data : {};
+        let result = new CardStatsEffectView();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["type"] = this.type;
+        data["amount"] = this.amount;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface ICardStatsEffectView extends IPassiveEffectView {
+    type: CardStatEffectType;
+    amount: number;
+}
+
+export enum CardStatEffectType {
     IncreaseApCost = "increaseApCost",
     ReduceApCost = "reduceApCost",
     IncreaseDamage = "increaseDamage",
     ReduceDamage = "reduceDamage",
-    IncreaseResistance = "increaseResistance",
-    ReduceResistance = "reduceResistance",
 }
 
 export class AddTriggeredEffectView extends ActiveEffectView implements IAddTriggeredEffectView {
@@ -1360,7 +1406,7 @@ export class EffectTriggerView implements IEffectTriggerView {
 
     static fromJS(data: any): EffectTriggerView {
         data = typeof data === 'object' ? data : {};
-        if (data["type"] === "TurnTriggerView") {
+        if (data["$type"] === "TurnTriggerView") {
             let result = new TurnTriggerView();
             result.init(data);
             return result;
@@ -1372,7 +1418,7 @@ export class EffectTriggerView implements IEffectTriggerView {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["type"] = this._discriminator;
+        data["$type"] = this._discriminator;
         return data;
     }
 }
@@ -1812,7 +1858,7 @@ export interface ICombatSideView {
 }
 
 export class PlayerSideView extends CombatSideView implements IPlayerSideView {
-    hand!: CardInstanceWithModifiersView[];
+    hand!: CardInstanceWithModificationsView[];
 
     constructor(data?: IPlayerSideView) {
         super(data);
@@ -1827,7 +1873,7 @@ export class PlayerSideView extends CombatSideView implements IPlayerSideView {
             if (Array.isArray(_data["hand"])) {
                 this.hand = [] as any;
                 for (let item of _data["hand"])
-                    this.hand!.push(CardInstanceWithModifiersView.fromJS(item));
+                    this.hand!.push(CardInstanceWithModificationsView.fromJS(item));
             }
         }
     }
@@ -1852,7 +1898,7 @@ export class PlayerSideView extends CombatSideView implements IPlayerSideView {
 }
 
 export interface IPlayerSideView extends ICombatSideView {
-    hand: CardInstanceWithModifiersView[];
+    hand: CardInstanceWithModificationsView[];
 }
 
 export class CardInstanceView implements ICardInstanceView {
@@ -1898,10 +1944,10 @@ export interface ICardInstanceView {
     character: string;
 }
 
-export class CardInstanceWithModifiersView extends CardInstanceView implements ICardInstanceWithModifiersView {
+export class CardInstanceWithModificationsView extends CardInstanceView implements ICardInstanceWithModificationsView {
     baseCard!: ActionCardView;
 
-    constructor(data?: ICardInstanceWithModifiersView) {
+    constructor(data?: ICardInstanceWithModificationsView) {
         super(data);
         if (!data) {
             this.baseCard = new ActionCardView();
@@ -1915,9 +1961,9 @@ export class CardInstanceWithModifiersView extends CardInstanceView implements I
         }
     }
 
-    static override fromJS(data: any): CardInstanceWithModifiersView {
+    static override fromJS(data: any): CardInstanceWithModificationsView {
         data = typeof data === 'object' ? data : {};
-        let result = new CardInstanceWithModifiersView();
+        let result = new CardInstanceWithModificationsView();
         result.init(data);
         return result;
     }
@@ -1930,7 +1976,7 @@ export class CardInstanceWithModifiersView extends CardInstanceView implements I
     }
 }
 
-export interface ICardInstanceWithModifiersView extends ICardInstanceView {
+export interface ICardInstanceWithModificationsView extends ICardInstanceView {
     baseCard: ActionCardView;
 }
 
@@ -1946,7 +1992,6 @@ export class CharacterCombatView implements ICharacterCombatView {
     shield!: number;
     passiveEffects!: PassiveEffectInstanceView[];
     triggeredEffects!: TriggeredEffectInstanceView[];
-    modifiers!: StatsModifier;
 
     constructor(data?: ICharacterCombatView) {
         if (data) {
@@ -1959,7 +2004,6 @@ export class CharacterCombatView implements ICharacterCombatView {
             this.character = new CharacterView();
             this.passiveEffects = [];
             this.triggeredEffects = [];
-            this.modifiers = new StatsModifier();
         }
     }
 
@@ -1978,7 +2022,6 @@ export class CharacterCombatView implements ICharacterCombatView {
                 for (let item of _data["triggeredEffects"])
                     this.triggeredEffects!.push(TriggeredEffectInstanceView.fromJS(item));
             }
-            this.modifiers = _data["modifiers"] ? StatsModifier.fromJS(_data["modifiers"]) : new StatsModifier();
         }
     }
 
@@ -2004,7 +2047,6 @@ export class CharacterCombatView implements ICharacterCombatView {
             for (let item of this.triggeredEffects)
                 data["triggeredEffects"].push(item.toJSON());
         }
-        data["modifiers"] = this.modifiers ? this.modifiers.toJSON() : <any>undefined;
         return data;
     }
 }
@@ -2015,7 +2057,6 @@ export interface ICharacterCombatView {
     shield: number;
     passiveEffects: PassiveEffectInstanceView[];
     triggeredEffects: TriggeredEffectInstanceView[];
-    modifiers: StatsModifier;
 }
 
 export class PassiveEffectInstanceView implements IPassiveEffectInstanceView {
@@ -2139,7 +2180,7 @@ export abstract class TriggerStateView implements ITriggerStateView {
 
     static fromJS(data: any): TriggerStateView {
         data = typeof data === 'object' ? data : {};
-        if (data["type"] === "TurnTriggerStateView") {
+        if (data["$type"] === "TurnTriggerStateView") {
             let result = new TurnTriggerStateView();
             result.init(data);
             return result;
@@ -2149,7 +2190,7 @@ export abstract class TriggerStateView implements ITriggerStateView {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["type"] = this._discriminator;
+        data["$type"] = this._discriminator;
         return data;
     }
 }
@@ -2193,54 +2234,6 @@ export class TurnTriggerStateView extends TriggerStateView implements ITurnTrigg
 export interface ITurnTriggerStateView extends ITriggerStateView {
     triggersIn: number;
     remainingDuration: number;
-}
-
-export class StatsModifier implements IStatsModifier {
-    healthAdditiveModifier!: number;
-    apCostAdditiveModifier!: number;
-    damageAdditiveModifier!: number;
-    resistanceAdditiveModifier!: number;
-
-    constructor(data?: IStatsModifier) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.healthAdditiveModifier = _data["healthAdditiveModifier"];
-            this.apCostAdditiveModifier = _data["apCostAdditiveModifier"];
-            this.damageAdditiveModifier = _data["damageAdditiveModifier"];
-            this.resistanceAdditiveModifier = _data["resistanceAdditiveModifier"];
-        }
-    }
-
-    static fromJS(data: any): StatsModifier {
-        data = typeof data === 'object' ? data : {};
-        let result = new StatsModifier();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["healthAdditiveModifier"] = this.healthAdditiveModifier;
-        data["apCostAdditiveModifier"] = this.apCostAdditiveModifier;
-        data["damageAdditiveModifier"] = this.damageAdditiveModifier;
-        data["resistanceAdditiveModifier"] = this.resistanceAdditiveModifier;
-        return data;
-    }
-}
-
-export interface IStatsModifier {
-    healthAdditiveModifier: number;
-    apCostAdditiveModifier: number;
-    damageAdditiveModifier: number;
-    resistanceAdditiveModifier: number;
 }
 
 export enum CombatSideTurnPhase {

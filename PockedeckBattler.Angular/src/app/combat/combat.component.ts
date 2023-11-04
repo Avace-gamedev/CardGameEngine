@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, filter, from, map, of, switchMap } from 'rxjs';
 import {
-  CardInstanceWithModifiersView,
+  CardInstanceWithModificationsView,
   CombatSide,
   CombatsService,
   PlayerCombatView,
@@ -82,7 +82,7 @@ export class CombatComponent implements OnInit {
     this.combatsService.endTurn(this.combat.id, this.identityService.getIdentity()).subscribe();
   }
 
-  hoverCard(card: CardInstanceWithModifiersView | undefined) {
+  hoverCard(card: CardInstanceWithModificationsView | undefined) {
     this.source = undefined;
     this.allyTargets = [];
     this.enemyTargets = [];

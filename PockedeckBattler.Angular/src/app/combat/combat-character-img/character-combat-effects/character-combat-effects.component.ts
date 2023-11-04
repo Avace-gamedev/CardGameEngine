@@ -1,8 +1,9 @@
 import { Component, Input } from '@angular/core';
 import {
+  CardStatsEffectView,
   CharacterCombatView,
+  CharacterStatsEffectView,
   PassiveEffectInstanceView,
-  PassiveStatsModifierView,
 } from '../../../api/pockedeck-battler-api-client';
 import { CombatCharacterImageSize } from '../../../core/character/character-img/character-img.component';
 
@@ -28,15 +29,19 @@ export class CharacterCombatEffectsComponent {
   @Input()
   public mode: 'col' | 'row' = 'row';
 
-  protected statsModifiers: PassiveEffectInstanceView[] = [];
+  protected characterStatsModifiers: PassiveEffectInstanceView[] = [];
+  protected cardStatsModifiers: PassiveEffectInstanceView[] = [];
 
   private update() {
-    this.statsModifiers = [];
+    this.characterStatsModifiers = [];
 
     if (!this._character) {
       return;
     }
 
-    this.statsModifiers = this._character.passiveEffects.filter((e) => e.effect instanceof PassiveStatsModifierView);
+    this.characterStatsModifiers = this._character.passiveEffects.filter(
+      (e) => e.effect instanceof CharacterStatsEffectView
+    );
+    this.cardStatsModifiers = this._character.passiveEffects.filter((e) => e.effect instanceof CardStatsEffectView);
   }
 }

@@ -33,8 +33,6 @@ public class CombatInstance
             throw new InvalidMoveException($"Could not find card at index {index}");
         }
 
-        sideState.ConsumeAp(card.ApCost);
-
         sideState.ReturnCardFromHandToDeck(index);
 
         card.Resolve(State);

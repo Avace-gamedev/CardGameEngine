@@ -8,10 +8,11 @@ import { HealEffectLineComponent } from './active-effect-line/heal-effect-line/h
 import { RandomEffectLineComponent } from './active-effect-line/random-effect-line/random-effect-line.component';
 import { ShieldEffectLineComponent } from './active-effect-line/shield-effect-line/shield-effect-line.component';
 import { PassiveEffectLineComponent } from './passive-effect-line/passive-effect-line.component';
-import { StatsPassiveEffectLineComponent } from './passive-effect-line/stats-passive-effect-line/stats-passive-effect-line.component';
 import { TriggeredEffectLineComponent } from './triggered-effect-line/triggered-effect-line.component';
 import { IconsModule } from '../icons/icons.module';
 import { SharedModule } from '../../shared/shared.module';
+import { CardStatEffectLineComponent } from './passive-effect-line/card-stat-effect-line/card-stat-effect-line.component';
+import { CharacterStatEffectLineComponent } from './passive-effect-line/character-stat-effect-line/character-stat-effect-line.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { SharedModule } from '../../shared/shared.module';
     RandomEffectLineComponent,
     AddPassiveEffectLineComponent,
     PassiveEffectLineComponent,
-    StatsPassiveEffectLineComponent,
+    CharacterStatEffectLineComponent,
+    CardStatEffectLineComponent,
     TriggeredEffectLineComponent,
     AddTriggeredEffectLineComponent,
   ],

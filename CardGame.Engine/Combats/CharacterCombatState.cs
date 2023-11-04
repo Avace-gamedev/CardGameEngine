@@ -1,4 +1,5 @@
 ﻿using CardGame.Engine.Characters;
+using CardGame.Engine.Combats.Modifiers;
 using CardGame.Engine.Effects.Passive;
 using CardGame.Engine.Effects.Passive.Stats;
 using CardGame.Engine.Effects.Triggered;
@@ -24,16 +25,19 @@ public class CharacterCombatState
     public Character Character { get; }
     public CharacterStatistics Stats => Character.Stats;
 
-    public StatsModifier StatsModifier =>
-        PassiveEffects.Select(e => e.Effect).OfType<PassiveStatsModifier>().Any()
-            ? PassiveEffects.Select(e => e.Effect).OfType<PassiveStatsModifier>().Select(e => e.GetStatsModifier()).Aggregate(StatsModifier.Combine)
-            : StatsModifier.None;
-
     public bool IsDead { get; private set; }
     public int Health { get; private set; }
     public int Shield { get; private set; }
     public IReadOnlyList<PassiveEffectInstance> PassiveEffects => _passiveEffects;
     public IReadOnlyList<TriggeredEffectInstance> TriggeredEffects => _triggeredEffects;
+
+    public CharacterStatsModifier GetStatsModifier()
+    {
+        CharacterStatEffect[] characterStatEffects = PassiveEffects.Select(e => e.Effect).OfType<CharacterStatEffect>().ToArray();
+        return characterStatEffects.Any()
+            ? characterStatEffects.Select(e => e.GetStatsModifier()).Aggregate(CharacterStatsModifier.Combine)
+            : CharacterStatsModifier.None;
+    }
 
     public DamageReceived Damage(int amount)
     {

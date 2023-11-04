@@ -11,7 +11,6 @@ public class CharacterCombatView
         CharacterView character,
         int health,
         int shield,
-        StatsModifier modifiers,
         PassiveEffectInstanceView[] passiveEffects,
         TriggeredEffectInstanceView[] triggeredEffects
     )
@@ -19,7 +18,6 @@ public class CharacterCombatView
         Character = character;
         Health = health;
         Shield = shield;
-        Modifiers = modifiers;
         PassiveEffects = passiveEffects;
         TriggeredEffects = triggeredEffects;
     }
@@ -34,10 +32,8 @@ public class CharacterCombatView
     [Required]
     public PassiveEffectInstanceView[] PassiveEffects { get; }
 
-    public TriggeredEffectInstanceView[] TriggeredEffects { get; }
-
     [Required]
-    public StatsModifier Modifiers { get; }
+    public TriggeredEffectInstanceView[] TriggeredEffects { get; }
 }
 
 public static class CharacterCombatViewMappingExtensions
@@ -48,7 +44,6 @@ public static class CharacterCombatViewMappingExtensions
             character.Character.View(),
             character.Health,
             character.Shield,
-            character.StatsModifier,
             character.PassiveEffects.Select(e => e.View()).ToArray(),
             character.TriggeredEffects.Select(e => e.View()).ToArray()
         );

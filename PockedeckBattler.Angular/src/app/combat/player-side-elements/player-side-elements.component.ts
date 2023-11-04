@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import {
-  CardInstanceWithModifiersView,
+  CardInstanceWithModificationsView,
   CharactersService,
   CharacterView,
   CombatSide,
@@ -33,8 +33,8 @@ export class PlayerSideElementsComponent implements OnInit {
   public endTurn: EventEmitter<void> = new EventEmitter<void>();
 
   @Output()
-  public hover: EventEmitter<CardInstanceWithModifiersView | undefined> = new EventEmitter<
-    CardInstanceWithModifiersView | undefined
+  public hover: EventEmitter<CardInstanceWithModificationsView | undefined> = new EventEmitter<
+    CardInstanceWithModificationsView | undefined
   >();
 
   protected characters: CharacterView[] = [];
@@ -62,12 +62,12 @@ export class PlayerSideElementsComponent implements OnInit {
     this.endTurn.emit();
   }
 
-  protected mouseEnter(card: CardInstanceWithModifiersView) {
+  protected mouseEnter(card: CardInstanceWithModificationsView) {
     this.hoveredCharacter = card.character;
     this.hover.emit(card);
   }
 
-  protected mouseLeave(card: CardInstanceWithModifiersView) {
+  protected mouseLeave(card: CardInstanceWithModificationsView) {
     if (this.hoveredCharacter === card.character) {
       this.clearMouseHover();
     }

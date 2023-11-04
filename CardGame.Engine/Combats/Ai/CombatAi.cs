@@ -38,7 +38,9 @@ public abstract class CombatAi
         }
 
         CombatSideState side = Combat.State.GetSide(Side);
-        return side.Hand.Select((card, index) => new { Card = card, Index = index }).Where(x => x.Card.ApCost <= side.Ap).Select(x => x.Index);
+        return side.Hand.Select((card, index) => new { Card = card, Index = index })
+            .Where(x => x.Card.GetCardWithModifications().ApCost <= side.Ap)
+            .Select(x => x.Index);
     }
 
     protected void PlayCard(int index)

@@ -1,23 +1,23 @@
 import { Component, Input } from '@angular/core';
-import { StatEffect } from '../../../api/pockedeck-battler-api-client';
 import { AssetIcon } from '../asset-icon/asset-icons';
 import { AssetIconSize } from '../asset-icon/asset-icon.component';
 import { StatEffectUtils } from './stat-effect';
+import { CharacterStatEffectType } from '../../../api/pockedeck-battler-api-client';
 
 @Component({
-  selector: 'app-stat-effect-icon',
-  templateUrl: './stat-effect-icon.component.html',
+  selector: 'app-character-stat-effect-icon',
+  templateUrl: './character-stats-effect-icon.component.html',
 })
-export class StatEffectIconComponent {
+export class CharacterStatsEffectIconComponent {
   @Input()
-  get effect(): StatEffect | undefined {
+  get effect(): CharacterStatEffectType | undefined {
     return this._effect;
   }
-  set effect(value: StatEffect | undefined) {
+  set effect(value: CharacterStatEffectType | undefined) {
     this._effect = value;
     this.update();
   }
-  private _effect: StatEffect | undefined;
+  private _effect: CharacterStatEffectType | undefined;
 
   @Input()
   public size: AssetIconSize = 'md';

@@ -1,8 +1,12 @@
 <div class="hstack gap-1 text-nowrap">
   <ng-container [ngSwitch]="type">
-    <ng-container *ngSwitchCase="PassiveEffectType.Stats">
-      <app-stats-passive-effect-line [effect]="$any(effect)" [overrideDuration]="overrideDuration">
-      </app-stats-passive-effect-line>
+    <ng-container *ngSwitchCase="PassiveEffectType.CharacterStats">
+      <app-character-stat-effect-line [effect]="$any(effect)" [overrideDuration]="overrideDuration">
+      </app-character-stat-effect-line>
+    </ng-container>
+    <ng-container *ngSwitchCase="PassiveEffectType.CardStats">
+      <app-card-stat-effect-line [effect]="$any(effect)" [overrideDuration]="overrideDuration">
+      </app-card-stat-effect-line>
     </ng-container>
     <ng-container *ngSwitchDefault> __passive_effect__ {{ effect?.toJSON()?.type }} </ng-container>
   </ng-container>

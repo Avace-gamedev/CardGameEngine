@@ -1,0 +1,15 @@
+<div class="vstack align-content-center" *ngIf="effect && display">
+  <div class="hstack gap-2 align-items-start justify-content-center" *ngIf="display.value !== 0">
+    <app-character-stat-effect-icon [effect]="effect.type" size="sm" class="pt-1"></app-character-stat-effect-icon>
+    <div class="d-flex flex-wrap column-gap-2">
+      <div class="text-nowrap">
+        {{ display.value | sign }}
+        {{ display.name }}
+      </div>
+      <div class="hstack gap-1 justify-content-end">
+        <app-asset-icon icon="duration" size="sm" ngbTooltip="Duration"></app-asset-icon>
+        <small> {{ display.duration }} turns</small>
+      </div>
+    </div>
+  </div>
+</div>

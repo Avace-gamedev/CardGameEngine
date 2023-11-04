@@ -2,6 +2,7 @@
 using CardGame.Engine.Characters;
 using CardGame.Engine.Combats;
 using CardGame.Engine.Effects.Active;
+using CardGame.Engine.Effects.Passive;
 using CardGame.Engine.Effects.Passive.Stats;
 using CardGame.Engine.Effects.Triggered;
 using PockedeckBattler.Server.GameContent.Characters.Attributes;
@@ -38,7 +39,7 @@ public static partial class Characters
                 "Reduces the foe's Attack.",
                 3,
                 ActionCardTarget.AllOpponents,
-                AddPassiveEffect.StatEffect(StatEffect.ReduceDamage, -10, 3)
+                new AddPassiveEffect(PassiveEffect.CardStatEffect(CardStatEffectType.ReduceDamage, -10, 3))
             ),
             ActionCard.Damage(
                 "Inferno",
@@ -68,7 +69,7 @@ public static partial class Characters
                 "Wags the tail to lower the foe's Defense.",
                 3,
                 ActionCardTarget.AllOpponents,
-                AddPassiveEffect.StatEffect(StatEffect.ReduceResistance, -10, 3)
+                new AddPassiveEffect(PassiveEffect.CharacterStatEffect(CharacterStatEffectType.ReduceResistance, -10, 3))
             ),
             ActionCard.Shield("Protect", "Use its shell to protect against next attacks.", 3, ActionCardTarget.Self, 44),
             ActionCard.Damage("Hydro Pump", "Blasts water at high power to strike the foe.", 7, ActionCardTarget.FrontOpponent, 45, Element.Water)
@@ -91,7 +92,7 @@ public static partial class Characters
                 "Forces the body to grow and heightens Bulbasaur's attack.",
                 3,
                 ActionCardTarget.AllAllies,
-                AddPassiveEffect.StatEffect(StatEffect.IncreaseResistance, 10, 3)
+                new AddPassiveEffect(PassiveEffect.CharacterStatEffect(CharacterStatEffectType.IncreaseResistance, 10, 3))
             ),
             ActionCard.AddTriggered(
                 "Leech Seed",

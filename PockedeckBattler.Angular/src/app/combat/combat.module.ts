@@ -22,6 +22,7 @@ import { CombatEffectComponent } from './combat-character-img/character-combat-e
 import { StatsModifierEffectComponent } from './combat-character-img/character-combat-effects/stats-modifier-effect/stats-modifier-effect.component';
 import { PassiveEffectInstanceComponent } from './combat-character-img/character-combat-effects/passive-effect-instance/passive-effect-instance.component';
 import { TriggeredEffectInstanceComponent } from './combat-character-img/character-combat-effects/triggered-effect-instance/triggered-effect-instance.component';
+import { CombatCommonElementsComponent } from './combat-common-elements/combat-common-elements.component';
 
 @NgModule({
   declarations: [
@@ -41,6 +42,7 @@ import { TriggeredEffectInstanceComponent } from './combat-character-img/charact
     StatsModifierEffectComponent,
     PassiveEffectInstanceComponent,
     TriggeredEffectInstanceComponent,
+    CombatCommonElementsComponent,
   ],
   imports: [
     CommonModule,

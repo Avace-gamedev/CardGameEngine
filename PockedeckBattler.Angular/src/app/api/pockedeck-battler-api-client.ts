@@ -1692,6 +1692,8 @@ export class BaseCombatView implements IBaseCombatView {
     currentSide!: CombatSide;
     currentPhase!: CombatSideTurnPhase;
     winner!: CombatSide;
+    leftPlayerName!: string;
+    rightPlayerName!: string;
 
     constructor(data?: IBaseCombatView) {
         if (data) {
@@ -1711,6 +1713,8 @@ export class BaseCombatView implements IBaseCombatView {
             this.currentSide = _data["currentSide"];
             this.currentPhase = _data["currentPhase"];
             this.winner = _data["winner"];
+            this.leftPlayerName = _data["leftPlayerName"];
+            this.rightPlayerName = _data["rightPlayerName"];
         }
     }
 
@@ -1730,6 +1734,8 @@ export class BaseCombatView implements IBaseCombatView {
         data["currentSide"] = this.currentSide;
         data["currentPhase"] = this.currentPhase;
         data["winner"] = this.winner;
+        data["leftPlayerName"] = this.leftPlayerName;
+        data["rightPlayerName"] = this.rightPlayerName;
         return data;
     }
 }
@@ -1742,6 +1748,8 @@ export interface IBaseCombatView {
     currentSide: CombatSide;
     currentPhase: CombatSideTurnPhase;
     winner: CombatSide;
+    leftPlayerName: string;
+    rightPlayerName: string;
 }
 
 export class PlayerCombatView extends BaseCombatView implements IPlayerCombatView {

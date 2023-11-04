@@ -73,7 +73,9 @@ public static class PlayerCombatViewMappingExtensions
             },
             Ongoing = combat.Instance.State.Ongoing,
             Over = combat.Instance.State.Over,
-            Winner = combat.Instance.State.Winner
+            Winner = combat.Instance.State.Winner,
+            LeftPlayerName = combat.LeftPlayerName,
+            RightPlayerName = combat.RightPlayerName
         };
     }
 }

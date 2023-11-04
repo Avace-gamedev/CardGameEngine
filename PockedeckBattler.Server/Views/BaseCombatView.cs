@@ -1,4 +1,5 @@
-﻿using CardGame.Engine.Combats;
+﻿using System.ComponentModel.DataAnnotations;
+using CardGame.Engine.Combats;
 
 namespace PockedeckBattler.Server.Views;
 
@@ -19,4 +20,10 @@ public class BaseCombatView
     public CombatSide CurrentSide { get; }
     public CombatSideTurnPhase CurrentPhase { get; }
     public CombatSide Winner { get; init; }
+
+    [Required]
+    public string LeftPlayerName { get; init; } = "";
+
+    [Required]
+    public string RightPlayerName { get; init; } = "";
 }

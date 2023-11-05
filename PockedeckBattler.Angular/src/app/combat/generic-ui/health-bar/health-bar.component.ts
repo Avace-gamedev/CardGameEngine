@@ -4,6 +4,7 @@ import { PlacementArray } from '@ng-bootstrap/ng-bootstrap/util/positioning';
 @Component({
   selector: 'app-health-bar',
   templateUrl: './health-bar.component.html',
+  styleUrls: ['health-bar.component.css'],
 })
 export class HealthBarComponent {
   @Input()

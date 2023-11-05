@@ -1,4 +1,4 @@
-name: Build and Deploy
+name: Pockedeck Battler - Build and Deploy Angular app
 
 on:
   push:

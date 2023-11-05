@@ -1,6 +1,8 @@
 ﻿using CardGame.Engine.Combats;
 using CardGame.Engine.Effects.Active;
-using CardGame.Engine.Effects.Triggered;
+using CardGame.Engine.Effects.Enchantments;
+using CardGame.Engine.Effects.Enchantments.State;
+using CardGame.Engine.Effects.Enchantments.Triggered;
 
 namespace CardGame.Engine.Cards.ActionCard;
 
@@ -66,13 +68,18 @@ public class ActionCard : Card
         return new ActionCard(name, description, apCost, target, new ShieldEffect(shield));
     }
 
-    public static ActionCard AddPassive(string name, string? description, int apCost, ActionCardTarget target, AddPassiveEffect passiveEffect)
+    public static ActionCard AddPassive(string name, string? description, int apCost, ActionCardTarget target, params PassiveEffect[] effects)
     {
-        return new ActionCard(name, description, apCost, target, passiveEffect);
+        return new ActionCard(name, description, apCost, target, new AddEnchantmentEffect(new Enchantment(name, effects)));
     }
 
-    public static ActionCard AddTriggered(string name, string? description, int apCost, ActionCardTarget target, TriggeredEffect triggeredEffect)
+    public static ActionCard AddTriggered(string name, string? description, int apCost, ActionCardTarget target, params TriggeredEffect[] effects)
     {
-        return new ActionCard(name, description, apCost, target, new AddTriggeredEffect(triggeredEffect));
+        return new ActionCard(name, description, apCost, target, new AddEnchantmentEffect(new Enchantment(name, effects)));
+    }
+
+    public static ActionCard AddEnchantment(string name, string? description, int apCost, ActionCardTarget target, AddEnchantmentEffect enchantmentEffect)
+    {
+        return new ActionCard(name, description, apCost, target, enchantmentEffect);
     }
 }

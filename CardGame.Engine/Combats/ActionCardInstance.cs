@@ -1,7 +1,7 @@
 ﻿using CardGame.Engine.Cards.ActionCard;
 using CardGame.Engine.Combats.Modifiers;
 using CardGame.Engine.Combats.State;
-using CardGame.Engine.Effects.Passive.Stats;
+using CardGame.Engine.Effects.Enchantments.State.Stats;
 
 namespace CardGame.Engine.Combats;
 
@@ -18,7 +18,7 @@ public class ActionCardInstance
 
     public ActionCard GetCardWithModifications()
     {
-        CardStatEffect[] cardStatEffects = Character.PassiveEffects.Select(e => e.Effect).OfType<CardStatEffect>().ToArray();
+        ChangeCardStatEffect[] cardStatEffects = Character.Enchantments.SelectMany(e => e.Enchantment.Passive).OfType<ChangeCardStatEffect>().ToArray();
         CardStatsModifier modifiers = cardStatEffects.Any()
             ? cardStatEffects.Select(e => e.GetStatsModifier()).Aggregate(CardStatsModifier.Combine)
             : CardStatsModifier.None;

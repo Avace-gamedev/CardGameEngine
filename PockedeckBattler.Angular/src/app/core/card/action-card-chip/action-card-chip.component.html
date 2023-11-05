@@ -5,10 +5,8 @@
     backgroundColor: 'var(' + bgColorCssVariable + ')',
     color: 'var(' + textColorCssVariable + ')'
   }"
-  [ngbPopover]="enablePopoverDetails ? cardTpl : null"
-  container="body"
+  [stickyPopover]="enablePopoverDetails ? cardTpl : null"
   [placement]="popoverDetailsPlacement"
-  triggers="mouseenter:mouseleave"
 >
   <app-action-card-type-icon [card]="card"></app-action-card-type-icon>
 

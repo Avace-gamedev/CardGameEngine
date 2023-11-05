@@ -2,17 +2,14 @@
 using CardGame.Engine.Combats.Damages;
 using CardGame.Engine.Combats.Modifiers;
 using CardGame.Engine.Combats.State;
-using CardGame.Engine.Effects.Passive;
-using CardGame.Engine.Effects.Passive.Stats;
-using CardGame.Engine.Effects.Triggered;
-using CardGame.Engine.Effects.Triggered.Instance;
+using CardGame.Engine.Effects.Enchantments;
+using CardGame.Engine.Effects.Enchantments.State.Stats;
 
 namespace CardGame.Engine.Combats;
 
 public class CharacterCombatState
 {
-    readonly List<PassiveEffectInstance> _passiveEffects = new();
-    readonly List<TriggeredEffectInstance> _triggeredEffects = new();
+    readonly List<EnchantmentInstance> _enchantments = new();
 
     public CharacterCombatState(CombatState combat, CombatSide side, Character character)
     {
@@ -33,12 +30,11 @@ public class CharacterCombatState
     public bool IsDead { get; private set; }
     public int Health { get; private set; }
     public int Shield { get; private set; }
-    public IReadOnlyList<PassiveEffectInstance> PassiveEffects => _passiveEffects;
-    public IReadOnlyList<TriggeredEffectInstance> TriggeredEffects => _triggeredEffects;
+    public IReadOnlyList<EnchantmentInstance> Enchantments => _enchantments;
 
     public CharacterStatsModifier GetStatsModifier()
     {
-        CharacterStatEffect[] characterStatEffects = PassiveEffects.Select(e => e.Effect).OfType<CharacterStatEffect>().ToArray();
+        ChangeCharacterStatEffect[] characterStatEffects = Enchantments.SelectMany(e => e.Enchantment.Passive).OfType<ChangeCharacterStatEffect>().ToArray();
         return characterStatEffects.Any()
             ? characterStatEffects.Select(e => e.GetStatsModifier()).Aggregate(CharacterStatsModifier.Combine)
             : CharacterStatsModifier.None;
@@ -101,18 +97,11 @@ public class CharacterCombatState
         return new ShieldReceived(amount);
     }
 
-    public void AddEffect(PassiveEffect effect, CharacterCombatState source)
+    public void AddEnchantment(Enchantment enchantment, CharacterCombatState source)
     {
-        PassiveEffectInstance passiveEffect = new(effect, source, this);
-        passiveEffect.Expired += OnEffectExpired;
-        _passiveEffects.Add(passiveEffect);
-    }
-
-    public void AddEffect(TriggeredEffect effect, CharacterCombatState source)
-    {
-        TriggeredEffectInstance triggeredEffect = new(effect, source, this);
-        triggeredEffect.Expired += OnEffectExpired;
-        _triggeredEffects.Add(triggeredEffect);
+        EnchantmentInstance enchantmentInstance = new(enchantment, source, this);
+        enchantmentInstance.Expired += OnEffectExpired;
+        _enchantments.Add(enchantmentInstance);
     }
 
     void SetShield(int shield)
@@ -142,16 +131,12 @@ public class CharacterCombatState
 
     void OnEffectExpired(object? sender, EventArgs _)
     {
-        switch (sender)
+        EnchantmentInstance[] toRemove = _enchantments.Where(e => e.HasExpired).ToArray();
+
+        foreach (EnchantmentInstance enchantment in toRemove)
         {
-            case PassiveEffectInstance passiveEffect:
-                _passiveEffects.Remove(passiveEffect);
-                passiveEffect.Dispose();
-                break;
-            case TriggeredEffectInstance triggeredEffect:
-                _triggeredEffects.Remove(triggeredEffect);
-                triggeredEffect.Dispose();
-                break;
+            _enchantments.Remove(enchantment);
+            enchantment.Dispose();
         }
     }
 }

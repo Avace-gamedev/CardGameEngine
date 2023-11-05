@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { Placement } from '@ng-bootstrap/ng-bootstrap';
 import { CharacterView } from '../../../api/pockedeck-battler-api-client';
+import { sendMessage } from '@microsoft/signalr/dist/esm/Utils';
+import { PlacementArray } from '@ng-bootstrap/ng-bootstrap/util/positioning';
 
 @Component({
   selector: 'app-character-img',
@@ -23,7 +24,7 @@ export class CharacterImgComponent {
   public enablePopoverDetails: boolean = false;
 
   @Input()
-  public popoverPlacement: Placement = 'auto';
+  public popoverPlacement: PlacementArray = 'auto';
 
   @Input()
   public footer: string | undefined;
@@ -75,6 +76,8 @@ export class CharacterImgComponent {
     this.characterBeingDragged = false;
     this.dropped.emit($event);
   }
+
+  protected readonly sendMessage = sendMessage;
 }
 
 export type CombatCharacterImageSize = 'sm' | 'md' | 'lg' | 'xl';

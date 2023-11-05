@@ -12,8 +12,7 @@ export enum ActiveEffectType {
   Heal = 'heal',
   Shield = 'shield',
   Random = 'random',
-  AddPassive = 'add-passive',
-  AddTriggered = 'add-triggered',
+  AddEnchantment = 'add-passive',
 }
 
 export enum PassiveEffectType {

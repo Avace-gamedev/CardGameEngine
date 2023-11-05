@@ -2,10 +2,11 @@
 using CardGame.Engine.Characters;
 using CardGame.Engine.Combats;
 using CardGame.Engine.Effects.Active;
-using CardGame.Engine.Effects.Passive;
-using CardGame.Engine.Effects.Passive.Stats;
-using CardGame.Engine.Effects.Triggered;
-using CardGame.Engine.Effects.Triggered.Instance;
+using CardGame.Engine.Effects.Enchantments;
+using CardGame.Engine.Effects.Enchantments.State;
+using CardGame.Engine.Effects.Enchantments.State.Stats;
+using CardGame.Engine.Effects.Enchantments.Triggered;
+using CardGame.Engine.Effects.Enchantments.Triggered.Instance;
 using PockedeckBattler.Server.GameContent.Characters.Attributes;
 
 namespace PockedeckBattler.Server.GameContent.Characters;
@@ -33,14 +34,14 @@ public static partial class Characters
                 ActionCardTarget.FrontOpponent,
                 12,
                 Element.Fire,
-                RandomEffect.Uniform(new AddTriggeredEffect(TriggeredEffect.DamageOverTime(new DamageEffect(6, Element.Fire), 4)), null)
+                RandomEffect.Uniform(new AddEnchantmentEffect(new Enchantment("Burn", TriggeredEffect.DamageOverTime(new DamageEffect(6, Element.Fire), 4))), null)
             ),
             ActionCard.AddPassive(
                 "Growl",
                 "Reduces the foe's Attack.",
                 3,
                 ActionCardTarget.AllOpponents,
-                new AddPassiveEffect(PassiveEffect.CharacterStatEffect(CharacterStatEffectType.ReduceAllDamages, 10, 3))
+                PassiveEffect.CharacterStatEffect(CharacterStatEffectType.ReduceAllDamages, 10, 3)
             ),
             ActionCard.Damage(
                 "Inferno",
@@ -49,7 +50,7 @@ public static partial class Characters
                 ActionCardTarget.FrontOpponent,
                 24,
                 Element.Fire,
-                new AddTriggeredEffect(TriggeredEffect.DamageOverTime(new DamageEffect(12, Element.Fire), 4))
+                new AddEnchantmentEffect(new Enchantment("Major Burn", TriggeredEffect.DamageOverTime(new DamageEffect(12, Element.Fire), 4)))
             )
         }
     );
@@ -70,7 +71,7 @@ public static partial class Characters
                 "Wags the tail to lower the foe's Defense.",
                 3,
                 ActionCardTarget.AllOpponents,
-                new AddPassiveEffect(PassiveEffect.CharacterStatEffect(CharacterStatEffectType.ReduceAllResistances, 10, 3))
+                PassiveEffect.CharacterStatEffect(CharacterStatEffectType.ReduceAllResistances, 10, 3)
             ),
             ActionCard.Shield("Protect", "Use its shell to protect against next attacks.", 3, ActionCardTarget.Self, 44),
             ActionCard.Damage("Hydro Pump", "Blasts water at high power to strike the foe.", 7, ActionCardTarget.FrontOpponent, 45, Element.Water)
@@ -93,7 +94,7 @@ public static partial class Characters
                 "Forces the body to grow and heightens Bulbasaur's attack.",
                 3,
                 ActionCardTarget.AllAllies,
-                new AddPassiveEffect(PassiveEffect.CharacterStatEffect(CharacterStatEffectType.IncreaseAllResistances, 10, 3))
+                PassiveEffect.CharacterStatEffect(CharacterStatEffectType.IncreaseAllResistances, 10, 3)
             ),
             ActionCard.AddTriggered(
                 "Leech Seed",

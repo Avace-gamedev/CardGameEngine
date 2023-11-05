@@ -1,25 +1,17 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using CardGame.Engine.Combats;
-using PockedeckBattler.Server.Views.Effects.Passive;
-using PockedeckBattler.Server.Views.Effects.Triggered;
+using PockedeckBattler.Server.Views.Effects.Enchantments;
 
 namespace PockedeckBattler.Server.Views;
 
 public class CharacterCombatView
 {
-    public CharacterCombatView(
-        CharacterView character,
-        int health,
-        int shield,
-        PassiveEffectInstanceView[] passiveEffects,
-        TriggeredEffectInstanceView[] triggeredEffects
-    )
+    public CharacterCombatView(CharacterView character, int health, int shield, EnchantmentInstanceView[] enchantments)
     {
         Character = character;
         Health = health;
         Shield = shield;
-        PassiveEffects = passiveEffects;
-        TriggeredEffects = triggeredEffects;
+        Enchantments = enchantments;
     }
 
     [Required]
@@ -30,22 +22,13 @@ public class CharacterCombatView
     public int Shield { get; }
 
     [Required]
-    public PassiveEffectInstanceView[] PassiveEffects { get; }
-
-    [Required]
-    public TriggeredEffectInstanceView[] TriggeredEffects { get; }
+    public EnchantmentInstanceView[] Enchantments { get; }
 }
 
 public static class CharacterCombatViewMappingExtensions
 {
     public static CharacterCombatView View(this CharacterCombatState character)
     {
-        return new CharacterCombatView(
-            character.Character.View(),
-            character.Health,
-            character.Shield,
-            character.PassiveEffects.Select(e => e.View()).ToArray(),
-            character.TriggeredEffects.Select(e => e.View()).ToArray()
-        );
+        return new CharacterCombatView(character.Character.View(), character.Health, character.Shield, character.Enchantments.Select(e => e.View()).ToArray());
     }
 }

@@ -1,8 +1,8 @@
 import { Component, Input } from '@angular/core';
-import { Placement } from '@ng-bootstrap/ng-bootstrap';
 import { CharacterCombatView } from '../../api/pockedeck-battler-api-client';
 import { CombatCharacterImageSize } from '../../core/character/character-img/character-img.component';
 import { Color, getCssColor } from '../../shared/utils/colors';
+import { PlacementArray } from '@ng-bootstrap/ng-bootstrap/util/positioning';
 
 @Component({
   selector: 'app-combat-character-img',
@@ -16,7 +16,7 @@ export class CombatCharacterImgComponent {
   public size: CombatCharacterImageSize = 'md';
 
   @Input()
-  public popoverPlacement: Placement = 'auto';
+  public popoverPlacement: PlacementArray = 'auto';
 
   @Input()
   public footer: string | undefined;

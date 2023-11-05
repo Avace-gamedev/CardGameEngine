@@ -28,8 +28,7 @@ public class CardStatsModifier
         {
             case DamageEffect damageEffect:
                 return damageEffect.ChangeDamageAmount(damageEffect.Amount + ImmediateDamageAdditiveModifier);
-            case AddPassiveEffect addPassiveEffect:
-            case AddTriggeredEffect addTriggeredEffect:
+            case AddEnchantmentEffect addPassiveEffect:
             case HealEffect healEffect:
             case RandomEffect randomEffect:
             case ShieldEffect shieldEffect:

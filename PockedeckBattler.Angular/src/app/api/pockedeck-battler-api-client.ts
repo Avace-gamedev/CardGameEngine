@@ -986,13 +986,8 @@ export abstract class ActiveEffectView implements IActiveEffectView {
             result.init(data);
             return result;
         }
-        if (data["$type"] === "AddPassiveEffectView") {
-            let result = new AddPassiveEffectView();
-            result.init(data);
-            return result;
-        }
-        if (data["$type"] === "AddTriggeredEffectView") {
-            let result = new AddTriggeredEffectView();
+        if (data["$type"] === "AddEnchantmentEffectView") {
+            let result = new AddEnchantmentEffectView();
             result.init(data);
             return result;
         }
@@ -1132,41 +1127,105 @@ export interface IShieldEffectView extends IActiveEffectView {
     amount: number;
 }
 
-export class AddPassiveEffectView extends ActiveEffectView implements IAddPassiveEffectView {
-    passiveEffect!: PassiveEffectView;
+export class AddEnchantmentEffectView extends ActiveEffectView implements IAddEnchantmentEffectView {
+    enchantmentEffect!: EnchantmentView;
 
-    constructor(data?: IAddPassiveEffectView) {
+    constructor(data?: IAddEnchantmentEffectView) {
         super(data);
         if (!data) {
-            this.passiveEffect = new PassiveEffectView();
+            this.enchantmentEffect = new EnchantmentView();
         }
-        this._discriminator = "AddPassiveEffectView";
+        this._discriminator = "AddEnchantmentEffectView";
     }
 
     override init(_data?: any) {
         super.init(_data);
         if (_data) {
-            this.passiveEffect = _data["passiveEffect"] ? PassiveEffectView.fromJS(_data["passiveEffect"]) : new PassiveEffectView();
+            this.enchantmentEffect = _data["enchantmentEffect"] ? EnchantmentView.fromJS(_data["enchantmentEffect"]) : new EnchantmentView();
         }
     }
 
-    static override fromJS(data: any): AddPassiveEffectView {
+    static override fromJS(data: any): AddEnchantmentEffectView {
         data = typeof data === 'object' ? data : {};
-        let result = new AddPassiveEffectView();
+        let result = new AddEnchantmentEffectView();
         result.init(data);
         return result;
     }
 
     override toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["passiveEffect"] = this.passiveEffect ? this.passiveEffect.toJSON() : <any>undefined;
+        data["enchantmentEffect"] = this.enchantmentEffect ? this.enchantmentEffect.toJSON() : <any>undefined;
         super.toJSON(data);
         return data;
     }
 }
 
-export interface IAddPassiveEffectView extends IActiveEffectView {
-    passiveEffect: PassiveEffectView;
+export interface IAddEnchantmentEffectView extends IActiveEffectView {
+    enchantmentEffect: EnchantmentView;
+}
+
+export class EnchantmentView implements IEnchantmentView {
+    name!: string;
+    passive!: PassiveEffectView[];
+    triggered!: TriggeredEffectView[];
+
+    constructor(data?: IEnchantmentView) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.passive = [];
+            this.triggered = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            if (Array.isArray(_data["passive"])) {
+                this.passive = [] as any;
+                for (let item of _data["passive"])
+                    this.passive!.push(PassiveEffectView.fromJS(item));
+            }
+            if (Array.isArray(_data["triggered"])) {
+                this.triggered = [] as any;
+                for (let item of _data["triggered"])
+                    this.triggered!.push(TriggeredEffectView.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): EnchantmentView {
+        data = typeof data === 'object' ? data : {};
+        let result = new EnchantmentView();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        if (Array.isArray(this.passive)) {
+            data["passive"] = [];
+            for (let item of this.passive)
+                data["passive"].push(item.toJSON());
+        }
+        if (Array.isArray(this.triggered)) {
+            data["triggered"] = [];
+            for (let item of this.triggered)
+                data["triggered"].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface IEnchantmentView {
+    name: string;
+    passive: PassiveEffectView[];
+    triggered: TriggeredEffectView[];
 }
 
 export class PassiveEffectView implements IPassiveEffectView {
@@ -1307,43 +1366,6 @@ export enum CardStatEffectType {
     ReduceApCost = "reduceApCost",
     IncreaseDamage = "increaseDamage",
     ReduceDamage = "reduceDamage",
-}
-
-export class AddTriggeredEffectView extends ActiveEffectView implements IAddTriggeredEffectView {
-    triggeredEffect!: TriggeredEffectView;
-
-    constructor(data?: IAddTriggeredEffectView) {
-        super(data);
-        if (!data) {
-            this.triggeredEffect = new TriggeredEffectView();
-        }
-        this._discriminator = "AddTriggeredEffectView";
-    }
-
-    override init(_data?: any) {
-        super.init(_data);
-        if (_data) {
-            this.triggeredEffect = _data["triggeredEffect"] ? TriggeredEffectView.fromJS(_data["triggeredEffect"]) : new TriggeredEffectView();
-        }
-    }
-
-    static override fromJS(data: any): AddTriggeredEffectView {
-        data = typeof data === 'object' ? data : {};
-        let result = new AddTriggeredEffectView();
-        result.init(data);
-        return result;
-    }
-
-    override toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["triggeredEffect"] = this.triggeredEffect ? this.triggeredEffect.toJSON() : <any>undefined;
-        super.toJSON(data);
-        return data;
-    }
-}
-
-export interface IAddTriggeredEffectView extends IActiveEffectView {
-    triggeredEffect: TriggeredEffectView;
 }
 
 export class TriggeredEffectView implements ITriggeredEffectView {
@@ -2000,8 +2022,7 @@ export class CharacterCombatView implements ICharacterCombatView {
     character!: CharacterView;
     health!: number;
     shield!: number;
-    passiveEffects!: PassiveEffectInstanceView[];
-    triggeredEffects!: TriggeredEffectInstanceView[];
+    enchantments!: EnchantmentInstanceView[];
 
     constructor(data?: ICharacterCombatView) {
         if (data) {
@@ -2012,8 +2033,7 @@ export class CharacterCombatView implements ICharacterCombatView {
         }
         if (!data) {
             this.character = new CharacterView();
-            this.passiveEffects = [];
-            this.triggeredEffects = [];
+            this.enchantments = [];
         }
     }
 
@@ -2022,15 +2042,10 @@ export class CharacterCombatView implements ICharacterCombatView {
             this.character = _data["character"] ? CharacterView.fromJS(_data["character"]) : new CharacterView();
             this.health = _data["health"];
             this.shield = _data["shield"];
-            if (Array.isArray(_data["passiveEffects"])) {
-                this.passiveEffects = [] as any;
-                for (let item of _data["passiveEffects"])
-                    this.passiveEffects!.push(PassiveEffectInstanceView.fromJS(item));
-            }
-            if (Array.isArray(_data["triggeredEffects"])) {
-                this.triggeredEffects = [] as any;
-                for (let item of _data["triggeredEffects"])
-                    this.triggeredEffects!.push(TriggeredEffectInstanceView.fromJS(item));
+            if (Array.isArray(_data["enchantments"])) {
+                this.enchantments = [] as any;
+                for (let item of _data["enchantments"])
+                    this.enchantments!.push(EnchantmentInstanceView.fromJS(item));
             }
         }
     }
@@ -2047,15 +2062,10 @@ export class CharacterCombatView implements ICharacterCombatView {
         data["character"] = this.character ? this.character.toJSON() : <any>undefined;
         data["health"] = this.health;
         data["shield"] = this.shield;
-        if (Array.isArray(this.passiveEffects)) {
-            data["passiveEffects"] = [];
-            for (let item of this.passiveEffects)
-                data["passiveEffects"].push(item.toJSON());
-        }
-        if (Array.isArray(this.triggeredEffects)) {
-            data["triggeredEffects"] = [];
-            for (let item of this.triggeredEffects)
-                data["triggeredEffects"].push(item.toJSON());
+        if (Array.isArray(this.enchantments)) {
+            data["enchantments"] = [];
+            for (let item of this.enchantments)
+                data["enchantments"].push(item.toJSON());
         }
         return data;
     }
@@ -2065,14 +2075,132 @@ export interface ICharacterCombatView {
     character: CharacterView;
     health: number;
     shield: number;
-    passiveEffects: PassiveEffectInstanceView[];
-    triggeredEffects: TriggeredEffectInstanceView[];
+    enchantments: EnchantmentInstanceView[];
+}
+
+export class EnchantmentInstanceView implements IEnchantmentInstanceView {
+    id!: string;
+    enchantment!: EnchantmentView;
+    source!: CharacterInCombatView;
+    target!: CharacterInCombatView;
+    passive!: PassiveEffectInstanceView[];
+    triggered!: TriggeredEffectInstanceView[];
+
+    constructor(data?: IEnchantmentInstanceView) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.enchantment = new EnchantmentView();
+            this.source = new CharacterInCombatView();
+            this.target = new CharacterInCombatView();
+            this.passive = [];
+            this.triggered = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.enchantment = _data["enchantment"] ? EnchantmentView.fromJS(_data["enchantment"]) : new EnchantmentView();
+            this.source = _data["source"] ? CharacterInCombatView.fromJS(_data["source"]) : new CharacterInCombatView();
+            this.target = _data["target"] ? CharacterInCombatView.fromJS(_data["target"]) : new CharacterInCombatView();
+            if (Array.isArray(_data["passive"])) {
+                this.passive = [] as any;
+                for (let item of _data["passive"])
+                    this.passive!.push(PassiveEffectInstanceView.fromJS(item));
+            }
+            if (Array.isArray(_data["triggered"])) {
+                this.triggered = [] as any;
+                for (let item of _data["triggered"])
+                    this.triggered!.push(TriggeredEffectInstanceView.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): EnchantmentInstanceView {
+        data = typeof data === 'object' ? data : {};
+        let result = new EnchantmentInstanceView();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["enchantment"] = this.enchantment ? this.enchantment.toJSON() : <any>undefined;
+        data["source"] = this.source ? this.source.toJSON() : <any>undefined;
+        data["target"] = this.target ? this.target.toJSON() : <any>undefined;
+        if (Array.isArray(this.passive)) {
+            data["passive"] = [];
+            for (let item of this.passive)
+                data["passive"].push(item.toJSON());
+        }
+        if (Array.isArray(this.triggered)) {
+            data["triggered"] = [];
+            for (let item of this.triggered)
+                data["triggered"].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface IEnchantmentInstanceView {
+    id: string;
+    enchantment: EnchantmentView;
+    source: CharacterInCombatView;
+    target: CharacterInCombatView;
+    passive: PassiveEffectInstanceView[];
+    triggered: TriggeredEffectInstanceView[];
+}
+
+export class CharacterInCombatView implements ICharacterInCombatView {
+    name!: string;
+    side!: CombatSide;
+
+    constructor(data?: ICharacterInCombatView) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.side = _data["side"];
+        }
+    }
+
+    static fromJS(data: any): CharacterInCombatView {
+        data = typeof data === 'object' ? data : {};
+        let result = new CharacterInCombatView();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["side"] = this.side;
+        return data;
+    }
+}
+
+export interface ICharacterInCombatView {
+    name: string;
+    side: CombatSide;
 }
 
 export class PassiveEffectInstanceView implements IPassiveEffectInstanceView {
     id!: string;
     effect!: PassiveEffectView;
-    source!: string;
+    source!: CharacterInCombatView;
     remainingDuration!: number;
 
     constructor(data?: IPassiveEffectInstanceView) {
@@ -2084,6 +2212,7 @@ export class PassiveEffectInstanceView implements IPassiveEffectInstanceView {
         }
         if (!data) {
             this.effect = new PassiveEffectView();
+            this.source = new CharacterInCombatView();
         }
     }
 
@@ -2091,7 +2220,7 @@ export class PassiveEffectInstanceView implements IPassiveEffectInstanceView {
         if (_data) {
             this.id = _data["id"];
             this.effect = _data["effect"] ? PassiveEffectView.fromJS(_data["effect"]) : new PassiveEffectView();
-            this.source = _data["source"];
+            this.source = _data["source"] ? CharacterInCombatView.fromJS(_data["source"]) : new CharacterInCombatView();
             this.remainingDuration = _data["remainingDuration"];
         }
     }
@@ -2107,7 +2236,7 @@ export class PassiveEffectInstanceView implements IPassiveEffectInstanceView {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["effect"] = this.effect ? this.effect.toJSON() : <any>undefined;
-        data["source"] = this.source;
+        data["source"] = this.source ? this.source.toJSON() : <any>undefined;
         data["remainingDuration"] = this.remainingDuration;
         return data;
     }
@@ -2116,14 +2245,14 @@ export class PassiveEffectInstanceView implements IPassiveEffectInstanceView {
 export interface IPassiveEffectInstanceView {
     id: string;
     effect: PassiveEffectView;
-    source: string;
+    source: CharacterInCombatView;
     remainingDuration: number;
 }
 
 export class TriggeredEffectInstanceView implements ITriggeredEffectInstanceView {
     id!: string;
     effect!: TriggeredEffectView;
-    source!: string;
+    source!: CharacterInCombatView;
     triggerState!: TriggerStateView;
 
     constructor(data?: ITriggeredEffectInstanceView) {
@@ -2135,6 +2264,7 @@ export class TriggeredEffectInstanceView implements ITriggeredEffectInstanceView
         }
         if (!data) {
             this.effect = new TriggeredEffectView();
+            this.source = new CharacterInCombatView();
         }
     }
 
@@ -2142,7 +2272,7 @@ export class TriggeredEffectInstanceView implements ITriggeredEffectInstanceView
         if (_data) {
             this.id = _data["id"];
             this.effect = _data["effect"] ? TriggeredEffectView.fromJS(_data["effect"]) : new TriggeredEffectView();
-            this.source = _data["source"];
+            this.source = _data["source"] ? CharacterInCombatView.fromJS(_data["source"]) : new CharacterInCombatView();
             this.triggerState = _data["triggerState"] ? TriggerStateView.fromJS(_data["triggerState"]) : <any>undefined;
         }
     }
@@ -2158,7 +2288,7 @@ export class TriggeredEffectInstanceView implements ITriggeredEffectInstanceView
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["effect"] = this.effect ? this.effect.toJSON() : <any>undefined;
-        data["source"] = this.source;
+        data["source"] = this.source ? this.source.toJSON() : <any>undefined;
         data["triggerState"] = this.triggerState ? this.triggerState.toJSON() : <any>undefined;
         return data;
     }
@@ -2167,7 +2297,7 @@ export class TriggeredEffectInstanceView implements ITriggeredEffectInstanceView
 export interface ITriggeredEffectInstanceView {
     id: string;
     effect: TriggeredEffectView;
-    source: string;
+    source: CharacterInCombatView;
     triggerState: TriggerStateView;
 }
 

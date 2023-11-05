@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Placement } from '@ng-bootstrap/ng-bootstrap';
+import { PlacementArray } from '@ng-bootstrap/ng-bootstrap/util/positioning';
 
 @Component({
   selector: 'app-health-bar',
@@ -37,7 +37,7 @@ export class HealthBarComponent {
   private _shield: number = 0;
 
   @Input()
-  public tooltipPlacement: Placement = 'bottom';
+  public tooltipPlacement: PlacementArray = 'bottom';
 
   protected healthPercent: number = 0;
   protected shieldPercent: number = 0;

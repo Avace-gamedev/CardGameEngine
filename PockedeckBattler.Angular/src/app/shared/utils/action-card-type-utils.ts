@@ -32,9 +32,7 @@ export class ActionCardTypeUtils {
         } else {
           return CardType.Effect;
         }
-      case ActiveEffectType.AddPassive:
-        return CardType.Effect;
-      case ActiveEffectType.AddTriggered:
+      case ActiveEffectType.AddEnchantment:
         return CardType.Effect;
     }
   }

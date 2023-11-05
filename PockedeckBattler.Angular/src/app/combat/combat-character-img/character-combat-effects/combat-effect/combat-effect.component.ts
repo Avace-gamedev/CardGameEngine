@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { AssetIconSize } from '../../../../core/icons/asset-icon/asset-icon.component';
 import { AssetIcon } from '../../../../core/icons/asset-icon/asset-icons';
+import { CharacterInCombatView } from '../../../../api/pockedeck-battler-api-client';
 
 @Component({
   selector: 'app-combat-effect',
@@ -45,7 +46,7 @@ export class CombatEffectComponent {
   }
 
   @Input()
-  public source: string | undefined;
+  public source: CharacterInCombatView | undefined;
 
   private _size: CombatEffectSize = 'md';
 

@@ -1,10 +1,8 @@
 <div
   class="border border-1 d-flex align-items-center justify-content-center user-select-none position-relative"
   [ngStyle]="{ 'width.px': sizeInPx, 'height.px': sizeInPx }"
-  [ngbPopover]="popoverBody"
+  [stickyPopover]="popoverBody"
   [popoverTitle]="popoverTitle"
-  container="body"
-  triggers="mouseenter:mouseleave"
   (shown)="popoverVisible = true"
   (hidden)="popoverVisible = false"
 >
@@ -12,6 +10,7 @@
 
   <div
     class="small bg-white border border-secondary-subtle rounded-circle p-2 position-absolute start-100 top-100 translate-middle"
+    *ngIf="duration"
   >
     <span class="small position-absolute translate-middle">
       {{ duration }}

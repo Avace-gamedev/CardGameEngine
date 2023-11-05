@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { Placement } from '@ng-bootstrap/ng-bootstrap';
 import { CharacterView } from '../../../api/pockedeck-battler-api-client';
+import { PlacementArray } from '@ng-bootstrap/ng-bootstrap/util/positioning';
 
 @Component({
   selector: 'app-character-card',
@@ -17,5 +17,5 @@ export class CharacterCardComponent {
   public enablePopoverDetails: boolean = false;
 
   @Input()
-  public popoverDetailsPlacement: Placement = 'auto';
+  public popoverDetailsPlacement: PlacementArray = 'auto';
 }

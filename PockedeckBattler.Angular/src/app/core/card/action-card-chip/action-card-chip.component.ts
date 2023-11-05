@@ -1,13 +1,13 @@
 import { Component, Input } from '@angular/core';
-import { Placement } from '@ng-bootstrap/ng-bootstrap';
 import {
   ActionCardView,
-  AddTriggeredEffectView,
+  AddEnchantmentEffectView,
   DamageEffectView,
   Element,
 } from '../../../api/pockedeck-battler-api-client';
 import { ActionCardTypeUtils } from '../../../shared/utils/action-card-type-utils';
 import { CardType } from '../../../shared/utils/types';
+import { PlacementArray } from '@ng-bootstrap/ng-bootstrap/util/positioning';
 
 @Component({
   selector: 'app-action-card-chip',
@@ -28,7 +28,7 @@ export class ActionCardChipComponent {
   public enablePopoverDetails: boolean = false;
 
   @Input()
-  public popoverDetailsPlacement: Placement = 'auto';
+  public popoverDetailsPlacement: PlacementArray = 'auto';
 
   @Input()
   public size: ActionCardChipSize = 'md';
@@ -44,7 +44,9 @@ export class ActionCardChipComponent {
     this.bgColorCssVariable = this.card ? ActionCardTypeUtils.computeBgColor(this.card) : undefined;
     this.textColorCssVariable = this.card ? ActionCardTypeUtils.computeTextColor(this.card) : undefined;
     this.damage = this.computeDamage();
-    this.isTriggered = this.card?.mainEffect instanceof AddTriggeredEffectView;
+    this.isTriggered =
+      this.card?.mainEffect instanceof AddEnchantmentEffectView &&
+      this.card.mainEffect.enchantmentEffect.triggered.length > 0;
   }
 
   private computeDamage(): { value: number; element: Element } | undefined {

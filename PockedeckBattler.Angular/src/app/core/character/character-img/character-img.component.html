@@ -3,9 +3,8 @@
     class="border border-1 d-flex align-items-center justify-content-center position-relative"
     [class.border-4]="characterBeingDragged"
     [ngStyle]="{ 'width.px': imgSize, 'height.px': imgSize }"
-    [ngbPopover]="size === 'sm' && character && enablePopoverDetails ? popover : null"
-    container="body"
-    triggers="mouseenter:mouseleave"
+    [stickyPopover]="popover"
+    [disablePopover]="size !== 'sm' || !character || !enablePopoverDetails"
     [placement]="popoverPlacement"
     (dragenter)="dragenter($event); $event.preventDefault()"
     (dragover)="$event.preventDefault()"
@@ -30,13 +29,7 @@
           <i class="bi bi-info"></i>
         </div>
 
-        <div
-          class="position-absolute top-0 end-0 pe-1"
-          [ngbPopover]="popover"
-          container="body"
-          triggers="mouseenter:mouseleave"
-          *ngSwitchDefault
-        >
+        <div class="position-absolute top-0 end-0 pe-1" [stickyPopover]="popover" *ngSwitchDefault>
           <i class="bi bi-info-circle"></i>
         </div>
       </ng-container>
@@ -49,5 +42,10 @@
 </div>
 
 <ng-template #popover>
-  <app-character-card [character]="character" [contentOnly]="true"></app-character-card>
+  <app-character-card
+    [character]="character"
+    [contentOnly]="true"
+    [enablePopoverDetails]="true"
+    [popoverDetailsPlacement]="['left', 'right']"
+  ></app-character-card>
 </ng-template>

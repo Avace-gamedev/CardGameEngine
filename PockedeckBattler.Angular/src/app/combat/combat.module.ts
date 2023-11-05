@@ -18,10 +18,10 @@ import { GenericUiModule } from './generic-ui/generic-ui.module';
 import { PlayerSideElementsComponent } from './player-side-elements/player-side-elements.component';
 import { CharacterCombatEffectsComponent } from './combat-character-img/character-combat-effects/character-combat-effects.component';
 import { CombatEffectComponent } from './combat-character-img/character-combat-effects/combat-effect/combat-effect.component';
-import { StatsModifierEffectComponent } from './combat-character-img/character-combat-effects/stats-modifier-effect/stats-modifier-effect.component';
-import { PassiveEffectInstanceComponent } from './combat-character-img/character-combat-effects/passive-effect-instance/passive-effect-instance.component';
-import { TriggeredEffectInstanceComponent } from './combat-character-img/character-combat-effects/triggered-effect-instance/triggered-effect-instance.component';
+import { PassiveEffectInstanceLineComponent } from './combat-character-img/character-combat-effects/passive-effect-instance-line/passive-effect-instance-line.component';
 import { CombatCommonElementsComponent } from './combat-common-elements/combat-common-elements.component';
+import { EnchantmentEffectInstanceComponent } from './combat-character-img/character-combat-effects/enchantment-effect-instance/enchantment-effect-instance.component';
+import { TriggeredEffectInstanceLineComponent } from './combat-character-img/character-combat-effects/triggered-effect-instance-line/triggered-effect-instance-line.component';
 
 @NgModule({
   declarations: [
@@ -37,10 +37,10 @@ import { CombatCommonElementsComponent } from './combat-common-elements/combat-c
     ActionCardInstanceComponent,
     CharacterCombatEffectsComponent,
     CombatEffectComponent,
-    StatsModifierEffectComponent,
-    PassiveEffectInstanceComponent,
-    TriggeredEffectInstanceComponent,
+    PassiveEffectInstanceLineComponent,
+    TriggeredEffectInstanceLineComponent,
     CombatCommonElementsComponent,
+    EnchantmentEffectInstanceComponent,
   ],
   imports: [
     CommonModule,

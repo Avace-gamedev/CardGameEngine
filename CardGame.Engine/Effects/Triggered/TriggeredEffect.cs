@@ -29,6 +29,6 @@ public class TriggeredEffect
         TurnTrigger.TriggerMoment triggerMoment = TurnTrigger.TriggerMoment.StartOfTargetTurn
     )
     {
-        return new TriggeredEffect(damage, new TurnTrigger(triggerMoment, 0, delay));
+        return new TriggeredEffect(damage, new TurnTrigger(triggerMoment, 1, delay));
     }
 }

@@ -20,10 +20,13 @@
         <PackageReference Include="NSwag.AspNetCore" Version="13.20.0"/>
     </ItemGroup>
 
-
     <ItemGroup>
         <ProjectReference Include="..\CardGame.Engine\CardGame.Engine.csproj"/>
     </ItemGroup>
 
-
+    <ItemGroup>
+        <Content Update="wwwroot\index.html">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
 </Project>

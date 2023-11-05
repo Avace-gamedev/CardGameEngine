@@ -4,21 +4,31 @@ using CardGame.Engine.Combats.State;
 
 namespace CardGame.Engine.Combats;
 
-public class CombatInstance
+public class CombatInstance : IDisposable
 {
     public CombatInstance(CombatState state, CombatOptions options)
     {
         State = state;
         Options = options;
 
+        State.EventHasBeenTriggered += OnAfterEventTriggered;
+
         StartGlobalTurn(1);
         StartSideTurn(Options.StartingSide);
     }
 
     public CombatState State { get; }
+
     public CombatOptions Options { get; }
+
     public CombatAi? LeftAi { get; private set; }
+
     public CombatAi? RightAi { get; private set; }
+
+    public void Dispose()
+    {
+        State.EventHasBeenTriggered -= OnAfterEventTriggered;
+    }
 
     public void PlayCard(CombatSide side, int index)
     {
@@ -36,12 +46,7 @@ public class CombatInstance
 
         card.Resolve(State);
 
-        RemoveDeadCharactersIfAny();
-
-        if (CheckWinCondition(out CombatSide winner))
-        {
-            EndCombat(winner);
-        }
+        TryEndCombat();
     }
 
     public void EndTurn(CombatSide side)
@@ -89,9 +94,8 @@ public class CombatInstance
     {
         State.StartPhaseOfSide(side, CombatSideTurnPhase.StartOfTurn);
 
-        if (CheckWinCondition(out CombatSide winner))
+        if (TryEndCombat())
         {
-            EndCombat(winner);
             return;
         }
 
@@ -119,9 +123,8 @@ public class CombatInstance
     {
         State.StartPhaseOfSide(side, CombatSideTurnPhase.EndOfTurn);
 
-        if (CheckWinCondition(out CombatSide winner))
+        if (TryEndCombat())
         {
-            EndCombat(winner);
             return;
         }
 
@@ -190,6 +193,23 @@ public class CombatInstance
         }
     }
 
+    bool TryEndCombat()
+    {
+        if (!State.Ongoing)
+        {
+            return true;
+        }
+
+        RemoveDeadCharactersIfAny();
+        if (CheckWinCondition(out CombatSide winner))
+        {
+            EndCombat(winner);
+            return true;
+        }
+
+        return false;
+    }
+
     void RunAiIfNecessary()
     {
         CombatAi? ai = State.Side switch
@@ -214,5 +234,10 @@ public class CombatInstance
                 }
             }
         }
+    }
+
+    void OnAfterEventTriggered(object? sender, EventArgs e)
+    {
+        TryEndCombat();
     }
 }

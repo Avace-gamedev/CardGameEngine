@@ -38,6 +38,8 @@ public class CombatState
     public event EventHandler<PhaseEventArgs>? PhaseEnded;
     public event EventHandler<CombatEndedEventArgs>? Ended;
 
+    public event EventHandler? EventHasBeenTriggered;
+
     public CombatSideState GetSide(CombatSide side)
     {
         return side switch
@@ -52,7 +54,7 @@ public class CombatState
     {
         if (Ongoing)
         {
-            TurnEnded?.Invoke(this, new TurnEventArgs(Turn));
+            InvokeEvent(() => TurnEnded?.Invoke(this, new TurnEventArgs(Turn)));
         }
         else
         {
@@ -65,14 +67,14 @@ public class CombatState
 
         Side = CombatSide.None;
 
-        TurnStarted?.Invoke(this, new TurnEventArgs(Turn));
+        InvokeEvent(() => TurnStarted?.Invoke(this, new TurnEventArgs(Turn)));
     }
 
     internal void StartPhaseOfSide(CombatSide side, CombatSideTurnPhase phase)
     {
         if (Phase != CombatSideTurnPhase.None)
         {
-            PhaseEnded?.Invoke(this, new PhaseEventArgs(Turn, Side, Phase));
+            InvokeEvent(() => PhaseEnded?.Invoke(this, new PhaseEventArgs(Turn, Side, Phase)));
         }
 
 
@@ -81,7 +83,7 @@ public class CombatState
 
         if (side != CombatSide.None)
         {
-            PhaseStarted?.Invoke(this, new PhaseEventArgs(Turn, Side, Phase));
+            InvokeEvent(() => PhaseStarted?.Invoke(this, new PhaseEventArgs(Turn, Side, Phase)));
         }
     }
 
@@ -95,7 +97,13 @@ public class CombatState
 
         Winner = winner;
 
-        Ended?.Invoke(this, new CombatEndedEventArgs(Winner));
+        InvokeEvent(() => Ended?.Invoke(this, new CombatEndedEventArgs(Winner)));
+    }
+
+    void InvokeEvent(Action action)
+    {
+        action();
+        EventHasBeenTriggered?.Invoke(this, EventArgs.Empty);
     }
 }
 

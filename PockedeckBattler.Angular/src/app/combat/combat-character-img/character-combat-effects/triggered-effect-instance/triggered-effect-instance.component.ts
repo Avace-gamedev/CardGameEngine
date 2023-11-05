@@ -68,7 +68,7 @@ export class TriggeredEffectInstanceComponent {
     }
 
     if (triggerState.triggersIn > 0) {
-      if (triggerState.remainingDuration > 0) {
+      if (triggerState.remainingDuration > 1) {
         return `in ${triggerState.triggersIn} turns, every ${triggerStr} for ${triggerState.remainingDuration} turns`;
       } else {
         return `in ${triggerState.triggersIn} turns, at ` + triggerStr;

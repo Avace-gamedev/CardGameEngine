@@ -6,7 +6,6 @@ import {
   Element,
 } from '../../../api/pockedeck-battler-api-client';
 import { ActionCardTypeUtils } from '../../../shared/utils/action-card-type-utils';
-import { CardType } from '../../../shared/utils/types';
 import { PlacementArray } from '@ng-bootstrap/ng-bootstrap/util/positioning';
 
 @Component({
@@ -39,8 +38,6 @@ export class ActionCardChipComponent {
   protected isTriggered: boolean = false;
 
   private update() {
-    const type = this._card ? ActionCardTypeUtils.getType(this._card) : CardType.None;
-
     this.bgColorCssVariable = this.card ? ActionCardTypeUtils.computeBgColor(this.card) : undefined;
     this.textColorCssVariable = this.card ? ActionCardTypeUtils.computeTextColor(this.card) : undefined;
     this.damage = this.computeDamage();

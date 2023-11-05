@@ -1,5 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { EnchantmentInstanceView, TurnTriggerStateView } from '../../../../api/pockedeck-battler-api-client';
+import { AssetIcon } from '../../../../core/icons/asset-icon/asset-icons';
+import { EnchantmentIconUtils } from '../../../../core/icons/enchantment-icon/enchantment-icon-utils';
 
 @Component({
   selector: 'app-enchantment-effect-instance',
@@ -18,13 +20,17 @@ export class EnchantmentEffectInstanceComponent {
 
   private _effect: EnchantmentInstanceView | undefined;
 
+  protected icon: AssetIcon | undefined;
   protected duration: number | undefined;
 
   private update() {
     if (!this._effect) {
+      this.icon = undefined;
       this.duration = undefined;
       return;
     }
+
+    this.icon = EnchantmentIconUtils.getIcon(this._effect.enchantment);
 
     let duration = 0;
 

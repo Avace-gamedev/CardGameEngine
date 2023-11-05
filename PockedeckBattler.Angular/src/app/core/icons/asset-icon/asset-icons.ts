@@ -33,5 +33,6 @@ export const assetIcons = [
   'stopwatch',
   'duration',
   'vibrating-shield',
+  'yin-yang',
 ] as const;
 export type AssetIcon = (typeof assetIcons)[number];

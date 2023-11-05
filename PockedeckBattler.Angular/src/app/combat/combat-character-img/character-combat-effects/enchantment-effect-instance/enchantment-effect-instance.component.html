@@ -1,4 +1,4 @@
-<app-combat-effect [name]="effect.enchantment.name" [duration]="duration" *ngIf="effect">
+<app-combat-effect [name]="effect.enchantment.name" [icon]="icon" [duration]="duration" *ngIf="effect">
   <app-passive-effect-instance-line
     [effect]="passive"
     *ngFor="let passive of effect.passive"

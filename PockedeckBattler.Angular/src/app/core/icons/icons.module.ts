@@ -7,6 +7,7 @@ import { AssetIconComponent } from './asset-icon/asset-icon.component';
 import { ActionPointsIconComponent } from './action-points-icon/action-points-icon.component';
 import { CharacterStatsEffectIconComponent } from './stat-effect-icon/character-stats-effect-icon.component';
 import { CardStatsEffectIconComponent } from './stat-effect-icon/card-stats-effect-icon.component';
+import { EnchantmentIconComponent } from './enchantment-icon/enchantment-icon.component';
 
 @NgModule({
   declarations: [
@@ -16,6 +17,7 @@ import { CardStatsEffectIconComponent } from './stat-effect-icon/card-stats-effe
     AssetIconComponent,
     CharacterStatsEffectIconComponent,
     CardStatsEffectIconComponent,
+    EnchantmentIconComponent,
   ],
   imports: [CommonModule, NgbTooltip, NgOptimizedImage],
   exports: [

@@ -13,4 +13,6 @@ jobs:
         with:
           node-version: 18
       - run: npm ci
+        working-directory: PockedeckBattler.Angular
       - run: npm test
+        working-directory: PockedeckBattler.Angular

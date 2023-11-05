@@ -63,10 +63,11 @@ WebApplication app = builder.Build();
 
 app.UseExceptionHandler();
 
+app.UseOpenApi();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseOpenApi();
     app.UseSwaggerUi3();
 
     app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin().DisallowCredentials());

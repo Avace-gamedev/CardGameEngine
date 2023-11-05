@@ -1,7 +1,7 @@
 <ng-container *ngIf="character">
   <div class="d-flex">
     <div class="vstack gap-1" [class.flex-column-reverse]="invert">
-      <div class="w-100">
+      <div class="w-100 z-3">
         <app-character-combat-effects [character]="character" [size]="size" mode="row"></app-character-combat-effects>
       </div>
 

@@ -1,4 +1,4 @@
-﻿using CardGame.Engine.Effects.Triggered;
+﻿using CardGame.Engine.Effects.Triggered.Instance;
 
 namespace PockedeckBattler.Server.Views.Effects.Triggered;
 

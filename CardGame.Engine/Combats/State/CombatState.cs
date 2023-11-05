@@ -4,7 +4,7 @@ namespace CardGame.Engine.Combats.State;
 
 public class CombatState
 {
-    public CombatState(CombatSideState leftSide, CombatSideState rightSide)
+    public CombatState(IReadOnlyList<Character> leftCharacters, IReadOnlyList<Character> rightCharacters)
     {
         Ongoing = false;
         Over = false;
@@ -15,8 +15,8 @@ public class CombatState
         Phase = CombatSideTurnPhase.None;
         Winner = CombatSide.None;
 
-        LeftSide = leftSide;
-        RightSide = rightSide;
+        LeftSide = new CombatSideState(this, CombatSide.Left, leftCharacters);
+        RightSide = new CombatSideState(this, CombatSide.Right, rightCharacters);
     }
 
     public bool Ongoing { get; private set; }
@@ -32,8 +32,10 @@ public class CombatState
     public CombatSideState CurrentSide => GetSide(Side);
     public CombatSideState OtherSide => GetSide(Side.OtherSide());
 
-    public event EventHandler<TurnStartedEventArgs>? TurnStarted;
-    public event EventHandler<PhaseStartedEventArgs>? PhaseStarted;
+    public event EventHandler<TurnEventArgs>? TurnStarted;
+    public event EventHandler<TurnEventArgs>? TurnEnded;
+    public event EventHandler<PhaseEventArgs>? PhaseStarted;
+    public event EventHandler<PhaseEventArgs>? PhaseEnded;
     public event EventHandler<CombatEndedEventArgs>? Ended;
 
     public CombatSideState GetSide(CombatSide side)
@@ -48,25 +50,38 @@ public class CombatState
 
     internal void StartTurn(int turn, int maxAp)
     {
-        Ongoing = true;
-        Over = false;
+        if (Ongoing)
+        {
+            TurnEnded?.Invoke(this, new TurnEventArgs(Turn));
+        }
+        else
+        {
+            Ongoing = true;
+            Over = false;
+        }
 
         Turn = turn;
         MaxAp = maxAp;
 
         Side = CombatSide.None;
 
-        TurnStarted?.Invoke(this, new TurnStartedEventArgs(Turn));
+        TurnStarted?.Invoke(this, new TurnEventArgs(Turn));
     }
 
     internal void StartPhaseOfSide(CombatSide side, CombatSideTurnPhase phase)
     {
+        if (Phase != CombatSideTurnPhase.None)
+        {
+            PhaseEnded?.Invoke(this, new PhaseEventArgs(Turn, Side, Phase));
+        }
+
+
         Side = side;
         Phase = phase;
 
         if (side != CombatSide.None)
         {
-            PhaseStarted?.Invoke(this, new PhaseStartedEventArgs(Turn, Side, Phase));
+            PhaseStarted?.Invoke(this, new PhaseEventArgs(Turn, Side, Phase));
         }
     }
 
@@ -82,14 +97,6 @@ public class CombatState
 
         Ended?.Invoke(this, new CombatEndedEventArgs(Winner));
     }
-
-    public static CombatState Create(IReadOnlyList<Character> leftCharacters, IReadOnlyList<Character> rightCharacters)
-    {
-        CombatSideState leftSide = CombatSideState.Create(CombatSide.Left, leftCharacters);
-        CombatSideState rightSide = CombatSideState.Create(CombatSide.Right, leftCharacters);
-
-        return new CombatState(leftSide, rightSide);
-    }
 }
 
 public class CombatEndedEventArgs
@@ -102,9 +109,9 @@ public class CombatEndedEventArgs
     public CombatSide Winner { get; }
 }
 
-public class TurnStartedEventArgs
+public class TurnEventArgs
 {
-    public TurnStartedEventArgs(int turn)
+    public TurnEventArgs(int turn)
     {
         Turn = turn;
     }
@@ -112,9 +119,9 @@ public class TurnStartedEventArgs
     int Turn { get; }
 }
 
-public class PhaseStartedEventArgs
+public class PhaseEventArgs
 {
-    public PhaseStartedEventArgs(int turn, CombatSide side, CombatSideTurnPhase phase)
+    public PhaseEventArgs(int turn, CombatSide side, CombatSideTurnPhase phase)
     {
         Turn = turn;
         Side = side;

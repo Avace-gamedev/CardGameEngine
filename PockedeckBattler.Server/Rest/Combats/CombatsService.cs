@@ -61,7 +61,7 @@ public class CombatsService : ICombatService
         Character? rightFrontCharacter = config.RightFrontCharacter == null ? null : Characters.RequireByName(config.RightFrontCharacter);
         Character? rightBackCharacter = config.RightBackCharacter == null ? null : Characters.RequireByName(config.RightBackCharacter);
 
-        CombatState combatState = CombatState.Create(
+        CombatState combatState = new(
             new[] { leftFrontCharacter, leftBackCharacter }.Where(c => c != null).Select(c => c!).ToArray(),
             new[] { rightFrontCharacter, rightBackCharacter }.Where(c => c != null).Select(c => c!).ToArray()
         );
@@ -151,7 +151,9 @@ public class CombatsService : ICombatService
         _registered[combat.Id] = combat;
 
         combat.Instance.State.TurnStarted += (_, _) => _mediator.Publish(new CombatNotification(combat, CombatEvent.Updated));
+        combat.Instance.State.TurnEnded += (_, _) => _mediator.Publish(new CombatNotification(combat, CombatEvent.Updated));
         combat.Instance.State.PhaseStarted += (_, _) => _mediator.Publish(new CombatNotification(combat, CombatEvent.Updated));
+        combat.Instance.State.PhaseEnded += (_, _) => _mediator.Publish(new CombatNotification(combat, CombatEvent.Updated));
         combat.Instance.State.Ended += (_, _) => _mediator.Publish(new CombatNotification(combat, CombatEvent.Ended));
 
         combat.Instance.State.LeftSide.CardDrawn += (_, _) => _mediator.Publish(new CombatNotification(combat, CombatEvent.Updated));

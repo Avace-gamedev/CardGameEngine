@@ -1,5 +1,5 @@
 <div
-  class="border border-1 d-flex align-items-center justify-content-center user-select-none"
+  class="border border-1 d-flex align-items-center justify-content-center user-select-none position-relative"
   [ngStyle]="{ 'width.px': sizeInPx, 'height.px': sizeInPx }"
   [ngbPopover]="popoverBody"
   [popoverTitle]="popoverTitle"
@@ -9,6 +9,14 @@
   (hidden)="popoverVisible = false"
 >
   <ng-container *ngTemplateOutlet="iconTpl"></ng-container>
+
+  <div
+    class="small bg-white border border-secondary-subtle rounded-circle p-2 position-absolute start-100 top-100 translate-middle"
+  >
+    <span class="small position-absolute translate-middle">
+      {{ duration }}
+    </span>
+  </div>
 </div>
 
 <ng-template #iconTpl>

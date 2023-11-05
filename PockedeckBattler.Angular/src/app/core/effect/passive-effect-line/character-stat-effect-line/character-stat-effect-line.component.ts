@@ -17,7 +17,14 @@ export class CharacterStatEffectLineComponent {
   private _effect: CharacterStatsEffectView | undefined;
 
   @Input()
-  public overrideDuration: number | undefined;
+  get overrideDuration(): number | undefined {
+    return this._overrideDuration;
+  }
+  set overrideDuration(value: number | undefined) {
+    this._overrideDuration = value;
+    this.update();
+  }
+  private _overrideDuration: number | undefined;
 
   protected display: ModifierToDisplay | undefined;
 
@@ -51,7 +58,7 @@ export class CharacterStatEffectLineComponent {
         break;
     }
 
-    this.display = { name, value: sign * this.effect.amount, duration: this.overrideDuration ?? this.effect.duration };
+    this.display = { name, value: sign * this.effect.amount, duration: this._overrideDuration ?? this.effect.duration };
   }
 }
 

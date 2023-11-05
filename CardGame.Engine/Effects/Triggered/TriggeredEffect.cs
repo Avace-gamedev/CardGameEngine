@@ -1,4 +1,5 @@
 using CardGame.Engine.Effects.Active;
+using CardGame.Engine.Effects.Triggered.Instance;
 
 namespace CardGame.Engine.Effects.Triggered;
 

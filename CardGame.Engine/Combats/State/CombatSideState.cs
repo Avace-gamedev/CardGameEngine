@@ -10,9 +10,16 @@ public class CombatSideState
     readonly List<ActionCardInstance> _deck;
     readonly List<ActionCardInstance> _hand;
 
-    public CombatSideState(CombatSide side, CharacterCombatState front, CharacterCombatState? back)
+    public CombatSideState(CombatState combat, CombatSide side, IReadOnlyList<Character> characters)
     {
         Side = side;
+
+        Character? backLeftCharacter = characters.ElementAtOrDefault(1);
+        CharacterCombatState front = new(combat, side, characters[0]);
+        CharacterCombatState? back = backLeftCharacter == null ? null : new CharacterCombatState(combat, side, backLeftCharacter);
+
+        Front = front;
+        Back = back;
 
         _hand = new List<ActionCardInstance>();
 
@@ -23,8 +30,6 @@ public class CombatSideState
             _deck.AddRange(back.Character.Deck.Select(c => new ActionCardInstance(c, back)));
         }
 
-        Front = front;
-        Back = back;
     }
 
     public CombatSide Side { get; }
@@ -201,16 +206,6 @@ public class CombatSideState
                 CardDiscarded?.Invoke(this, new CardDiscardedEventArgs(card, CardLocation.Deck));
             }
         }
-    }
-
-    public static CombatSideState Create(CombatSide side, IReadOnlyList<Character> characters)
-    {
-        Character? backLeftCharacter = characters.ElementAtOrDefault(1);
-
-        CharacterCombatState front = new(side, characters[0]);
-        CharacterCombatState? back = backLeftCharacter == null ? null : new CharacterCombatState(side, backLeftCharacter);
-
-        return new CombatSideState(side, front, back);
     }
 }
 

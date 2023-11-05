@@ -5,6 +5,7 @@ using CardGame.Engine.Effects.Active;
 using CardGame.Engine.Effects.Passive;
 using CardGame.Engine.Effects.Passive.Stats;
 using CardGame.Engine.Effects.Triggered;
+using CardGame.Engine.Effects.Triggered.Instance;
 using PockedeckBattler.Server.GameContent.Characters.Attributes;
 
 namespace PockedeckBattler.Server.GameContent.Characters;

@@ -28,7 +28,14 @@ public class ActionCard : Card
 
     public void Resolve(CharacterCombatState source, IEnumerable<CharacterCombatState> targets)
     {
-        MainEffect.Resolve(source, targets);
+        CharacterCombatState[] characterCombatStates = targets as CharacterCombatState[] ?? targets.ToArray();
+
+        MainEffect.Resolve(source, characterCombatStates);
+
+        foreach (ActiveEffect effect in AdditionalEffects)
+        {
+            effect.Resolve(source, characterCombatStates);
+        }
     }
 
     public static ActionCard Damage(string name, int apCost, ActionCardTarget target, int damage, Element element, params ActiveEffect[] additionalEffects)

@@ -1,5 +1,5 @@
 ﻿using System.Runtime.Serialization;
-using CardGame.Engine.Effects.Triggered;
+using CardGame.Engine.Effects.Triggered.Instance;
 using Newtonsoft.Json;
 using NJsonSchema.Converters;
 

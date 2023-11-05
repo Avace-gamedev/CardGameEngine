@@ -24,6 +24,7 @@ export class TriggeredEffectInstanceComponent {
   private _effect: TriggeredEffectInstanceView | undefined;
 
   protected triggerString: string | undefined;
+  protected duration: number | undefined;
 
   private update() {
     this.triggerString = undefined;
@@ -36,33 +37,48 @@ export class TriggeredEffectInstanceComponent {
       this._effect.triggerState instanceof TurnTriggerStateView &&
       this._effect.effect.trigger instanceof TurnTriggerView
     ) {
-      let trigger = '';
-      switch (this._effect.effect.trigger.moment) {
-        case TriggerMoment.StartOfSourceTurn:
-          trigger = 'start of ' + this._effect.source + ' turn';
-          break;
-        case TriggerMoment.EndOfSourceTurn:
-          trigger = 'end of ' + this._effect.source + ' turn';
-          break;
-        case TriggerMoment.StartOfTargetTurn:
-          trigger = 'start of turn';
-          break;
-        case TriggerMoment.EndOfTargetTurn:
-          trigger = 'end of turn';
-          break;
-      }
+      this.triggerString = this.computeTurnTriggerString(
+        this._effect.source,
+        this._effect.triggerState,
+        this._effect.effect.trigger
+      );
 
-      if (this._effect.triggerState.triggersIn > 0) {
-        if (this._effect.triggerState.remainingDuration > 0) {
-          this.triggerString = `in ${this._effect.triggerState.triggersIn} turns, every ${trigger} for ${this._effect.triggerState.remainingDuration} turns`;
-        } else {
-          this.triggerString = `in ${this._effect.triggerState.triggersIn} turns, at ` + trigger;
-        }
+      this.duration =
+        this._effect.triggerState.triggersIn > 0
+          ? this._effect.triggerState.triggersIn
+          : this._effect.triggerState.remainingDuration;
+    }
+  }
+
+  private computeTurnTriggerString(source: string, triggerState: TurnTriggerStateView, trigger: TurnTriggerView) {
+    let triggerStr = '';
+    switch (trigger.moment) {
+      case TriggerMoment.StartOfSourceTurn:
+        triggerStr = 'start of ' + source + ' turn';
+        break;
+      case TriggerMoment.EndOfSourceTurn:
+        triggerStr = 'end of ' + source + ' turn';
+        break;
+      case TriggerMoment.StartOfTargetTurn:
+        triggerStr = 'start of turn';
+        break;
+      case TriggerMoment.EndOfTargetTurn:
+        triggerStr = 'end of turn';
+        break;
+    }
+
+    if (triggerState.triggersIn > 0) {
+      if (triggerState.remainingDuration > 0) {
+        return `in ${triggerState.triggersIn} turns, every ${triggerStr} for ${triggerState.remainingDuration} turns`;
       } else {
-        if (this._effect.triggerState.remainingDuration > 0) {
-          this.triggerString = `every ${trigger} for ${this._effect.triggerState.remainingDuration} turns`;
-        }
+        return `in ${triggerState.triggersIn} turns, at ` + triggerStr;
+      }
+    } else {
+      if (triggerState.remainingDuration > 0) {
+        return `every ${triggerStr} for ${triggerState.remainingDuration} turns`;
       }
     }
+
+    return undefined;
   }
 }

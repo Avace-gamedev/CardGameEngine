@@ -1,6 +1,5 @@
 ﻿using CardGame.Engine.Combats.Ai;
 using CardGame.Engine.Combats.Exceptions;
-using CardGame.Engine.Combats.Resolve;
 using CardGame.Engine.Combats.State;
 
 namespace CardGame.Engine.Combats;
@@ -90,8 +89,6 @@ public class CombatInstance
     {
         State.StartPhaseOfSide(side, CombatSideTurnPhase.StartOfTurn);
 
-        StartOfTurnResolver.Resolve(this);
-
         if (CheckWinCondition(out CombatSide winner))
         {
             EndCombat(winner);
@@ -106,9 +103,9 @@ public class CombatInstance
             1 => Options.HandSizeWithOneCharacter, 2 => Options.HandSizeWithBothCharacters,
             _ => throw new ArgumentOutOfRangeException()
         };
-        while (sideState.Hand.Count < handSize)
+        while (sideState.Hand.Count < handSize && sideState.DrawRandomCardFromDeckToHand())
         {
-            sideState.DrawRandomCardFromDeckToHand();
+            //
         }
 
         State.StartPhaseOfSide(side, CombatSideTurnPhase.Play);
@@ -121,8 +118,6 @@ public class CombatInstance
     void EndSideTurn(CombatSide side)
     {
         State.StartPhaseOfSide(side, CombatSideTurnPhase.EndOfTurn);
-
-        EndOfTurnResolver.Resolve(this);
 
         if (CheckWinCondition(out CombatSide winner))
         {

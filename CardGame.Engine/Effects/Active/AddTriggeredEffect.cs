@@ -16,17 +16,7 @@ public class AddTriggeredEffect : ActiveEffect
     {
         foreach (CharacterCombatState target in targets)
         {
-            target.AddTriggeredEffect(new TriggeredEffectInstance(Effect, source));
+            target.AddEffect(Effect, source);
         }
-    }
-
-    public static AddTriggeredEffect DamageOverTime(
-        DamageEffect damage,
-        int duration,
-        int initialDelay = 0,
-        TurnTrigger.TriggerMoment triggerMoment = TurnTrigger.TriggerMoment.StartOfSourceTurn
-    )
-    {
-        return new AddTriggeredEffect(new TriggeredEffect(damage, new TurnTrigger(triggerMoment, duration, initialDelay)));
     }
 }

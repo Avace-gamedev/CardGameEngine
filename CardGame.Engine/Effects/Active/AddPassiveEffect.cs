@@ -16,7 +16,7 @@ public class AddPassiveEffect : ActiveEffect
     {
         foreach (CharacterCombatState target in targets)
         {
-            target.AddPassiveEffect(new PassiveEffectInstance(Effect, source));
+            target.AddEffect(Effect, source);
         }
     }
 }

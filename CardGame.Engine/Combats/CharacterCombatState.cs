@@ -1,9 +1,11 @@
 ﻿using CardGame.Engine.Characters;
 using CardGame.Engine.Combats.Damages;
 using CardGame.Engine.Combats.Modifiers;
+using CardGame.Engine.Combats.State;
 using CardGame.Engine.Effects.Passive;
 using CardGame.Engine.Effects.Passive.Stats;
 using CardGame.Engine.Effects.Triggered;
+using CardGame.Engine.Effects.Triggered.Instance;
 
 namespace CardGame.Engine.Combats;
 
@@ -12,8 +14,9 @@ public class CharacterCombatState
     readonly List<PassiveEffectInstance> _passiveEffects = new();
     readonly List<TriggeredEffectInstance> _triggeredEffects = new();
 
-    public CharacterCombatState(CombatSide side, Character character)
+    public CharacterCombatState(CombatState combat, CombatSide side, Character character)
     {
+        Combat = combat;
         Side = side;
         Character = character;
 
@@ -22,6 +25,7 @@ public class CharacterCombatState
         IsDead = false;
     }
 
+    public CombatState Combat { get; }
     public CombatSide Side { get; }
     public Character Character { get; }
     public CharacterStatistics Stats => Character.Stats;
@@ -97,13 +101,17 @@ public class CharacterCombatState
         return new ShieldReceived(amount);
     }
 
-    public void AddPassiveEffect(PassiveEffectInstance passiveEffect)
+    public void AddEffect(PassiveEffect effect, CharacterCombatState source)
     {
+        PassiveEffectInstance passiveEffect = new(effect, source, this);
+        passiveEffect.Expired += OnEffectExpired;
         _passiveEffects.Add(passiveEffect);
     }
 
-    public void AddTriggeredEffect(TriggeredEffectInstance triggeredEffect)
+    public void AddEffect(TriggeredEffect effect, CharacterCombatState source)
     {
+        TriggeredEffectInstance triggeredEffect = new(effect, source, this);
+        triggeredEffect.Expired += OnEffectExpired;
         _triggeredEffects.Add(triggeredEffect);
     }
 
@@ -129,6 +137,21 @@ public class CharacterCombatState
         if (Health == 0)
         {
             IsDead = true;
+        }
+    }
+
+    void OnEffectExpired(object? sender, EventArgs _)
+    {
+        switch (sender)
+        {
+            case PassiveEffectInstance passiveEffect:
+                _passiveEffects.Remove(passiveEffect);
+                passiveEffect.Dispose();
+                break;
+            case TriggeredEffectInstance triggeredEffect:
+                _triggeredEffects.Remove(triggeredEffect);
+                triggeredEffect.Dispose();
+                break;
         }
     }
 }

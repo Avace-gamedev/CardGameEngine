@@ -12,8 +12,5 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-      - name: Angular Full CI
-        uses: colbyhill21/angular-full-ci/@v1.0
-        with:
-          testcommand: run test
-          entryPoint: 'PockedeckBattler.Angular'
+      - run: npm ci
+      - run: npm test

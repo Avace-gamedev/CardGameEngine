@@ -1,15 +1,21 @@
-﻿using CardGame.Engine.Combats.Ai;
+﻿using CardGame.Engine.Characters;
+using CardGame.Engine.Combats.Ai;
 using CardGame.Engine.Combats.Exceptions;
+using CardGame.Engine.Combats.History;
 using CardGame.Engine.Combats.State;
 
 namespace CardGame.Engine.Combats;
 
 public class CombatInstance : IDisposable
 {
-    public CombatInstance(CombatState state, CombatOptions options)
+    public CombatInstance(IReadOnlyList<Character> leftCharacters, IReadOnlyList<Character> rightCharacters, CombatOptions options)
     {
-        State = state;
         Options = options;
+        State = new CombatState(leftCharacters, rightCharacters, options.RandomSeed);
+
+        options.RandomSeed = State.RandomSeed;
+
+        History = new CombatHistory(new InitialCombatState(State.RandomSeed, leftCharacters, rightCharacters, options));
 
         State.EventHasBeenTriggered += OnAfterEventTriggered;
 
@@ -17,9 +23,9 @@ public class CombatInstance : IDisposable
         StartSideTurn(Options.StartingSide);
     }
 
-    public CombatState State { get; }
-
     public CombatOptions Options { get; }
+    public CombatState State { get; }
+    public CombatHistory History { get; }
 
     public CombatAi? LeftAi { get; private set; }
 

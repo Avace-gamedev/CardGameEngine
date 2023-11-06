@@ -9,14 +9,14 @@ public class CombatState
         Ongoing = false;
         Over = false;
 
+        RandomSeed = randomSeed ?? Random.Shared.Next();
+        Random random = new(RandomSeed);
+
         Turn = 0;
         MaxAp = 0;
         Side = CombatSide.None;
         Phase = CombatSideTurnPhase.None;
         Winner = CombatSide.None;
-
-        RandomSeed = randomSeed ?? Random.Shared.Next();
-        Random random = new(RandomSeed);
 
         LeftSide = new CombatSideState(this, CombatSide.Left, leftCharacters, new Random(random.Next()));
         RightSide = new CombatSideState(this, CombatSide.Right, rightCharacters, new Random(random.Next()));

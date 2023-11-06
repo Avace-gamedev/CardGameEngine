@@ -2,7 +2,6 @@
 using CardGame.Engine.Characters;
 using CardGame.Engine.Combats;
 using CardGame.Engine.Combats.Exceptions;
-using CardGame.Engine.Combats.State;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -28,9 +27,11 @@ public class SimpleCombatTest
         _rightCard = ActionCard.Damage("Some Card", 3, ActionCardTarget.FrontOpponent, 5, Element.Neutral);
         _rightCharacter = new Character(new CharacterIdentity("right", "Right"), new CharacterStatistics { MaxHealth = 10 }, new[] { _rightCard });
 
-        CombatState state = new(new[] { _leftCharacter }, new[] { _rightCharacter });
-
-        _combat = new CombatInstance(state, new CombatOptions { HandSizeWithBothCharacters = 2, StartingAp = 4, StartingSide = CombatSide.Left });
+        _combat = new CombatInstance(
+            new[] { _leftCharacter },
+            new[] { _rightCharacter },
+            new CombatOptions { HandSizeWithBothCharacters = 2, StartingAp = 4, StartingSide = CombatSide.Left }
+        );
     }
 
     [TestMethod]

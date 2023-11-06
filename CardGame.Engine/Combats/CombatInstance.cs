@@ -52,6 +52,8 @@ public class CombatInstance : IDisposable
 
         card.Resolve();
 
+        History.RecordCardPlay(side, index);
+
         TryEndCombat();
     }
 
@@ -62,6 +64,8 @@ public class CombatInstance : IDisposable
         State.AssertSideCanPlay(side);
 
         EndSideTurn(side);
+
+        History.RecordEndTurn(side);
 
         CombatSide newSide = State.Side;
         if (State.Side == CombatSide.None)

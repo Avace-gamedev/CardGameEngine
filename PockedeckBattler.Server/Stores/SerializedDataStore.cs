@@ -23,7 +23,7 @@ public abstract class SerializedDataStore<TData, TSerializedData> : IStore<TData
         IAsyncEnumerable<TSerializedData> serializedValues = _serializedDataStore.LoadAll(cancellationToken);
         await foreach (TSerializedData serializedValue in serializedValues)
         {
-            TData? value = Deserialize(serializedValue);
+            TData? value = await Deserialize(serializedValue);
             if (value == null)
             {
                 _logger.LogWarning("Could not deserialize value {value}", serializedValue);
@@ -42,12 +42,12 @@ public abstract class SerializedDataStore<TData, TSerializedData> : IStore<TData
             return default;
         }
 
-        return Deserialize(serializedValue);
+        return await Deserialize(serializedValue);
     }
 
     public async Task Save(string key, TData data, CancellationToken cancellationToken)
     {
-        TSerializedData serializedValue = Serialize(data);
+        TSerializedData serializedValue = await Serialize(data);
         await _serializedDataStore.Save(key, serializedValue, cancellationToken);
     }
 
@@ -56,6 +56,6 @@ public abstract class SerializedDataStore<TData, TSerializedData> : IStore<TData
         return _serializedDataStore.Delete(key, cancellationToken);
     }
 
-    protected abstract TSerializedData Serialize(TData value);
-    protected abstract TData? Deserialize(TSerializedData serializedValue);
+    protected abstract Task<TSerializedData> Serialize(TData value);
+    protected abstract Task<TData?> Deserialize(TSerializedData serializedValue);
 }

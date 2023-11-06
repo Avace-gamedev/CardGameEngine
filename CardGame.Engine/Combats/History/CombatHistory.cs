@@ -4,13 +4,13 @@ public class CombatHistory
 {
     readonly List<CombatAction> _actions;
 
-    public CombatHistory(InitialCombatState initialState)
+    public CombatHistory(InitialCombatState initialState, IReadOnlyList<CombatAction>? actions = null)
     {
         InitialState = initialState;
-        _actions = new List<CombatAction>();
+        _actions = actions?.ToList() ?? new List<CombatAction>();
     }
 
-    public InitialCombatState InitialState { get; set; }
+    public InitialCombatState InitialState { get; }
     public IReadOnlyList<CombatAction> Actions => _actions;
 
     public void RecordCardPlay(CombatSide side, int index)

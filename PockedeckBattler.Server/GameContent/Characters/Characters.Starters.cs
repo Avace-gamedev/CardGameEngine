@@ -34,7 +34,10 @@ public static partial class Characters
                 ActionCardTarget.FrontOpponent,
                 12,
                 Element.Fire,
-                RandomEffect.Uniform(new AddEnchantmentEffect(new Enchantment("Burn", TriggeredEffect.DamageOverTime(new DamageEffect(6, Element.Fire), 4))), null)
+                RandomEffect.Uniform(
+                    new AddEnchantmentEffect(Enchantment.CreateInstance("Burn", TriggeredEffect.DamageOverTime(new DamageEffect(6, Element.Fire), 4))),
+                    null
+                )
             ),
             ActionCard.AddPassive(
                 "Growl",
@@ -50,7 +53,7 @@ public static partial class Characters
                 ActionCardTarget.FrontOpponent,
                 24,
                 Element.Fire,
-                new AddEnchantmentEffect(new Enchantment("Major Burn", TriggeredEffect.DamageOverTime(new DamageEffect(12, Element.Fire), 4)))
+                new AddEnchantmentEffect(Enchantment.CreateInstance("Major Burn", TriggeredEffect.DamageOverTime(new DamageEffect(12, Element.Fire), 4)))
             )
         }
     );

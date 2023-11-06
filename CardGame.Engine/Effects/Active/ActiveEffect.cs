@@ -1,5 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using CardGame.Engine.Combats;
+﻿using CardGame.Engine.Combats;
 
 namespace CardGame.Engine.Effects.Active;
 

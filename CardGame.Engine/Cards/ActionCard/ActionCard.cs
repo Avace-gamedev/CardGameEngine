@@ -14,13 +14,13 @@ public class ActionCard : Card
         int apCost,
         ActionCardTarget target,
         ActiveEffect mainEffect,
-        params ActiveEffect[] additionalEffects
+        IReadOnlyList<ActiveEffect>? additionalEffects = null
     ) : base(name, description)
     {
         ApCost = apCost;
         MainEffect = mainEffect;
         Target = target;
-        AdditionalEffects = additionalEffects;
+        AdditionalEffects = additionalEffects?.ToList() ?? new List<ActiveEffect>();
     }
 
     public int ApCost { get; }
@@ -70,12 +70,12 @@ public class ActionCard : Card
 
     public static ActionCard AddPassive(string name, string? description, int apCost, ActionCardTarget target, params PassiveEffect[] effects)
     {
-        return new ActionCard(name, description, apCost, target, new AddEnchantmentEffect(new Enchantment(name, effects)));
+        return new ActionCard(name, description, apCost, target, new AddEnchantmentEffect(Enchantment.CreateInstance(name, effects)));
     }
 
     public static ActionCard AddTriggered(string name, string? description, int apCost, ActionCardTarget target, params TriggeredEffect[] effects)
     {
-        return new ActionCard(name, description, apCost, target, new AddEnchantmentEffect(new Enchantment(name, effects)));
+        return new ActionCard(name, description, apCost, target, new AddEnchantmentEffect(Enchantment.CreateInstance(name, effects)));
     }
 
     public static ActionCard AddEnchantment(string name, string? description, int apCost, ActionCardTarget target, AddEnchantmentEffect enchantmentEffect)

@@ -6,10 +6,10 @@ public class Character
 {
     readonly List<ActionCard> _deck;
 
-    public Character(CharacterIdentity identity, CharacterStatistics baseStats, IEnumerable<ActionCard> deck)
+    public Character(CharacterIdentity identity, CharacterStatistics stats, IReadOnlyCollection<ActionCard> deck)
     {
         Identity = identity;
-        Stats = baseStats;
+        Stats = stats;
         _deck = deck.ToList();
     }
 

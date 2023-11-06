@@ -1,6 +1,4 @@
-﻿using CardGame.Engine.Combats;
-
-namespace PockedeckBattler.Server.Stores.Combats;
+﻿namespace PockedeckBattler.Server.Stores.Combats;
 
 public class CombatFileStore : SerializedDataStore<CombatInstanceWithMetadata, SerializableCombatWithMetadata>
 {
@@ -16,26 +14,13 @@ public class CombatFileStore : SerializedDataStore<CombatInstanceWithMetadata, S
         return Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "PockeDeckBattler", "FileStores", "Combats");
     }
 
-    protected override SerializableCombatWithMetadata Serialize(CombatInstanceWithMetadata value)
+    protected override async Task<SerializableCombatWithMetadata> Serialize(CombatInstanceWithMetadata value)
     {
-        return SerializableCombatWithMetadata.From(value);
+        return await SerializableCombatWithMetadata.From(value);
     }
 
-    protected override CombatInstanceWithMetadata? Deserialize(SerializableCombatWithMetadata serializedValue)
+    protected override async Task<CombatInstanceWithMetadata?> Deserialize(SerializableCombatWithMetadata serializedValue)
     {
-        return serializedValue.Restore();
-    }
-}
-
-public class SerializableCombatInstance
-{
-    public CombatInstance? Restore()
-    {
-        return null;
-    }
-
-    public static SerializableCombatInstance From(CombatInstance instance)
-    {
-        return new SerializableCombatInstance();
+        return await serializedValue.Restore();
     }
 }

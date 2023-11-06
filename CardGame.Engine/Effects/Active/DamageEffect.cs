@@ -16,7 +16,7 @@ public class DamageEffect : ActiveEffect
     public Element Element { get; }
     public float LifeStealRatio { get; init; } = 0;
 
-    public override void Resolve(CharacterCombatState source, IEnumerable<CharacterCombatState> targets)
+    internal override void Resolve(CharacterCombatState source, IEnumerable<CharacterCombatState> targets, Random random)
     {
         AttackDamage attackDamage = new(Amount);
 

@@ -44,7 +44,7 @@ public class CombatInstance : IDisposable
 
         sideState.ReturnCardFromHandToDeck(index);
 
-        card.Resolve(State);
+        card.Resolve();
 
         TryEndCombat();
     }

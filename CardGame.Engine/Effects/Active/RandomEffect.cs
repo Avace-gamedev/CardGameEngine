@@ -16,24 +16,24 @@ public class RandomEffect : ActiveEffect
 
     public Entry[] Entries { get; }
 
-    public override void Resolve(CharacterCombatState source, IEnumerable<CharacterCombatState> targets)
+    internal override void Resolve(CharacterCombatState source, IEnumerable<CharacterCombatState> targets, Random random)
     {
-        double random = Random.Shared.NextDouble();
+        double randomDouble = random.NextDouble();
         ActiveEffect? randomlySelectedEffect = Entries.Aggregate<Entry, (double Sum, ActiveEffect? Effect)>(
                 (0, null),
                 (acc, entry) =>
                 {
                     double newSum = acc.Sum + entry.Probability;
-                    return (newSum, acc.Sum >= random
+                    return (newSum, acc.Sum >= randomDouble
                         ? acc.Effect
-                        : newSum >= random
+                        : newSum >= randomDouble
                             ? entry.Effect
                             : null);
                 }
             )
             .Effect;
 
-        randomlySelectedEffect?.Resolve(source, targets);
+        randomlySelectedEffect?.Resolve(source, targets, random);
     }
 
     public static RandomEffect Uniform(params ActiveEffect?[] effects)

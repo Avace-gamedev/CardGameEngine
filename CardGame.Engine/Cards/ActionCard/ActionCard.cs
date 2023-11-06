@@ -28,15 +28,15 @@ public class ActionCard : Card
     public ActiveEffect MainEffect { get; }
     public IReadOnlyList<ActiveEffect> AdditionalEffects { get; }
 
-    public void Resolve(CharacterCombatState source, IEnumerable<CharacterCombatState> targets)
+    internal void Resolve(CharacterCombatState source, IEnumerable<CharacterCombatState> targets, Random random)
     {
         CharacterCombatState[] characterCombatStates = targets as CharacterCombatState[] ?? targets.ToArray();
 
-        MainEffect.Resolve(source, characterCombatStates);
+        MainEffect.Resolve(source, characterCombatStates, random);
 
         foreach (ActiveEffect effect in AdditionalEffects)
         {
-            effect.Resolve(source, characterCombatStates);
+            effect.Resolve(source, characterCombatStates, random);
         }
     }
 

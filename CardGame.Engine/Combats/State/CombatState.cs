@@ -4,7 +4,7 @@ namespace CardGame.Engine.Combats.State;
 
 public class CombatState
 {
-    public CombatState(IReadOnlyList<Character> leftCharacters, IReadOnlyList<Character> rightCharacters)
+    public CombatState(IReadOnlyList<Character> leftCharacters, IReadOnlyList<Character> rightCharacters, int? randomSeed = null)
     {
         Ongoing = false;
         Over = false;
@@ -15,10 +15,14 @@ public class CombatState
         Phase = CombatSideTurnPhase.None;
         Winner = CombatSide.None;
 
-        LeftSide = new CombatSideState(this, CombatSide.Left, leftCharacters);
-        RightSide = new CombatSideState(this, CombatSide.Right, rightCharacters);
+        RandomSeed = randomSeed ?? Random.Shared.Next();
+        Random random = new(RandomSeed);
+
+        LeftSide = new CombatSideState(this, CombatSide.Left, leftCharacters, new Random(random.Next()));
+        RightSide = new CombatSideState(this, CombatSide.Right, rightCharacters, new Random(random.Next()));
     }
 
+    public int RandomSeed { get; }
     public bool Ongoing { get; private set; }
     public bool Over { get; private set; }
     public int Turn { get; private set; }

@@ -4,8 +4,11 @@ namespace CardGame.Engine.Effects.Enchantments.Triggered.Instance;
 
 public class TriggeredEffectInstance : IDisposable
 {
-    public TriggeredEffectInstance(TriggeredEffect effect, CharacterCombatState source, CharacterCombatState target)
+    readonly Random _random;
+
+    public TriggeredEffectInstance(TriggeredEffect effect, CharacterCombatState source, CharacterCombatState target, Random random)
     {
+        _random = random;
         Id = Guid.NewGuid();
         Effect = effect;
         Source = source;
@@ -36,7 +39,7 @@ public class TriggeredEffectInstance : IDisposable
 
     void OnTriggered(object? _, EventArgs __)
     {
-        Effect.Effect.Resolve(Source, new[] { Target });
+        Effect.Effect.Resolve(Source, new[] { Target }, _random);
     }
 
     void OnExpired(object? _, EventArgs __)

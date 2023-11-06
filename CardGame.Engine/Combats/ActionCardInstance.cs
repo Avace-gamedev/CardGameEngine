@@ -7,14 +7,20 @@ namespace CardGame.Engine.Combats;
 
 public class ActionCardInstance
 {
-    public ActionCardInstance(ActionCard card, CharacterCombatState character)
+    readonly Random _random;
+
+    public ActionCardInstance(ActionCard card, CharacterCombatState character, Random random)
     {
         Card = card;
         Character = character;
+
+        _random = random;
     }
 
     public ActionCard Card { get; }
     public CharacterCombatState Character { get; }
+
+    CombatState Combat => Character.Combat;
 
     public ActionCard GetCardWithModifications()
     {
@@ -26,14 +32,14 @@ public class ActionCardInstance
         return modifiers.Apply(Card);
     }
 
-    public void Resolve(CombatState combat)
+    public void Resolve()
     {
         ActionCard cardWithModifications = GetCardWithModifications();
 
-        CombatSideState side = combat.GetSide(Character.Side);
+        CombatSideState side = Combat.GetSide(Character.Side);
         side.ConsumeAp(cardWithModifications.ApCost);
 
-        IEnumerable<CharacterCombatState> targets = combat.GetTargets(Character, cardWithModifications.Target);
-        cardWithModifications.Resolve(Character, targets);
+        IEnumerable<CharacterCombatState> targets = Combat.GetTargets(Character, cardWithModifications.Target);
+        cardWithModifications.Resolve(Character, targets, _random);
     }
 }

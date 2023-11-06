@@ -2,7 +2,6 @@
 using CardGame.Engine.Characters;
 using CardGame.Engine.Combats;
 using CardGame.Engine.Combats.Ai;
-using CardGame.Engine.Combats.State;
 using MediatR;
 using PockedeckBattler.Server.GameContent.Characters;
 using PockedeckBattler.Server.Rest.Combats.Exceptions;
@@ -61,13 +60,17 @@ public class CombatsService : ICombatService
         Character? rightFrontCharacter = config.RightFrontCharacter == null ? null : Characters.RequireByName(config.RightFrontCharacter);
         Character? rightBackCharacter = config.RightBackCharacter == null ? null : Characters.RequireByName(config.RightBackCharacter);
 
-        CombatState combatState = new(
+        CombatOptions options = new();
+        if (!string.IsNullOrWhiteSpace(config.RandomSeed))
+        {
+            options.RandomSeed = config.RandomSeed.GetHashCode();
+        }
+
+        CombatInstance combatInstance = new(
             new[] { leftFrontCharacter, leftBackCharacter }.Where(c => c != null).Select(c => c!).ToArray(),
             new[] { rightFrontCharacter, rightBackCharacter }.Where(c => c != null).Select(c => c!).ToArray(),
-            string.IsNullOrWhiteSpace(config.RandomSeed) ? null : config.RandomSeed.GetHashCode()
+            options
         );
-
-        CombatInstance combatInstance = new(combatState, new CombatOptions());
 
         if (config.RightPlayerIsAi)
         {

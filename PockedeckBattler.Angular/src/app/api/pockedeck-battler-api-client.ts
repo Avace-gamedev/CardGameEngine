@@ -148,6 +148,7 @@ export interface ICombatsService {
     getCombatsInPreparationOfPlayer(playerName?: string | undefined): Observable<CombatInPreparationView[]>;
     createCombat(playerName?: string | undefined): Observable<CombatInPreparationView>;
     getCombatsOfPlayer(playerName?: string | undefined): Observable<PlayerCombatView[]>;
+    updateCombatInPreparationSide(id: string, request: UpdateCombatInPreparationSideRequest): Observable<void>;
     leaveCombatInPreparation(id: string, playerName?: string | undefined): Observable<FileResponse | null>;
     startCombat(id: string, playerName?: string | undefined): Observable<string>;
     getCombat(id: string, playerName?: string | undefined): Observable<PlayerCombatView>;
@@ -435,6 +436,57 @@ export class CombatsService implements ICombatsService {
                 result200 = <any>null;
             }
             return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    updateCombatInPreparationSide(id: string, request: UpdateCombatInPreparationSideRequest): Observable<void> {
+        let url_ = this.baseUrl + "/combats/in-preparation/{id}/side";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(request);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateCombatInPreparationSide(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateCombatInPreparationSide(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processUpdateCombatInPreparationSide(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return _observableOf(null as any);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
@@ -1586,6 +1638,7 @@ export interface IRandomEffectEntryView {
 
 export class CombatInPreparationView implements ICombatInPreparationView {
     id!: string;
+    randomSeed?: string | undefined;
     leftPlayerName!: string;
     leftFrontCharacter?: string | undefined;
     leftBackCharacter?: string | undefined;
@@ -1608,6 +1661,7 @@ export class CombatInPreparationView implements ICombatInPreparationView {
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
+            this.randomSeed = _data["randomSeed"];
             this.leftPlayerName = _data["leftPlayerName"];
             this.leftFrontCharacter = _data["leftFrontCharacter"];
             this.leftBackCharacter = _data["leftBackCharacter"];
@@ -1630,6 +1684,7 @@ export class CombatInPreparationView implements ICombatInPreparationView {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["randomSeed"] = this.randomSeed;
         data["leftPlayerName"] = this.leftPlayerName;
         data["leftFrontCharacter"] = this.leftFrontCharacter;
         data["leftBackCharacter"] = this.leftBackCharacter;
@@ -1645,6 +1700,7 @@ export class CombatInPreparationView implements ICombatInPreparationView {
 
 export interface ICombatInPreparationView {
     id: string;
+    randomSeed?: string | undefined;
     leftPlayerName: string;
     leftFrontCharacter?: string | undefined;
     leftBackCharacter?: string | undefined;
@@ -1657,13 +1713,53 @@ export interface ICombatInPreparationView {
 }
 
 export class UpdateCombatInPreparationRequest implements IUpdateCombatInPreparationRequest {
+    playerName!: string;
+    randomSeed?: string | undefined;
+
+    constructor(data?: IUpdateCombatInPreparationRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.playerName = _data["playerName"];
+            this.randomSeed = _data["randomSeed"];
+        }
+    }
+
+    static fromJS(data: any): UpdateCombatInPreparationRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateCombatInPreparationRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["playerName"] = this.playerName;
+        data["randomSeed"] = this.randomSeed;
+        return data;
+    }
+}
+
+export interface IUpdateCombatInPreparationRequest {
+    playerName: string;
+    randomSeed?: string | undefined;
+}
+
+export class UpdateCombatInPreparationSideRequest implements IUpdateCombatInPreparationSideRequest {
     isAi?: boolean | undefined;
     playerName!: string;
     ready!: boolean;
     frontCharacter?: string | undefined;
     backCharacter?: string | undefined;
 
-    constructor(data?: IUpdateCombatInPreparationRequest) {
+    constructor(data?: IUpdateCombatInPreparationSideRequest) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -1682,9 +1778,9 @@ export class UpdateCombatInPreparationRequest implements IUpdateCombatInPreparat
         }
     }
 
-    static fromJS(data: any): UpdateCombatInPreparationRequest {
+    static fromJS(data: any): UpdateCombatInPreparationSideRequest {
         data = typeof data === 'object' ? data : {};
-        let result = new UpdateCombatInPreparationRequest();
+        let result = new UpdateCombatInPreparationSideRequest();
         result.init(data);
         return result;
     }
@@ -1700,7 +1796,7 @@ export class UpdateCombatInPreparationRequest implements IUpdateCombatInPreparat
     }
 }
 
-export interface IUpdateCombatInPreparationRequest {
+export interface IUpdateCombatInPreparationSideRequest {
     isAi?: boolean | undefined;
     playerName: string;
     ready: boolean;

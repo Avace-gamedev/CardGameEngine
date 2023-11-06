@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, from, of, switchMap } from 'rxjs';
-import { CombatsService, UpdateCombatInPreparationRequest } from '../../api/pockedeck-battler-api-client';
+import { CombatsService, UpdateCombatInPreparationSideRequest } from '../../api/pockedeck-battler-api-client';
 import { IdentityService } from '../../core/authentication/services/identity.service';
 
 @Component({
@@ -30,9 +30,9 @@ export class CombatJoinComponent implements OnInit {
           id = idOrNull;
 
           const identity = this.identityService.getIdentity();
-          return this.combatsService.updateCombatInPreparation(
+          return this.combatsService.updateCombatInPreparationSide(
             id,
-            new UpdateCombatInPreparationRequest({
+            new UpdateCombatInPreparationSideRequest({
               playerName: identity,
               ready: false,
             })

@@ -63,13 +63,34 @@ public class CombatsController : ControllerBase
 
         CombatInPreparation combatInPreparation = await _combatInPreparationService.RequireCombatInPreparation(id);
 
+        if (request.PlayerName != combatInPreparation.LeftPlayerName
+            && request.PlayerName != combatInPreparation.RightPlayerName
+            && combatInPreparation.RightPlayerName != null)
+        {
+            throw new Exception($"Player {request.PlayerName} is not part of combat {id}");
+        }
+
+        combatInPreparation.RandomSeed = request.RandomSeed ?? combatInPreparation.RandomSeed;
+
+        await _combatInPreparationService.SaveCombatInPreparation(combatInPreparation);
+    }
+
+    [HttpPost("in-preparation/{id:guid}/side")]
+    public async Task UpdateCombatInPreparationSide(Guid id, UpdateCombatInPreparationSideRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.PlayerName))
+        {
+            throw new Exception("Player name cannot be empty");
+        }
+
+        CombatInPreparation combatInPreparation = await _combatInPreparationService.RequireCombatInPreparation(id);
+
         if (request.PlayerName == combatInPreparation.LeftPlayerName)
         {
             if (request.IsAi == true)
             {
                 _logger.LogWarning("Left player cannot be AI, value of IsAi will be ignored");
             }
-
             combatInPreparation.LeftFrontCharacter = request.FrontCharacter;
             combatInPreparation.LeftBackCharacter = request.BackCharacter;
             combatInPreparation.LeftReady = request.Ready;

@@ -11,6 +11,8 @@ public class CombatInPreparationView
     }
 
     public Guid Id { get; }
+    public string? RandomSeed { get; set; }
+
     public string LeftPlayerName { get; }
     public string? LeftFrontCharacter { get; set; }
     public string? LeftBackCharacter { get; set; }
@@ -29,6 +31,7 @@ public static class CombatInPreparationViewMappingExtensions
     {
         return new CombatInPreparationView(combat.Id, combat.LeftPlayerName)
         {
+            RandomSeed = combat.RandomSeed,
             LeftFrontCharacter = combat.LeftFrontCharacter,
             LeftBackCharacter = combat.LeftBackCharacter,
             LeftReady = combat.LeftReady,

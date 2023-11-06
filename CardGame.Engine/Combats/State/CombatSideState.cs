@@ -9,27 +9,31 @@ public class CombatSideState
 {
     readonly List<ActionCardInstance> _deck;
     readonly List<ActionCardInstance> _hand;
+    readonly Random _random;
 
-    public CombatSideState(CombatState combat, CombatSide side, IReadOnlyList<Character> characters)
+    public CombatSideState(CombatState combat, CombatSide side, IReadOnlyList<Character> characters, Random random)
     {
         Side = side;
 
         Character? backLeftCharacter = characters.ElementAtOrDefault(1);
-        CharacterCombatState front = new(combat, side, characters[0]);
-        CharacterCombatState? back = backLeftCharacter == null ? null : new CharacterCombatState(combat, side, backLeftCharacter);
+        CharacterCombatState front = new(combat, side, characters[0], new Random(random.Next()));
+        CharacterCombatState? back = backLeftCharacter == null ? null : new CharacterCombatState(combat, side, backLeftCharacter, new Random(random.Next()));
 
         Front = front;
         Back = back;
 
         _hand = new List<ActionCardInstance>();
 
+        _random = new Random(random.Next());
+
         _deck = new List<ActionCardInstance>();
-        _deck.AddRange(front.Character.Deck.Select(c => new ActionCardInstance(c, front)));
+        _deck.AddRange(front.Character.Deck.Select(c => new ActionCardInstance(c, front, new Random(_random.Next()))));
         if (back != null)
         {
-            _deck.AddRange(back.Character.Deck.Select(c => new ActionCardInstance(c, back)));
+            _deck.AddRange(back.Character.Deck.Select(c => new ActionCardInstance(c, back, new Random(_random.Next()))));
         }
 
+        ShuffleDeck();
     }
 
     public CombatSide Side { get; }
@@ -92,7 +96,7 @@ public class CombatSideState
 
         _hand.RemoveAt(index);
 
-        int randomPosition = Random.Shared.Next(0, _deck.Count + 1);
+        int randomPosition = _random.Next(0, _deck.Count + 1);
         _deck.Insert(randomPosition, card);
 
         CardReturned?.Invoke(this, card);
@@ -154,7 +158,7 @@ public class CombatSideState
 
     internal void ShuffleDeck()
     {
-        Random.Shared.Shuffle(_deck);
+        _random.Shuffle(_deck);
 
         DeckShuffled?.Invoke(this, EventArgs.Empty);
     }

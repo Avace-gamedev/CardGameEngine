@@ -11,7 +11,7 @@ public class ShieldEffect : ActiveEffect
 
     public int Amount { get; }
 
-    public override void Resolve(CharacterCombatState source, IEnumerable<CharacterCombatState> targets)
+    internal override void Resolve(CharacterCombatState source, IEnumerable<CharacterCombatState> targets, Random random)
     {
         foreach (CharacterCombatState target in targets)
         {

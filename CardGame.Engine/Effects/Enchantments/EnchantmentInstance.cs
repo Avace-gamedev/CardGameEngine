@@ -6,14 +6,14 @@ namespace CardGame.Engine.Effects.Enchantments;
 
 public class EnchantmentInstance : IDisposable
 {
-    public EnchantmentInstance(Enchantment enchantment, CharacterCombatState source, CharacterCombatState target)
+    public EnchantmentInstance(Enchantment enchantment, CharacterCombatState source, CharacterCombatState target, Random random)
     {
         Id = Guid.NewGuid();
         Enchantment = enchantment;
         Source = source;
         Target = target;
         PassiveEffects = enchantment.Passive.Select(p => new PassiveEffectInstance(p, source, target)).ToArray();
-        TriggeredEffects = enchantment.Triggered.Select(t => new TriggeredEffectInstance(t, source, target)).ToArray();
+        TriggeredEffects = enchantment.Triggered.Select(t => new TriggeredEffectInstance(t, source, target, random)).ToArray();
 
         foreach (PassiveEffectInstance p in PassiveEffects)
         {

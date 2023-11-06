@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { catchError, from, map, switchMap, throwError } from 'rxjs';
+import { catchError, debounceTime, from, map, of, Subject, switchMap, throwError } from 'rxjs';
 import {
   CharactersService,
   CharacterView,
@@ -9,6 +9,7 @@ import {
   CombatSide,
   CombatsService,
   UpdateCombatInPreparationRequest,
+  UpdateCombatInPreparationSideRequest,
 } from '../../api/pockedeck-battler-api-client';
 import { SignalRService } from '../../api/signal-r/signal-r.service';
 import { IdentityService } from '../../core/authentication/services/identity.service';
@@ -25,7 +26,11 @@ export class CombatConfigureComponent implements OnInit {
   protected combat: CombatInPreparationView | undefined;
   protected side: CombatSide | undefined;
 
+  protected randomSeed: string | undefined;
+  protected randomSeedChange: Subject<void> = new Subject<void>();
+
   protected startedCombatId: string | undefined;
+
   private hasRequestedStartOfCombat: boolean | undefined;
 
   constructor(
@@ -42,10 +47,28 @@ export class CombatConfigureComponent implements OnInit {
   ngOnInit() {
     const identity = this.identityService.getIdentity();
 
+    this.randomSeedChange
+      .pipe(
+        debounceTime(500),
+        switchMap(() => {
+          if (this.combat == null) {
+            return of(void 0);
+          }
+          return this.combatsService.updateCombatInPreparation(
+            this.combat.id,
+            new UpdateCombatInPreparationRequest({ playerName: identity, randomSeed: this.randomSeed })
+          );
+        })
+      )
+      .subscribe();
+
     this.signalRService
       .listen<CombatInPreparationView>('combats', 'CombatInPreparationChanged', CombatInPreparationView.fromJS)
       .pipe(untilDestroyed(this))
-      .subscribe((combat) => (this.combat = combat));
+      .subscribe((combat) => {
+        this.combat = combat;
+        this.randomSeed = combat.randomSeed;
+      });
 
     this.signalRService
       .listen<CombatInPreparationView>('combats', 'CombatInPreparationDeleted', CombatInPreparationView.fromJS)
@@ -121,7 +144,13 @@ export class CombatConfigureComponent implements OnInit {
     const isAi = side === CombatSide.Right && this.combat.rightPlayerIsAi;
 
     this.combatsService
-      .updateCombatInPreparation(this.combat.id, new UpdateCombatInPreparationRequest({ ...configuration, isAi }))
+      .updateCombatInPreparationSide(
+        this.combat.id,
+        new UpdateCombatInPreparationSideRequest({
+          ...configuration,
+          isAi,
+        })
+      )
       .subscribe();
   }
 
@@ -131,9 +160,9 @@ export class CombatConfigureComponent implements OnInit {
     }
 
     this.combatsService
-      .updateCombatInPreparation(
+      .updateCombatInPreparationSide(
         this.combat.id,
-        new UpdateCombatInPreparationRequest({
+        new UpdateCombatInPreparationSideRequest({
           isAi: true,
           playerName: 'Sancho',
           ready: false,

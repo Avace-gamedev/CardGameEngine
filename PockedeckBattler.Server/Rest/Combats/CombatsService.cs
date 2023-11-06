@@ -63,14 +63,15 @@ public class CombatsService : ICombatService
 
         CombatState combatState = new(
             new[] { leftFrontCharacter, leftBackCharacter }.Where(c => c != null).Select(c => c!).ToArray(),
-            new[] { rightFrontCharacter, rightBackCharacter }.Where(c => c != null).Select(c => c!).ToArray()
+            new[] { rightFrontCharacter, rightBackCharacter }.Where(c => c != null).Select(c => c!).ToArray(),
+            string.IsNullOrWhiteSpace(config.RandomSeed) ? null : config.RandomSeed.GetHashCode()
         );
 
         CombatInstance combatInstance = new(combatState, new CombatOptions());
 
         if (config.RightPlayerIsAi)
         {
-            combatInstance.SetAi(CombatSide.Right, new CombatAiOptions());
+            combatInstance.SetAi(CombatSide.Right, new CombatAiOptions(Random.Shared.Next()));
         }
 
         CombatInstanceWithMetadata combat = new(config.Id, config.LeftPlayerName, config.RightPlayerName, combatInstance, config);

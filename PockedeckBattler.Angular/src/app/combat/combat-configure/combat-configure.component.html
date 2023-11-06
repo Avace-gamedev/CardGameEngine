@@ -39,6 +39,17 @@
 
   <div class="flex-fill"></div>
 
+  <div class="form-floating">
+    <input
+      id="random-seed"
+      class="form-control"
+      [(ngModel)]="randomSeed"
+      placeholder="Random Seed Phrase (optional)"
+      (input)="randomSeedChange.next()"
+    />
+    <label for="random-seed">Random Seed Phrase (optional)</label>
+  </div>
+
   <div class="vstack gap-1">
     <div class="text-success text-center" *ngIf="startedCombatId">Combat has started, click START to join!</div>
 

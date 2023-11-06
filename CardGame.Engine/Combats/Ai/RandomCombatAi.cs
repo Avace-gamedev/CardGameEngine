@@ -4,8 +4,11 @@ namespace CardGame.Engine.Combats.Ai;
 
 public class RandomCombatAi : CombatAi
 {
-    public RandomCombatAi(CombatInstance combat, CombatSide side) : base(combat, side)
+    readonly Random _random;
+
+    public RandomCombatAi(CombatInstance combat, CombatSide side, Random random) : base(combat, side)
     {
+        _random = random;
     }
 
     protected override void PlayCards()
@@ -24,7 +27,7 @@ public class RandomCombatAi : CombatAi
             return false;
         }
 
-        int card = Random.Shared.Sample(playableCards);
+        int card = _random.Sample(playableCards);
         PlayCard(card);
 
         return true;

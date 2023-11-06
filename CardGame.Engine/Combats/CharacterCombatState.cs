@@ -10,9 +10,11 @@ namespace CardGame.Engine.Combats;
 public class CharacterCombatState
 {
     readonly List<EnchantmentInstance> _enchantments = new();
+    readonly Random _random;
 
-    public CharacterCombatState(CombatState combat, CombatSide side, Character character)
+    public CharacterCombatState(CombatState combat, CombatSide side, Character character, Random random)
     {
+        _random = random;
         Combat = combat;
         Side = side;
         Character = character;
@@ -99,7 +101,7 @@ public class CharacterCombatState
 
     public void AddEnchantment(Enchantment enchantment, CharacterCombatState source)
     {
-        EnchantmentInstance enchantmentInstance = new(enchantment, source, this);
+        EnchantmentInstance enchantmentInstance = new(enchantment, source, this, _random);
         enchantmentInstance.Expired += OnEffectExpired;
         _enchantments.Add(enchantmentInstance);
     }

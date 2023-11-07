@@ -1,5 +1,6 @@
 ﻿using CardGame.Engine.Combats;
-using CardGame.Engine.Combats.Damages;
+using CardGame.Engine.Combats.Abstractions;
+using CardGame.Engine.Combats.Characters;
 using CardGame.Engine.Combats.Modifiers;
 
 namespace CardGame.Engine.Effects.Active;

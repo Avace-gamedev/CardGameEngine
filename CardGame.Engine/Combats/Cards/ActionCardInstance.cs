@@ -1,9 +1,9 @@
 ﻿using CardGame.Engine.Cards.ActionCard;
+using CardGame.Engine.Combats.Characters;
 using CardGame.Engine.Combats.Modifiers;
-using CardGame.Engine.Combats.State;
 using CardGame.Engine.Effects.Enchantments.State.Stats;
 
-namespace CardGame.Engine.Combats;
+namespace CardGame.Engine.Combats.Cards;
 
 public class ActionCardInstance
 {

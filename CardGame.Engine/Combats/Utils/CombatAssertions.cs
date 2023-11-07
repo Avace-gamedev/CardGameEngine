@@ -1,7 +1,7 @@
-﻿using CardGame.Engine.Combats.Exceptions;
-using CardGame.Engine.Combats.State;
+﻿using CardGame.Engine.Combats.Abstractions;
+using CardGame.Engine.Combats.Exceptions;
 
-namespace CardGame.Engine.Combats;
+namespace CardGame.Engine.Combats.Utils;
 
 public static class CombatAssertions
 {

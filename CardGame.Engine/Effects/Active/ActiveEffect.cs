@@ -1,4 +1,5 @@
 ﻿using CardGame.Engine.Combats;
+using CardGame.Engine.Combats.Characters;
 
 namespace CardGame.Engine.Effects.Active;
 

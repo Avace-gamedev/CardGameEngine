@@ -1,6 +1,7 @@
 ﻿using CardGame.Engine.Characters;
+using CardGame.Engine.Combats.Abstractions;
 
-namespace CardGame.Engine.Combats.State;
+namespace CardGame.Engine.Combats;
 
 public class CombatState
 {

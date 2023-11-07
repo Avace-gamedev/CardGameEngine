@@ -1,4 +1,5 @@
 ﻿using CardGame.Engine.Characters;
+using CardGame.Engine.Combats.Abstractions;
 
 namespace CardGame.Engine.Combats.History;
 

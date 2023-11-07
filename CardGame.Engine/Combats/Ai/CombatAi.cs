@@ -1,4 +1,4 @@
-﻿using CardGame.Engine.Combats.State;
+﻿using CardGame.Engine.Combats.Abstractions;
 
 namespace CardGame.Engine.Combats.Ai;
 

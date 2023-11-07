@@ -1,4 +1,4 @@
-﻿namespace CardGame.Engine.Combats.Cards;
+﻿namespace CardGame.Engine.Combats.Abstractions;
 
 public enum CardLocation
 {

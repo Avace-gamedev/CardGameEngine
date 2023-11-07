@@ -1,11 +1,10 @@
 ﻿using CardGame.Engine.Characters;
-using CardGame.Engine.Combats.Damages;
+using CardGame.Engine.Combats.Abstractions;
 using CardGame.Engine.Combats.Modifiers;
-using CardGame.Engine.Combats.State;
 using CardGame.Engine.Effects.Enchantments;
 using CardGame.Engine.Effects.Enchantments.State.Stats;
 
-namespace CardGame.Engine.Combats;
+namespace CardGame.Engine.Combats.Characters;
 
 public class CharacterCombatState
 {

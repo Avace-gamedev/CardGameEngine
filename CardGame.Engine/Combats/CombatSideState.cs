@@ -1,9 +1,11 @@
 ﻿using CardGame.Engine.Characters;
+using CardGame.Engine.Combats.Abstractions;
 using CardGame.Engine.Combats.Cards;
+using CardGame.Engine.Combats.Characters;
 using CardGame.Engine.Combats.Exceptions;
 using CardGame.Engine.Extensions;
 
-namespace CardGame.Engine.Combats.State;
+namespace CardGame.Engine.Combats;
 
 public class CombatSideState
 {

@@ -8,7 +8,7 @@ using CardGame.Engine.Effects.Enchantments.State.Stats;
 using CardGame.Engine.Effects.Enchantments.Triggered;
 using CardGame.Engine.Effects.Enchantments.Triggered.Instance;
 
-namespace CardGame.Engine.Combats.Persistence;
+namespace CardGame.Engine.Combats.Serialization;
 
 public class JsonCombatSerializer : ICombatInstanceSerializer
 {

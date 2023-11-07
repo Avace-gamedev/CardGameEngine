@@ -1,8 +1,10 @@
 ﻿using CardGame.Engine.Characters;
+using CardGame.Engine.Combats.Abstractions;
 using CardGame.Engine.Combats.Ai;
+using CardGame.Engine.Combats.Cards;
 using CardGame.Engine.Combats.Exceptions;
 using CardGame.Engine.Combats.History;
-using CardGame.Engine.Combats.State;
+using CardGame.Engine.Combats.Utils;
 
 namespace CardGame.Engine.Combats;
 

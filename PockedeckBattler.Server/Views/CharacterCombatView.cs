@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using CardGame.Engine.Combats;
+using CardGame.Engine.Combats.Characters;
 using PockedeckBattler.Server.Views.Effects.Enchantments;
 
 namespace PockedeckBattler.Server.Views;

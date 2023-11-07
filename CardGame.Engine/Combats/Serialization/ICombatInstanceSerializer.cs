@@ -1,4 +1,4 @@
-﻿namespace CardGame.Engine.Combats.Persistence;
+﻿namespace CardGame.Engine.Combats.Serialization;
 
 public interface ICombatInstanceSerializer
 {

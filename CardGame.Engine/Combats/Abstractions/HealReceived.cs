@@ -1,4 +1,4 @@
-namespace CardGame.Engine.Combats;
+namespace CardGame.Engine.Combats.Abstractions;
 
 public class HealReceived
 {

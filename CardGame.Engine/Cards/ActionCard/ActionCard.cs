@@ -1,4 +1,6 @@
 ﻿using CardGame.Engine.Combats;
+using CardGame.Engine.Combats.Abstractions;
+using CardGame.Engine.Combats.Characters;
 using CardGame.Engine.Effects.Active;
 using CardGame.Engine.Effects.Enchantments;
 using CardGame.Engine.Effects.Enchantments.State;

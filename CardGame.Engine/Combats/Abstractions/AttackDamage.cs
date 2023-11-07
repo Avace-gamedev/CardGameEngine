@@ -1,4 +1,4 @@
-﻿namespace CardGame.Engine.Combats.Damages;
+﻿namespace CardGame.Engine.Combats.Abstractions;
 
 public class AttackDamage
 {

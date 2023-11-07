@@ -1,4 +1,6 @@
-﻿namespace CardGame.Engine.Combats.Ai;
+﻿using CardGame.Engine.Combats.Abstractions;
+
+namespace CardGame.Engine.Combats.Ai;
 
 public static class CombatAiFactory
 {

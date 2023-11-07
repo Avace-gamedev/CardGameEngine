@@ -33,6 +33,11 @@ public class CharacterCombatState
     public int Shield { get; private set; }
     public IReadOnlyList<EnchantmentInstance> Enchantments => _enchantments;
 
+    public event EventHandler<DamageReceived>? DamageReceived;
+    public event EventHandler<HealReceived>? HealReceived;
+    public event EventHandler<ShieldReceived>? ShieldReceived;
+    public event EventHandler<Enchantment>? EnchantmentAdded;
+
     public CharacterStatsModifier GetStatsModifier()
     {
         ChangeCharacterStatEffect[] characterStatEffects = Enchantments.SelectMany(e => e.Enchantment.Passive).OfType<ChangeCharacterStatEffect>().ToArray();
@@ -43,59 +48,29 @@ public class CharacterCombatState
 
     public DamageReceived Damage(AttackDamage attack)
     {
-        if (IsDead || attack.Amount <= 0)
-        {
-            return new DamageReceived(0, 0);
-        }
+        DamageReceived damageReceived = ComputeDamageReceived(attack);
 
-        CharacterStatsModifier modifiers = GetStatsModifier();
-        AttackDamage modifiedAttack = modifiers.ModifyReceivedAttack(attack);
+        DamageReceived?.Invoke(this, damageReceived);
 
-        if (modifiedAttack.Amount > Shield)
-        {
-            int shieldDamage = Shield;
-
-            SetShield(0);
-
-            int healthDamage = modifiedAttack.Amount - shieldDamage;
-
-            if (healthDamage > Health)
-            {
-                healthDamage = Health;
-            }
-
-            SetHealth(Health - healthDamage);
-
-            return new DamageReceived(healthDamage, shieldDamage);
-        }
-        SetShield(Shield - modifiedAttack.Amount);
-        return new DamageReceived(0, modifiedAttack.Amount);
+        return damageReceived;
     }
 
     public HealReceived Heal(int amount)
     {
-        if (IsDead)
-        {
-            return new HealReceived(0);
-        }
+        HealReceived healReceived = ComputeHealReceived(amount);
 
-        int healthReceived = Math.Min(Stats.MaxHealth - Health, amount);
+        HealReceived?.Invoke(this, healReceived);
 
-        SetHealth(Health + healthReceived);
-
-        return new HealReceived(healthReceived);
+        return healReceived;
     }
 
     public ShieldReceived AddShield(int amount)
     {
-        if (IsDead)
-        {
-            return new ShieldReceived(0);
-        }
+        ShieldReceived shieldReceived = ComputeShieldReceived(amount);
 
-        SetShield(Shield + amount);
+        ShieldReceived?.Invoke(this, shieldReceived);
 
-        return new ShieldReceived(amount);
+        return shieldReceived;
     }
 
     public void AddEnchantment(Enchantment enchantment, CharacterCombatState source)
@@ -103,6 +78,8 @@ public class CharacterCombatState
         EnchantmentInstance enchantmentInstance = new(enchantment, source, this, _random);
         enchantmentInstance.Expired += OnEffectExpired;
         _enchantments.Add(enchantmentInstance);
+
+        EnchantmentAdded?.Invoke(this, enchantment);
     }
 
     void SetShield(int shield)
@@ -139,5 +116,65 @@ public class CharacterCombatState
             _enchantments.Remove(enchantment);
             enchantment.Dispose();
         }
+    }
+
+    DamageReceived ComputeDamageReceived(AttackDamage attack)
+    {
+        if (IsDead || attack.Amount <= 0)
+        {
+            return new DamageReceived(0, 0);
+        }
+
+        CharacterStatsModifier modifiers = GetStatsModifier();
+        AttackDamage modifiedAttack = modifiers.ModifyReceivedAttack(attack);
+
+        if (modifiedAttack.Amount > Shield)
+        {
+            int shieldDamage = Shield;
+
+            SetShield(0);
+
+            int healthDamage = modifiedAttack.Amount - shieldDamage;
+
+            if (healthDamage > Health)
+            {
+                healthDamage = Health;
+            }
+
+            SetHealth(Health - healthDamage);
+
+            return new DamageReceived(healthDamage, shieldDamage);
+        }
+
+        SetShield(Shield - modifiedAttack.Amount);
+
+        return new DamageReceived(0, modifiedAttack.Amount);
+    }
+
+    HealReceived ComputeHealReceived(int amount)
+    {
+        if (IsDead)
+        {
+            return new HealReceived(0);
+        }
+
+        int healthReceived = Math.Min(Stats.MaxHealth - Health, amount);
+
+        SetHealth(Health + healthReceived);
+
+        return new HealReceived(healthReceived);
+    }
+
+    ShieldReceived ComputeShieldReceived(int amount)
+    {
+
+        if (IsDead)
+        {
+            return new ShieldReceived(0);
+        }
+
+        SetShield(Shield + amount);
+
+        return new ShieldReceived(amount);
     }
 }

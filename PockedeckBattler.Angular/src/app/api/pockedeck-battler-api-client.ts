@@ -1814,6 +1814,7 @@ export class BaseCombatView implements IBaseCombatView {
     winner!: CombatSide;
     leftPlayerName!: string;
     rightPlayerName!: string;
+    log!: CombatLogView;
 
     constructor(data?: IBaseCombatView) {
         if (data) {
@@ -1821,6 +1822,9 @@ export class BaseCombatView implements IBaseCombatView {
                 if (data.hasOwnProperty(property))
                     (<any>this)[property] = (<any>data)[property];
             }
+        }
+        if (!data) {
+            this.log = new CombatLogView();
         }
     }
 
@@ -1835,6 +1839,7 @@ export class BaseCombatView implements IBaseCombatView {
             this.winner = _data["winner"];
             this.leftPlayerName = _data["leftPlayerName"];
             this.rightPlayerName = _data["rightPlayerName"];
+            this.log = _data["log"] ? CombatLogView.fromJS(_data["log"]) : new CombatLogView();
         }
     }
 
@@ -1856,6 +1861,7 @@ export class BaseCombatView implements IBaseCombatView {
         data["winner"] = this.winner;
         data["leftPlayerName"] = this.leftPlayerName;
         data["rightPlayerName"] = this.rightPlayerName;
+        data["log"] = this.log ? this.log.toJSON() : <any>undefined;
         return data;
     }
 }
@@ -1870,6 +1876,7 @@ export interface IBaseCombatView {
     winner: CombatSide;
     leftPlayerName: string;
     rightPlayerName: string;
+    log: CombatLogView;
 }
 
 export class PlayerCombatView extends BaseCombatView implements IPlayerCombatView {
@@ -2478,6 +2485,466 @@ export enum CombatSideTurnPhase {
     Draw = "draw",
     Play = "play",
     EndOfTurn = "endOfTurn",
+}
+
+export class CombatLogView implements ICombatLogView {
+    entries!: CombatLogEntryView[];
+
+    constructor(data?: ICombatLogView) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.entries = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["entries"])) {
+                this.entries = [] as any;
+                for (let item of _data["entries"])
+                    this.entries!.push(CombatLogEntryView.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): CombatLogView {
+        data = typeof data === 'object' ? data : {};
+        let result = new CombatLogView();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.entries)) {
+            data["entries"] = [];
+            for (let item of this.entries)
+                data["entries"].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface ICombatLogView {
+    entries: CombatLogEntryView[];
+}
+
+export abstract class CombatLogEntryView implements ICombatLogEntryView {
+
+    protected _discriminator: string;
+
+    constructor(data?: ICombatLogEntryView) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        this._discriminator = "CombatLogEntryView";
+    }
+
+    init(_data?: any) {
+    }
+
+    static fromJS(data: any): CombatLogEntryView {
+        data = typeof data === 'object' ? data : {};
+        if (data["entryType"] === "CardPlayedLogEntryView") {
+            let result = new CardPlayedLogEntryView();
+            result.init(data);
+            return result;
+        }
+        throw new Error("The abstract class 'CombatLogEntryView' cannot be instantiated.");
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["entryType"] = this._discriminator;
+        return data;
+    }
+}
+
+export interface ICombatLogEntryView {
+}
+
+export class CardPlayedLogEntryView extends CombatLogEntryView implements ICardPlayedLogEntryView {
+    source!: CharacterInCombatView;
+    card!: ActionCardView;
+    effects!: EffectOnCharacterLogEntryView[];
+
+    constructor(data?: ICardPlayedLogEntryView) {
+        super(data);
+        if (!data) {
+            this.source = new CharacterInCombatView();
+            this.card = new ActionCardView();
+            this.effects = [];
+        }
+        this._discriminator = "CardPlayedLogEntryView";
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.source = _data["source"] ? CharacterInCombatView.fromJS(_data["source"]) : new CharacterInCombatView();
+            this.card = _data["card"] ? ActionCardView.fromJS(_data["card"]) : new ActionCardView();
+            if (Array.isArray(_data["effects"])) {
+                this.effects = [] as any;
+                for (let item of _data["effects"])
+                    this.effects!.push(EffectOnCharacterLogEntryView.fromJS(item));
+            }
+        }
+    }
+
+    static override fromJS(data: any): CardPlayedLogEntryView {
+        data = typeof data === 'object' ? data : {};
+        let result = new CardPlayedLogEntryView();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["source"] = this.source ? this.source.toJSON() : <any>undefined;
+        data["card"] = this.card ? this.card.toJSON() : <any>undefined;
+        if (Array.isArray(this.effects)) {
+            data["effects"] = [];
+            for (let item of this.effects)
+                data["effects"].push(item.toJSON());
+        }
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface ICardPlayedLogEntryView extends ICombatLogEntryView {
+    source: CharacterInCombatView;
+    card: ActionCardView;
+    effects: EffectOnCharacterLogEntryView[];
+}
+
+export abstract class EffectOnCharacterLogEntryView implements IEffectOnCharacterLogEntryView {
+    character!: CharacterInCombatView;
+
+    protected _discriminator: string;
+
+    constructor(data?: IEffectOnCharacterLogEntryView) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.character = new CharacterInCombatView();
+        }
+        this._discriminator = "EffectOnCharacterLogEntryView";
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.character = _data["character"] ? CharacterInCombatView.fromJS(_data["character"]) : new CharacterInCombatView();
+        }
+    }
+
+    static fromJS(data: any): EffectOnCharacterLogEntryView {
+        data = typeof data === 'object' ? data : {};
+        if (data["effectType"] === "DamageEffectOnCharacterLogEntryView") {
+            let result = new DamageEffectOnCharacterLogEntryView();
+            result.init(data);
+            return result;
+        }
+        if (data["effectType"] === "HealEffectOnCharacterLogEntryView") {
+            let result = new HealEffectOnCharacterLogEntryView();
+            result.init(data);
+            return result;
+        }
+        if (data["effectType"] === "ShieldEffectOnCharacterLogEntryView") {
+            let result = new ShieldEffectOnCharacterLogEntryView();
+            result.init(data);
+            return result;
+        }
+        if (data["effectType"] === "AddEnchantmentEffectOnCharacterLogEntryView") {
+            let result = new AddEnchantmentEffectOnCharacterLogEntryView();
+            result.init(data);
+            return result;
+        }
+        throw new Error("The abstract class 'EffectOnCharacterLogEntryView' cannot be instantiated.");
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["effectType"] = this._discriminator;
+        data["character"] = this.character ? this.character.toJSON() : <any>undefined;
+        return data;
+    }
+}
+
+export interface IEffectOnCharacterLogEntryView {
+    character: CharacterInCombatView;
+}
+
+export class DamageEffectOnCharacterLogEntryView extends EffectOnCharacterLogEntryView implements IDamageEffectOnCharacterLogEntryView {
+    damage!: DamageReceived;
+
+    constructor(data?: IDamageEffectOnCharacterLogEntryView) {
+        super(data);
+        if (!data) {
+            this.damage = new DamageReceived();
+        }
+        this._discriminator = "DamageEffectOnCharacterLogEntryView";
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.damage = _data["damage"] ? DamageReceived.fromJS(_data["damage"]) : new DamageReceived();
+        }
+    }
+
+    static override fromJS(data: any): DamageEffectOnCharacterLogEntryView {
+        data = typeof data === 'object' ? data : {};
+        let result = new DamageEffectOnCharacterLogEntryView();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["damage"] = this.damage ? this.damage.toJSON() : <any>undefined;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IDamageEffectOnCharacterLogEntryView extends IEffectOnCharacterLogEntryView {
+    damage: DamageReceived;
+}
+
+export class DamageReceived implements IDamageReceived {
+    health!: number;
+    shield!: number;
+
+    constructor(data?: IDamageReceived) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.health = _data["health"];
+            this.shield = _data["shield"];
+        }
+    }
+
+    static fromJS(data: any): DamageReceived {
+        data = typeof data === 'object' ? data : {};
+        let result = new DamageReceived();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["health"] = this.health;
+        data["shield"] = this.shield;
+        return data;
+    }
+}
+
+export interface IDamageReceived {
+    health: number;
+    shield: number;
+}
+
+export class HealEffectOnCharacterLogEntryView extends EffectOnCharacterLogEntryView implements IHealEffectOnCharacterLogEntryView {
+    heal!: HealReceived;
+
+    constructor(data?: IHealEffectOnCharacterLogEntryView) {
+        super(data);
+        if (!data) {
+            this.heal = new HealReceived();
+        }
+        this._discriminator = "HealEffectOnCharacterLogEntryView";
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.heal = _data["heal"] ? HealReceived.fromJS(_data["heal"]) : new HealReceived();
+        }
+    }
+
+    static override fromJS(data: any): HealEffectOnCharacterLogEntryView {
+        data = typeof data === 'object' ? data : {};
+        let result = new HealEffectOnCharacterLogEntryView();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["heal"] = this.heal ? this.heal.toJSON() : <any>undefined;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IHealEffectOnCharacterLogEntryView extends IEffectOnCharacterLogEntryView {
+    heal: HealReceived;
+}
+
+export class HealReceived implements IHealReceived {
+    health!: number;
+
+    constructor(data?: IHealReceived) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.health = _data["health"];
+        }
+    }
+
+    static fromJS(data: any): HealReceived {
+        data = typeof data === 'object' ? data : {};
+        let result = new HealReceived();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["health"] = this.health;
+        return data;
+    }
+}
+
+export interface IHealReceived {
+    health: number;
+}
+
+export class ShieldEffectOnCharacterLogEntryView extends EffectOnCharacterLogEntryView implements IShieldEffectOnCharacterLogEntryView {
+    shield!: ShieldReceived;
+
+    constructor(data?: IShieldEffectOnCharacterLogEntryView) {
+        super(data);
+        if (!data) {
+            this.shield = new ShieldReceived();
+        }
+        this._discriminator = "ShieldEffectOnCharacterLogEntryView";
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.shield = _data["shield"] ? ShieldReceived.fromJS(_data["shield"]) : new ShieldReceived();
+        }
+    }
+
+    static override fromJS(data: any): ShieldEffectOnCharacterLogEntryView {
+        data = typeof data === 'object' ? data : {};
+        let result = new ShieldEffectOnCharacterLogEntryView();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["shield"] = this.shield ? this.shield.toJSON() : <any>undefined;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IShieldEffectOnCharacterLogEntryView extends IEffectOnCharacterLogEntryView {
+    shield: ShieldReceived;
+}
+
+export class ShieldReceived implements IShieldReceived {
+    health!: number;
+
+    constructor(data?: IShieldReceived) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.health = _data["health"];
+        }
+    }
+
+    static fromJS(data: any): ShieldReceived {
+        data = typeof data === 'object' ? data : {};
+        let result = new ShieldReceived();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["health"] = this.health;
+        return data;
+    }
+}
+
+export interface IShieldReceived {
+    health: number;
+}
+
+export class AddEnchantmentEffectOnCharacterLogEntryView extends EffectOnCharacterLogEntryView implements IAddEnchantmentEffectOnCharacterLogEntryView {
+    enchantment!: EnchantmentView;
+
+    constructor(data?: IAddEnchantmentEffectOnCharacterLogEntryView) {
+        super(data);
+        if (!data) {
+            this.enchantment = new EnchantmentView();
+        }
+        this._discriminator = "AddEnchantmentEffectOnCharacterLogEntryView";
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.enchantment = _data["enchantment"] ? EnchantmentView.fromJS(_data["enchantment"]) : new EnchantmentView();
+        }
+    }
+
+    static override fromJS(data: any): AddEnchantmentEffectOnCharacterLogEntryView {
+        data = typeof data === 'object' ? data : {};
+        let result = new AddEnchantmentEffectOnCharacterLogEntryView();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["enchantment"] = this.enchantment ? this.enchantment.toJSON() : <any>undefined;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IAddEnchantmentEffectOnCharacterLogEntryView extends IEffectOnCharacterLogEntryView {
+    enchantment: EnchantmentView;
 }
 
 export interface FileResponse {

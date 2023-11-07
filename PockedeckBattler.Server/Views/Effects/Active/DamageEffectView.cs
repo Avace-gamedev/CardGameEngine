@@ -1,6 +1,5 @@
-﻿using CardGame.Engine.Combats;
-using CardGame.Engine.Combats.Abstractions;
-using CardGame.Engine.Effects.Active;
+﻿using CardGame.Engine.Combats.Abstractions;
+using CardGame.Engine.Effects;
 
 namespace PockedeckBattler.Server.Views.Effects.Active;
 

@@ -2,7 +2,7 @@
 using CardGame.Engine.Combats.Abstractions;
 using CardGame.Engine.Combats.Characters;
 
-namespace CardGame.Engine.Effects.Enchantments.State;
+namespace CardGame.Engine.Effects.Enchantments.Passive;
 
 public class PassiveEffectInstance : IDisposable
 {

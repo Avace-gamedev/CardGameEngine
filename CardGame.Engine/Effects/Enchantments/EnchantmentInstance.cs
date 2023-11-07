@@ -1,6 +1,5 @@
-﻿using CardGame.Engine.Combats;
-using CardGame.Engine.Combats.Characters;
-using CardGame.Engine.Effects.Enchantments.State;
+﻿using CardGame.Engine.Combats.Characters;
+using CardGame.Engine.Effects.Enchantments.Passive;
 using CardGame.Engine.Effects.Enchantments.Triggered.Instance;
 
 namespace CardGame.Engine.Effects.Enchantments;

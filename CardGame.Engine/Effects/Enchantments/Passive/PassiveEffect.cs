@@ -1,6 +1,6 @@
-using CardGame.Engine.Effects.Enchantments.State.Stats;
+using CardGame.Engine.Effects.Enchantments.Passive.Stats;
 
-namespace CardGame.Engine.Effects.Enchantments.State;
+namespace CardGame.Engine.Effects.Enchantments.Passive;
 
 public abstract class PassiveEffect
 {

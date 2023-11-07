@@ -1,9 +1,8 @@
-﻿using CardGame.Engine.Combats;
-using CardGame.Engine.Combats.Characters;
+﻿using CardGame.Engine.Combats.Characters;
 
-namespace CardGame.Engine.Effects.Active;
+namespace CardGame.Engine.Effects;
 
-public class RandomEffect : ActiveEffect
+public class RandomEffect : Effect
 {
     public RandomEffect(params Entry[] entries)
     {
@@ -20,7 +19,7 @@ public class RandomEffect : ActiveEffect
     internal override void Resolve(CharacterCombatState source, IEnumerable<CharacterCombatState> targets, Random random)
     {
         double randomDouble = random.NextDouble();
-        ActiveEffect? randomlySelectedEffect = Entries.Aggregate<Entry, (double Sum, ActiveEffect? Effect)>(
+        Effect? randomlySelectedEffect = Entries.Aggregate<Entry, (double Sum, Effect? Effect)>(
                 (0, null),
                 (acc, entry) =>
                 {
@@ -37,7 +36,7 @@ public class RandomEffect : ActiveEffect
         randomlySelectedEffect?.Resolve(source, targets, random);
     }
 
-    public static RandomEffect Uniform(params ActiveEffect?[] effects)
+    public static RandomEffect Uniform(params Effect?[] effects)
     {
         if (effects.Length == 0)
         {
@@ -50,13 +49,13 @@ public class RandomEffect : ActiveEffect
 
     public class Entry
     {
-        public Entry(ActiveEffect effect, double probability)
+        public Entry(Effect effect, double probability)
         {
             Effect = effect;
             Probability = probability;
         }
 
-        public ActiveEffect Effect { get; }
+        public Effect Effect { get; }
         public double Probability { get; }
     }
 }

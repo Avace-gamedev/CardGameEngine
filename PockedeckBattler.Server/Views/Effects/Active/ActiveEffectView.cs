@@ -1,5 +1,5 @@
 ﻿using System.Runtime.Serialization;
-using CardGame.Engine.Effects.Active;
+using CardGame.Engine.Effects;
 using Newtonsoft.Json;
 using NJsonSchema.Converters;
 
@@ -17,7 +17,7 @@ public abstract class ActiveEffectView
 
 public static class ActiveEffectViewMappingExtensions
 {
-    public static ActiveEffectView View(this ActiveEffect effect)
+    public static ActiveEffectView View(this Effect effect)
     {
         return effect switch
         {

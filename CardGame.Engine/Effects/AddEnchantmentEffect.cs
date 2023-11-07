@@ -1,10 +1,9 @@
-﻿using CardGame.Engine.Combats;
-using CardGame.Engine.Combats.Characters;
+﻿using CardGame.Engine.Combats.Characters;
 using CardGame.Engine.Effects.Enchantments;
 
-namespace CardGame.Engine.Effects.Active;
+namespace CardGame.Engine.Effects;
 
-public class AddEnchantmentEffect : ActiveEffect
+public class AddEnchantmentEffect : Effect
 {
     public AddEnchantmentEffect(Enchantment enchantment)
     {

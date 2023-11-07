@@ -1,5 +1,5 @@
 ﻿using CardGame.Engine.Cards.ActionCard;
-using CardGame.Engine.Effects.Active;
+using CardGame.Engine.Effects;
 
 namespace CardGame.Engine.Combats.Modifiers;
 
@@ -22,7 +22,7 @@ public class CardStatsModifier
         );
     }
 
-    ActiveEffect Apply(ActiveEffect effect)
+    Effect Apply(Effect effect)
     {
         switch (effect)
         {

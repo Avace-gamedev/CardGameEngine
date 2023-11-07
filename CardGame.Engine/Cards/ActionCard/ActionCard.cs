@@ -1,9 +1,8 @@
-﻿using CardGame.Engine.Combats;
-using CardGame.Engine.Combats.Abstractions;
+﻿using CardGame.Engine.Combats.Abstractions;
 using CardGame.Engine.Combats.Characters;
-using CardGame.Engine.Effects.Active;
+using CardGame.Engine.Effects;
 using CardGame.Engine.Effects.Enchantments;
-using CardGame.Engine.Effects.Enchantments.State;
+using CardGame.Engine.Effects.Enchantments.Passive;
 using CardGame.Engine.Effects.Enchantments.Triggered;
 
 namespace CardGame.Engine.Cards.ActionCard;
@@ -15,20 +14,20 @@ public class ActionCard : Card
         string? description,
         int apCost,
         ActionCardTarget target,
-        ActiveEffect mainEffect,
-        IReadOnlyList<ActiveEffect>? additionalEffects = null
+        Effect mainEffect,
+        IReadOnlyList<Effect>? additionalEffects = null
     ) : base(name, description)
     {
         ApCost = apCost;
         MainEffect = mainEffect;
         Target = target;
-        AdditionalEffects = additionalEffects?.ToList() ?? new List<ActiveEffect>();
+        AdditionalEffects = additionalEffects?.ToList() ?? new List<Effect>();
     }
 
     public int ApCost { get; }
     public ActionCardTarget Target { get; }
-    public ActiveEffect MainEffect { get; }
-    public IReadOnlyList<ActiveEffect> AdditionalEffects { get; }
+    public Effect MainEffect { get; }
+    public IReadOnlyList<Effect> AdditionalEffects { get; }
 
     internal void Resolve(CharacterCombatState source, IEnumerable<CharacterCombatState> targets, Random random)
     {
@@ -36,13 +35,13 @@ public class ActionCard : Card
 
         MainEffect.Resolve(source, characterCombatStates, random);
 
-        foreach (ActiveEffect effect in AdditionalEffects)
+        foreach (Effect effect in AdditionalEffects)
         {
             effect.Resolve(source, characterCombatStates, random);
         }
     }
 
-    public static ActionCard Damage(string name, int apCost, ActionCardTarget target, int damage, Element element, params ActiveEffect[] additionalEffects)
+    public static ActionCard Damage(string name, int apCost, ActionCardTarget target, int damage, Element element, params Effect[] additionalEffects)
     {
         return Damage(name, null, apCost, target, damage, element, additionalEffects);
     }
@@ -54,7 +53,7 @@ public class ActionCard : Card
         ActionCardTarget target,
         int damage,
         Element element,
-        params ActiveEffect[] additionalEffects
+        params Effect[] additionalEffects
     )
     {
         return new ActionCard(name, description, apCost, target, new DamageEffect(damage, element), additionalEffects);

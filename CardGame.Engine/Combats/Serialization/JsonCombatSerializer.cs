@@ -2,9 +2,9 @@
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
 using CardGame.Engine.Combats.History;
-using CardGame.Engine.Effects.Active;
-using CardGame.Engine.Effects.Enchantments.State;
-using CardGame.Engine.Effects.Enchantments.State.Stats;
+using CardGame.Engine.Effects;
+using CardGame.Engine.Effects.Enchantments.Passive;
+using CardGame.Engine.Effects.Enchantments.Passive.Stats;
 using CardGame.Engine.Effects.Enchantments.Triggered;
 using CardGame.Engine.Effects.Enchantments.Triggered.Instance;
 
@@ -43,7 +43,7 @@ public class JsonCombatSerializer : ICombatInstanceSerializer
         {
             JsonTypeInfo typeInfo = base.GetTypeInfo(type, options);
 
-            if (typeInfo.Type == typeof(ActiveEffect))
+            if (typeInfo.Type == typeof(Effect))
             {
                 typeInfo.PolymorphismOptions = new JsonPolymorphismOptions
                 {

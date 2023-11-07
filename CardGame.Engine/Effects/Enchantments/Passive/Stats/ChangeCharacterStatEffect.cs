@@ -1,6 +1,6 @@
 ﻿using CardGame.Engine.Combats.Modifiers;
 
-namespace CardGame.Engine.Effects.Enchantments.State.Stats;
+namespace CardGame.Engine.Effects.Enchantments.Passive.Stats;
 
 public class ChangeCharacterStatEffect : PassiveEffect
 {

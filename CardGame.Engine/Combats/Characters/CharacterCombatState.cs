@@ -2,7 +2,7 @@
 using CardGame.Engine.Combats.Abstractions;
 using CardGame.Engine.Combats.Modifiers;
 using CardGame.Engine.Effects.Enchantments;
-using CardGame.Engine.Effects.Enchantments.State.Stats;
+using CardGame.Engine.Effects.Enchantments.Passive.Stats;
 
 namespace CardGame.Engine.Combats.Characters;
 

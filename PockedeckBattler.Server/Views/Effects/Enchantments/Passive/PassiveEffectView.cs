@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
-using CardGame.Engine.Effects.Enchantments.State;
-using CardGame.Engine.Effects.Enchantments.State.Stats;
+using CardGame.Engine.Effects.Enchantments.Passive;
+using CardGame.Engine.Effects.Enchantments.Passive.Stats;
 using Newtonsoft.Json;
 using NJsonSchema.Converters;
 

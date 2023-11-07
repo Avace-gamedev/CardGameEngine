@@ -1,4 +1,4 @@
-﻿using CardGame.Engine.Effects.Active;
+﻿using CardGame.Engine.Effects;
 
 namespace PockedeckBattler.Server.Views.Effects.Active;
 

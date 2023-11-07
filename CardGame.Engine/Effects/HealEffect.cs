@@ -1,11 +1,10 @@
-using CardGame.Engine.Combats;
 using CardGame.Engine.Combats.Characters;
 
-namespace CardGame.Engine.Effects.Active;
+namespace CardGame.Engine.Effects;
 
-public class ShieldEffect : ActiveEffect
+public class HealEffect : Effect
 {
-    public ShieldEffect(int amount)
+    public HealEffect(int amount)
     {
         Amount = amount;
     }
@@ -16,7 +15,7 @@ public class ShieldEffect : ActiveEffect
     {
         foreach (CharacterCombatState target in targets)
         {
-            target.AddShield(Amount);
+            target.Heal(Amount);
         }
     }
 }

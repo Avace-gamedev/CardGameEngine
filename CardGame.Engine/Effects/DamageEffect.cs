@@ -1,11 +1,10 @@
-﻿using CardGame.Engine.Combats;
-using CardGame.Engine.Combats.Abstractions;
+﻿using CardGame.Engine.Combats.Abstractions;
 using CardGame.Engine.Combats.Characters;
 using CardGame.Engine.Combats.Modifiers;
 
-namespace CardGame.Engine.Effects.Active;
+namespace CardGame.Engine.Effects;
 
-public class DamageEffect : ActiveEffect
+public class DamageEffect : Effect
 {
     public DamageEffect(int amount, Element element)
     {

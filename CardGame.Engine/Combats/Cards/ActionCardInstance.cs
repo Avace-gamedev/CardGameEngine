@@ -1,7 +1,7 @@
 ﻿using CardGame.Engine.Cards.ActionCard;
 using CardGame.Engine.Combats.Characters;
 using CardGame.Engine.Combats.Modifiers;
-using CardGame.Engine.Effects.Enchantments.State.Stats;
+using CardGame.Engine.Effects.Enchantments.Passive.Stats;
 
 namespace CardGame.Engine.Combats.Cards;
 

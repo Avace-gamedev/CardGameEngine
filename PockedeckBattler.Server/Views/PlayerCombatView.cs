@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using CardGame.Engine.Combats;
 using CardGame.Engine.Combats.Abstractions;
 using PockedeckBattler.Server.Stores.Combats;
+using PockedeckBattler.Server.Views.Combats.Log;
 
 namespace PockedeckBattler.Server.Views;
 
@@ -76,7 +76,8 @@ public static class PlayerCombatViewMappingExtensions
             Over = combat.Instance.State.Over,
             Winner = combat.Instance.State.Winner,
             LeftPlayerName = combat.LeftPlayerName,
-            RightPlayerName = combat.RightPlayerName
+            RightPlayerName = combat.RightPlayerName,
+            Log = combat.Instance.Log.View()
         };
     }
 }

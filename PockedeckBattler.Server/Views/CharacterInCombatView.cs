@@ -1,6 +1,6 @@
-﻿using CardGame.Engine.Combats;
-using CardGame.Engine.Combats.Abstractions;
+﻿using CardGame.Engine.Combats.Abstractions;
 using CardGame.Engine.Combats.Characters;
+using CardGame.Engine.Combats.Logs;
 
 namespace PockedeckBattler.Server.Views;
 
@@ -21,5 +21,10 @@ public static class CharacterInCombatMappingExtensions
     public static CharacterInCombatView InCombatView(this CharacterCombatState character)
     {
         return new CharacterInCombatView(character.Character.Identity.Name, character.Side);
+    }
+
+    public static CharacterInCombatView View(this CharacterLogEntry character)
+    {
+        return new CharacterInCombatView(character.Name, character.Side);
     }
 }

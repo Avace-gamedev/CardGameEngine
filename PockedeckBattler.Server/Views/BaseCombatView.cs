@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using CardGame.Engine.Combats;
 using CardGame.Engine.Combats.Abstractions;
+using PockedeckBattler.Server.Views.Combats.Log;
 
 namespace PockedeckBattler.Server.Views;
 
@@ -27,4 +27,7 @@ public class BaseCombatView
 
     [Required]
     public string RightPlayerName { get; init; } = "";
+
+    [Required]
+    public CombatLogView Log { get; init; }
 }

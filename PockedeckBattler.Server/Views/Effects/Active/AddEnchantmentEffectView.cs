@@ -4,7 +4,7 @@ using PockedeckBattler.Server.Views.Effects.Enchantments;
 
 namespace PockedeckBattler.Server.Views.Effects.Active;
 
-public class AddEnchantmentEffectView : ActiveEffectView
+public class AddEnchantmentEffectView : EffectView
 {
     public AddEnchantmentEffectView(EnchantmentView passiveEffect)
     {

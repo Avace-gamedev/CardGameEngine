@@ -930,8 +930,8 @@ export class ActionCardView implements IActionCardView {
     description?: string | undefined;
     apCost!: number;
     target!: ActionCardTarget;
-    mainEffect!: ActiveEffectView;
-    additionalEffects!: ActiveEffectView[];
+    mainEffect!: EffectView;
+    additionalEffects!: EffectView[];
 
     constructor(data?: IActionCardView) {
         if (data) {
@@ -951,11 +951,11 @@ export class ActionCardView implements IActionCardView {
             this.description = _data["description"];
             this.apCost = _data["apCost"];
             this.target = _data["target"];
-            this.mainEffect = _data["mainEffect"] ? ActiveEffectView.fromJS(_data["mainEffect"]) : <any>undefined;
+            this.mainEffect = _data["mainEffect"] ? EffectView.fromJS(_data["mainEffect"]) : <any>undefined;
             if (Array.isArray(_data["additionalEffects"])) {
                 this.additionalEffects = [] as any;
                 for (let item of _data["additionalEffects"])
-                    this.additionalEffects!.push(ActiveEffectView.fromJS(item));
+                    this.additionalEffects!.push(EffectView.fromJS(item));
             }
         }
     }
@@ -988,8 +988,8 @@ export interface IActionCardView {
     description?: string | undefined;
     apCost: number;
     target: ActionCardTarget;
-    mainEffect: ActiveEffectView;
-    additionalEffects: ActiveEffectView[];
+    mainEffect: EffectView;
+    additionalEffects: EffectView[];
 }
 
 export enum ActionCardTarget {
@@ -1004,64 +1004,64 @@ export enum ActionCardTarget {
     AllAllies = "allAllies",
 }
 
-export abstract class ActiveEffectView implements IActiveEffectView {
+export abstract class EffectView implements IEffectView {
 
     protected _discriminator: string;
 
-    constructor(data?: IActiveEffectView) {
+    constructor(data?: IEffectView) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
                     (<any>this)[property] = (<any>data)[property];
             }
         }
-        this._discriminator = "ActiveEffectView";
+        this._discriminator = "EffectView";
     }
 
     init(_data?: any) {
     }
 
-    static fromJS(data: any): ActiveEffectView {
+    static fromJS(data: any): EffectView {
         data = typeof data === 'object' ? data : {};
-        if (data["$type"] === "DamageEffectView") {
+        if (data["effectType"] === "DamageEffectView") {
             let result = new DamageEffectView();
             result.init(data);
             return result;
         }
-        if (data["$type"] === "HealEffectView") {
+        if (data["effectType"] === "HealEffectView") {
             let result = new HealEffectView();
             result.init(data);
             return result;
         }
-        if (data["$type"] === "ShieldEffectView") {
+        if (data["effectType"] === "ShieldEffectView") {
             let result = new ShieldEffectView();
             result.init(data);
             return result;
         }
-        if (data["$type"] === "AddEnchantmentEffectView") {
+        if (data["effectType"] === "AddEnchantmentEffectView") {
             let result = new AddEnchantmentEffectView();
             result.init(data);
             return result;
         }
-        if (data["$type"] === "RandomEffectView") {
+        if (data["effectType"] === "RandomEffectView") {
             let result = new RandomEffectView();
             result.init(data);
             return result;
         }
-        throw new Error("The abstract class 'ActiveEffectView' cannot be instantiated.");
+        throw new Error("The abstract class 'EffectView' cannot be instantiated.");
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["$type"] = this._discriminator;
+        data["effectType"] = this._discriminator;
         return data;
     }
 }
 
-export interface IActiveEffectView {
+export interface IEffectView {
 }
 
-export class DamageEffectView extends ActiveEffectView implements IDamageEffectView {
+export class DamageEffectView extends EffectView implements IDamageEffectView {
     amount!: number;
     element!: Element;
     lifeStealRatio!: number;
@@ -1097,7 +1097,7 @@ export class DamageEffectView extends ActiveEffectView implements IDamageEffectV
     }
 }
 
-export interface IDamageEffectView extends IActiveEffectView {
+export interface IDamageEffectView extends IEffectView {
     amount: number;
     element: Element;
     lifeStealRatio: number;
@@ -1111,7 +1111,7 @@ export enum Element {
     Wind = "wind",
 }
 
-export class HealEffectView extends ActiveEffectView implements IHealEffectView {
+export class HealEffectView extends EffectView implements IHealEffectView {
     amount!: number;
 
     constructor(data?: IHealEffectView) {
@@ -1141,11 +1141,11 @@ export class HealEffectView extends ActiveEffectView implements IHealEffectView 
     }
 }
 
-export interface IHealEffectView extends IActiveEffectView {
+export interface IHealEffectView extends IEffectView {
     amount: number;
 }
 
-export class ShieldEffectView extends ActiveEffectView implements IShieldEffectView {
+export class ShieldEffectView extends EffectView implements IShieldEffectView {
     amount!: number;
 
     constructor(data?: IShieldEffectView) {
@@ -1175,11 +1175,11 @@ export class ShieldEffectView extends ActiveEffectView implements IShieldEffectV
     }
 }
 
-export interface IShieldEffectView extends IActiveEffectView {
+export interface IShieldEffectView extends IEffectView {
     amount: number;
 }
 
-export class AddEnchantmentEffectView extends ActiveEffectView implements IAddEnchantmentEffectView {
+export class AddEnchantmentEffectView extends EffectView implements IAddEnchantmentEffectView {
     enchantmentEffect!: EnchantmentView;
 
     constructor(data?: IAddEnchantmentEffectView) {
@@ -1212,7 +1212,7 @@ export class AddEnchantmentEffectView extends ActiveEffectView implements IAddEn
     }
 }
 
-export interface IAddEnchantmentEffectView extends IActiveEffectView {
+export interface IAddEnchantmentEffectView extends IEffectView {
     enchantmentEffect: EnchantmentView;
 }
 
@@ -1303,12 +1303,12 @@ export class PassiveEffectView implements IPassiveEffectView {
 
     static fromJS(data: any): PassiveEffectView {
         data = typeof data === 'object' ? data : {};
-        if (data["$type"] === "CharacterStatsEffectView") {
+        if (data["effectType"] === "CharacterStatsEffectView") {
             let result = new CharacterStatsEffectView();
             result.init(data);
             return result;
         }
-        if (data["$type"] === "CardStatsEffectView") {
+        if (data["effectType"] === "CardStatsEffectView") {
             let result = new CardStatsEffectView();
             result.init(data);
             return result;
@@ -1320,7 +1320,7 @@ export class PassiveEffectView implements IPassiveEffectView {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["$type"] = this._discriminator;
+        data["effectType"] = this._discriminator;
         data["duration"] = this.duration;
         return data;
     }
@@ -1422,7 +1422,7 @@ export enum CardStatEffectType {
 
 export class TriggeredEffectView implements ITriggeredEffectView {
     trigger!: EffectTriggerView;
-    effect!: ActiveEffectView;
+    effect!: EffectView;
 
     constructor(data?: ITriggeredEffectView) {
         if (data) {
@@ -1439,7 +1439,7 @@ export class TriggeredEffectView implements ITriggeredEffectView {
     init(_data?: any) {
         if (_data) {
             this.trigger = _data["trigger"] ? EffectTriggerView.fromJS(_data["trigger"]) : new EffectTriggerView();
-            this.effect = _data["effect"] ? ActiveEffectView.fromJS(_data["effect"]) : <any>undefined;
+            this.effect = _data["effect"] ? EffectView.fromJS(_data["effect"]) : <any>undefined;
         }
     }
 
@@ -1460,7 +1460,7 @@ export class TriggeredEffectView implements ITriggeredEffectView {
 
 export interface ITriggeredEffectView {
     trigger: EffectTriggerView;
-    effect: ActiveEffectView;
+    effect: EffectView;
 }
 
 export class EffectTriggerView implements IEffectTriggerView {
@@ -1551,7 +1551,7 @@ export enum TriggerMoment {
     EndOfTargetTurn = "endOfTargetTurn",
 }
 
-export class RandomEffectView extends ActiveEffectView implements IRandomEffectView {
+export class RandomEffectView extends EffectView implements IRandomEffectView {
     entries!: RandomEffectEntryView[];
 
     constructor(data?: IRandomEffectView) {
@@ -1592,12 +1592,12 @@ export class RandomEffectView extends ActiveEffectView implements IRandomEffectV
     }
 }
 
-export interface IRandomEffectView extends IActiveEffectView {
+export interface IRandomEffectView extends IEffectView {
     entries: RandomEffectEntryView[];
 }
 
 export class RandomEffectEntryView implements IRandomEffectEntryView {
-    effect!: ActiveEffectView;
+    effect!: EffectView;
     probability!: number;
 
     constructor(data?: IRandomEffectEntryView) {
@@ -1611,7 +1611,7 @@ export class RandomEffectEntryView implements IRandomEffectEntryView {
 
     init(_data?: any) {
         if (_data) {
-            this.effect = _data["effect"] ? ActiveEffectView.fromJS(_data["effect"]) : <any>undefined;
+            this.effect = _data["effect"] ? EffectView.fromJS(_data["effect"]) : <any>undefined;
             this.probability = _data["probability"];
         }
     }
@@ -1632,7 +1632,7 @@ export class RandomEffectEntryView implements IRandomEffectEntryView {
 }
 
 export interface IRandomEffectEntryView {
-    effect: ActiveEffectView;
+    effect: EffectView;
     probability: number;
 }
 
@@ -2416,7 +2416,7 @@ export abstract class TriggerStateView implements ITriggerStateView {
 
     static fromJS(data: any): TriggerStateView {
         data = typeof data === 'object' ? data : {};
-        if (data["$type"] === "TurnTriggerStateView") {
+        if (data["triggerType"] === "TurnTriggerStateView") {
             let result = new TurnTriggerStateView();
             result.init(data);
             return result;
@@ -2426,7 +2426,7 @@ export abstract class TriggerStateView implements ITriggerStateView {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["$type"] = this._discriminator;
+        data["triggerType"] = this._discriminator;
         return data;
     }
 }

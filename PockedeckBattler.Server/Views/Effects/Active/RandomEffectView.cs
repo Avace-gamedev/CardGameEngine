@@ -2,7 +2,7 @@
 
 namespace PockedeckBattler.Server.Views.Effects.Active;
 
-public class RandomEffectView : ActiveEffectView
+public class RandomEffectView : EffectView
 {
     public RandomEffectView(params RandomEffectEntryView[] entries)
     {
@@ -14,13 +14,13 @@ public class RandomEffectView : ActiveEffectView
 
 public class RandomEffectEntryView
 {
-    public RandomEffectEntryView(ActiveEffectView effect, double probability)
+    public RandomEffectEntryView(EffectView effect, double probability)
     {
         Effect = effect;
         Probability = probability;
     }
 
-    public ActiveEffectView Effect { get; }
+    public EffectView Effect { get; }
     public double Probability { get; }
 }
 

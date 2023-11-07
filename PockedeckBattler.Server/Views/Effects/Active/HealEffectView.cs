@@ -2,7 +2,7 @@
 
 namespace PockedeckBattler.Server.Views.Effects.Active;
 
-public class HealEffectView : ActiveEffectView
+public class HealEffectView : EffectView
 {
     public HealEffectView(int amount)
     {

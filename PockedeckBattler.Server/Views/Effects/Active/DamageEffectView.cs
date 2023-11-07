@@ -3,7 +3,7 @@ using CardGame.Engine.Effects;
 
 namespace PockedeckBattler.Server.Views.Effects.Active;
 
-public class DamageEffectView : ActiveEffectView
+public class DamageEffectView : EffectView
 {
     public DamageEffectView(int amount, Element element, float lifeStealRatio)
     {

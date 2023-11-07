@@ -1,4 +1,4 @@
-import { ActionCardView, ActiveEffectView, RandomEffectView } from '../../api/pockedeck-battler-api-client';
+import { ActionCardView, EffectView, RandomEffectView } from '../../api/pockedeck-battler-api-client';
 import { ActiveEffectTypeUtils } from './active-effect-type-utils';
 import { ActiveEffectType, CardType } from './types';
 
@@ -11,7 +11,7 @@ export class ActionCardTypeUtils {
     return this.activeEffectToCardType(card.mainEffect);
   }
 
-  private static activeEffectToCardType(mainEffect: ActiveEffectView): CardType {
+  private static activeEffectToCardType(mainEffect: EffectView): CardType {
     const mainEffectType = ActiveEffectTypeUtils.getType(mainEffect);
 
     switch (mainEffectType) {

@@ -1,7 +1,7 @@
 import {
-  ActiveEffectView,
   AddEnchantmentEffectView,
   DamageEffectView,
+  EffectView,
   HealEffectView,
   RandomEffectView,
   ShieldEffectView,
@@ -14,7 +14,7 @@ export class ActiveEffectIconsUtils {
   static shield: AssetIcon = 'healing-shield';
   static enchantment: AssetIcon = 'galaxy';
 
-  static getIcon(effect: ActiveEffectView): AssetIcon | undefined {
+  static getIcon(effect: EffectView): AssetIcon | undefined {
     if (effect instanceof DamageEffectView) {
       return ElementIconsUtils.getIcon(effect.element);
     } else if (effect instanceof HealEffectView) {

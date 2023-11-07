@@ -6,7 +6,7 @@ using NJsonSchema.Converters;
 
 namespace PockedeckBattler.Server.Views.Effects.Enchantments.Passive;
 
-[JsonConverter(typeof(JsonInheritanceConverter), "$type")]
+[JsonConverter(typeof(JsonInheritanceConverter), "effectType")]
 [KnownType(typeof(CharacterStatsEffectView))]
 [KnownType(typeof(CardStatsEffectView))]
 public class PassiveEffectView

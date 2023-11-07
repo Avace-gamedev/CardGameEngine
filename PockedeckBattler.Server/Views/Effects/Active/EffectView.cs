@@ -5,19 +5,19 @@ using NJsonSchema.Converters;
 
 namespace PockedeckBattler.Server.Views.Effects.Active;
 
-[JsonConverter(typeof(JsonInheritanceConverter), "$type")]
+[JsonConverter(typeof(JsonInheritanceConverter), "effectType")]
 [KnownType(typeof(DamageEffectView))]
 [KnownType(typeof(HealEffectView))]
 [KnownType(typeof(ShieldEffectView))]
 [KnownType(typeof(AddEnchantmentEffectView))]
 [KnownType(typeof(RandomEffectView))]
-public abstract class ActiveEffectView
+public abstract class EffectView
 {
 }
 
 public static class ActiveEffectViewMappingExtensions
 {
-    public static ActiveEffectView View(this Effect effect)
+    public static EffectView View(this Effect effect)
     {
         return effect switch
         {

@@ -1,7 +1,7 @@
 import {
-  ActiveEffectView,
   AddEnchantmentEffectView,
   DamageEffectView,
+  EffectView,
   HealEffectView,
   RandomEffectView,
   ShieldEffectView,
@@ -9,7 +9,7 @@ import {
 import { ActiveEffectType } from './types';
 
 export class ActiveEffectTypeUtils {
-  static getType(card: ActiveEffectView): ActiveEffectType {
+  static getType(card: EffectView): ActiveEffectType {
     if (!card) {
       return ActiveEffectType.None;
     }

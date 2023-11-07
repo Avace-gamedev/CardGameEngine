@@ -6,14 +6,7 @@ namespace PockedeckBattler.Server.Views;
 
 public class ActionCardView
 {
-    public ActionCardView(
-        string name,
-        string? description,
-        int apCost,
-        ActionCardTarget target,
-        ActiveEffectView mainEffect,
-        IReadOnlyList<ActiveEffectView> additionalEffects
-    )
+    public ActionCardView(string name, string? description, int apCost, ActionCardTarget target, EffectView mainEffect, IReadOnlyList<EffectView> additionalEffects)
     {
         Name = name;
         Description = description;
@@ -31,10 +24,10 @@ public class ActionCardView
     public ActionCardTarget Target { get; }
 
     [Required]
-    public ActiveEffectView MainEffect { get; }
+    public EffectView MainEffect { get; }
 
     [Required]
-    public IReadOnlyList<ActiveEffectView> AdditionalEffects { get; }
+    public IReadOnlyList<EffectView> AdditionalEffects { get; }
 }
 
 public static class ActionCardViewMappingExtensions

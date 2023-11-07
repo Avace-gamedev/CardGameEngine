@@ -1,6 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using CardGame.Engine.Characters;
 using CardGame.Engine.Combats;
+using CardGame.Engine.Combats.Abstractions;
 using CardGame.Engine.Combats.Ai;
 using MediatR;
 using PockedeckBattler.Server.GameContent.Characters;

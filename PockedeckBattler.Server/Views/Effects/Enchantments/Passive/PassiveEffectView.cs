@@ -1,12 +1,12 @@
 ﻿using System.Runtime.Serialization;
-using CardGame.Engine.Effects.Enchantments.State;
-using CardGame.Engine.Effects.Enchantments.State.Stats;
+using CardGame.Engine.Effects.Enchantments.Passive;
+using CardGame.Engine.Effects.Enchantments.Passive.Stats;
 using Newtonsoft.Json;
 using NJsonSchema.Converters;
 
 namespace PockedeckBattler.Server.Views.Effects.Enchantments.Passive;
 
-[JsonConverter(typeof(JsonInheritanceConverter), "$type")]
+[JsonConverter(typeof(JsonInheritanceConverter), "effectType")]
 [KnownType(typeof(CharacterStatsEffectView))]
 [KnownType(typeof(CardStatsEffectView))]
 public class PassiveEffectView

@@ -1,5 +1,5 @@
 using CardGame.Engine.Combats;
-using CardGame.Engine.Combats.State;
+using CardGame.Engine.Combats.Characters;
 using CardGame.Engine.Effects.Enchantments.Triggered.Instance;
 
 namespace CardGame.Engine.Effects.Enchantments.Triggered;

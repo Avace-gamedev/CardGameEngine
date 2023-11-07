@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { ActionCardView, ActiveEffectView, RandomEffectView } from '../../../api/pockedeck-battler-api-client';
+import { ActionCardView, EffectView, RandomEffectView } from '../../../api/pockedeck-battler-api-client';
 import { ActiveEffectType } from '../../../shared/utils/types';
 import { AssetIcon } from '../../icons/asset-icon/asset-icons';
 import { ActiveEffectIconsUtils } from '../../icons/utils/active-effect-icons-utils';
@@ -34,7 +34,7 @@ export class ActionCardTypeIconComponent {
     this.tooltip = this.getTooltip(this._card.mainEffect);
   }
 
-  private getTooltip(effect: ActiveEffectView): string | undefined {
+  private getTooltip(effect: EffectView): string | undefined {
     const type = ActiveEffectTypeUtils.getType(effect);
     switch (type) {
       case ActiveEffectType.None:

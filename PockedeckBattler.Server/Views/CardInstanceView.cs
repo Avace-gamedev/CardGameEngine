@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using CardGame.Engine.Combats;
+using CardGame.Engine.Combats.Cards;
 
 namespace PockedeckBattler.Server.Views;
 

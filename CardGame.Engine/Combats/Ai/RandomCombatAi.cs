@@ -1,4 +1,5 @@
-﻿using CardGame.Engine.Extensions;
+﻿using CardGame.Engine.Combats.Abstractions;
+using CardGame.Engine.Extensions;
 
 namespace CardGame.Engine.Combats.Ai;
 

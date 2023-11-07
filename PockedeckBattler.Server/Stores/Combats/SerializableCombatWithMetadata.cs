@@ -1,5 +1,5 @@
 ﻿using CardGame.Engine.Combats;
-using CardGame.Engine.Combats.Persistence;
+using CardGame.Engine.Combats.Serialization;
 using PockedeckBattler.Server.Stores.CombatsInPreparation;
 
 namespace PockedeckBattler.Server.Stores.Combats;

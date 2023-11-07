@@ -1,4 +1,4 @@
-﻿using CardGame.Engine.Effects.Enchantments.State;
+﻿using CardGame.Engine.Effects.Enchantments.Passive;
 using CardGame.Engine.Effects.Enchantments.Triggered;
 
 namespace CardGame.Engine.Effects.Enchantments;

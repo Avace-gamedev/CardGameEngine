@@ -1,18 +1,17 @@
-using CardGame.Engine.Effects.Active;
 using CardGame.Engine.Effects.Enchantments.Triggered.Instance;
 
 namespace CardGame.Engine.Effects.Enchantments.Triggered;
 
 public class TriggeredEffect
 {
-    public TriggeredEffect(ActiveEffect effect, EffectTrigger trigger)
+    public TriggeredEffect(Effect effect, EffectTrigger trigger)
     {
         Effect = effect;
         Trigger = trigger;
     }
 
     public EffectTrigger Trigger { get; }
-    public ActiveEffect Effect { get; }
+    public Effect Effect { get; }
 
     public static TriggeredEffect DamageOverTime(
         DamageEffect damage,

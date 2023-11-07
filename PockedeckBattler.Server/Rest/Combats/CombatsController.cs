@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using CardGame.Engine.Combats;
+using CardGame.Engine.Combats.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 using PockedeckBattler.Server.Rest.Combats.Requests;
 using PockedeckBattler.Server.Stores.Combats;

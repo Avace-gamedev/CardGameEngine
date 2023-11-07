@@ -1,4 +1,6 @@
 ﻿using CardGame.Engine.Combats;
+using CardGame.Engine.Combats.Abstractions;
+using CardGame.Engine.Combats.Characters;
 
 namespace PockedeckBattler.Server.Views;
 

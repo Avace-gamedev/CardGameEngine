@@ -1,8 +1,8 @@
-﻿using CardGame.Engine.Effects.Active;
+﻿using CardGame.Engine.Effects;
 
 namespace PockedeckBattler.Server.Views.Effects.Active;
 
-public class ShieldEffectView : ActiveEffectView
+public class ShieldEffectView : EffectView
 {
     public ShieldEffectView(int amount)
     {

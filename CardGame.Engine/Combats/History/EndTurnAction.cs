@@ -1,4 +1,6 @@
-﻿namespace CardGame.Engine.Combats.History;
+﻿using CardGame.Engine.Combats.Abstractions;
+
+namespace CardGame.Engine.Combats.History;
 
 public class EndTurnAction : CombatAction
 {

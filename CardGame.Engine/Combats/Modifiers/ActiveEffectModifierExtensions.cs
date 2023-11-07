@@ -1,4 +1,4 @@
-﻿using CardGame.Engine.Effects.Active;
+﻿using CardGame.Engine.Effects;
 
 namespace CardGame.Engine.Combats.Modifiers;
 

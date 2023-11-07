@@ -6,7 +6,7 @@ namespace PockedeckBattler.Server.Views.Effects.Enchantments.Triggered;
 
 public class TriggeredEffectView
 {
-    public TriggeredEffectView(EffectTriggerView trigger, ActiveEffectView effect)
+    public TriggeredEffectView(EffectTriggerView trigger, EffectView effect)
     {
         Trigger = trigger;
         Effect = effect;
@@ -16,7 +16,7 @@ public class TriggeredEffectView
     public EffectTriggerView Trigger { get; }
 
     [Required]
-    public ActiveEffectView Effect { get; }
+    public EffectView Effect { get; }
 }
 
 public static class TriggeredEffectViewMappingExtensions

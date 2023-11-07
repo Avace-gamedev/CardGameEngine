@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using CardGame.Engine.Effects.Enchantments.State;
+using CardGame.Engine.Effects.Enchantments.Passive;
 
 namespace PockedeckBattler.Server.Views.Effects.Enchantments.Passive;
 

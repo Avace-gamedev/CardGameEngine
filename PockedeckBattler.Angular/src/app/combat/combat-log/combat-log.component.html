@@ -1,7 +1,11 @@
 <div class="container-fluid" *ngIf="log">
   <ng-container *ngFor="let entry of log.entries">
     <ng-container [ngSwitch]="getType(entry)">
-      <app-card-played-log-entry [entry]="$any(entry)" *ngSwitchCase="EntryType.PlayCard"></app-card-played-log-entry>
+      <app-card-played-log-entry
+        [entry]="$any(entry)"
+        (highlight)="highlight.emit($event)"
+        *ngSwitchCase="EntryType.PlayCard"
+      ></app-card-played-log-entry>
     </ng-container>
   </ng-container>
 </div>

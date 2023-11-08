@@ -1,5 +1,10 @@
-import { Component, Input } from '@angular/core';
-import { CardPlayedLogEntryView, CombatLogEntryView, CombatLogView } from 'src/app/api/pockedeck-battler-api-client';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+  CardPlayedLogEntryView,
+  CombatLogEntryView,
+  CombatLogView,
+  ICharacterInCombatView,
+} from 'src/app/api/pockedeck-battler-api-client';
 
 @Component({
   selector: 'app-combat-log',
@@ -8,6 +13,11 @@ import { CardPlayedLogEntryView, CombatLogEntryView, CombatLogView } from 'src/a
 export class CombatLogComponent {
   @Input()
   public log: CombatLogView | undefined;
+
+  @Output()
+  public highlight: EventEmitter<ICharacterInCombatView | undefined> = new EventEmitter<
+    ICharacterInCombatView | undefined
+  >();
 
   protected getType(entry: CombatLogEntryView) {
     if (entry instanceof CardPlayedLogEntryView) {

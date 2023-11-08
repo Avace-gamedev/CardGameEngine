@@ -5,6 +5,7 @@ import {
   CardInstanceWithModificationsView,
   CombatSide,
   CombatsService,
+  ICharacterInCombatView,
   PlayerCombatView,
 } from '../api/pockedeck-battler-api-client';
 import { SignalRService } from '../api/signal-r/signal-r.service';
@@ -19,7 +20,7 @@ import { CurrentCombatService } from './current-combat.service';
 })
 export class CombatComponent implements OnInit {
   protected combat: PlayerCombatView | undefined;
-  protected source: string | undefined;
+  protected source: ICharacterInCombatView | undefined;
   protected allyTargets: string[] = [];
   protected enemyTargets: string[] = [];
 
@@ -94,7 +95,7 @@ export class CombatComponent implements OnInit {
       return;
     }
 
-    this.source = card.character;
+    this.source = { name: card.character, side: this.combat.player.side };
     const allyTargets = ActionCardTargetUtils.getAllyTargets(
       card.card.target,
       card.character === this.combat.player.frontCharacter?.character.identity.name ? 'front' : 'back'
@@ -149,6 +150,10 @@ export class CombatComponent implements OnInit {
         }
         break;
     }
+  }
+
+  hoverCharacter(character: ICharacterInCombatView | undefined) {
+    this.source = character;
   }
 
   private setCombat(combat: PlayerCombatView) {

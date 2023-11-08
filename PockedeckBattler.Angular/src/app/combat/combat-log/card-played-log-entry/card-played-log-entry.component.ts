@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import {
   AddEnchantmentEffectOnCharacterLogEntryView,
   CardPlayedLogEntryView,
@@ -7,6 +7,8 @@ import {
   DamageEffectOnCharacterLogEntryView,
   EffectOnCharacterLogEntryView,
   HealEffectOnCharacterLogEntryView,
+  ICharacterIdentity,
+  ICharacterInCombatView,
   IDamageReceived,
   IEnchantmentView,
   IHealReceived,
@@ -32,6 +34,11 @@ export class CardPlayedLogEntryComponent {
   }
 
   private _entry: CardPlayedLogEntryView | undefined;
+
+  @Output()
+  public highlight: EventEmitter<ICharacterInCombatView | undefined> = new EventEmitter<
+    ICharacterInCombatView | undefined
+  >();
 
   protected source: CharacterIdentity | undefined;
   protected effects: CombatLogEffectGroup[] = [];
@@ -64,9 +71,10 @@ export class CardPlayedLogEntryComponent {
         this.effects.push({
           effect: currentEffect,
           targets: currentTargets
-            .map((c) => this.getIdentity(c))
-            .filter((c) => !!c)
-            .map((c) => c!),
+            .map((c) => ({ character: c, identity: this.getIdentity(c) }))
+            .filter((c) => !!c.identity)
+            .map((c) => ({ character: c.character, identity: c.identity! }))
+            .map((c) => ({ ...c.character, ...c!.identity })),
         });
         currentEffect = undefined;
         currentTargets = [];
@@ -77,9 +85,10 @@ export class CardPlayedLogEntryComponent {
       this.effects.push({
         effect: currentEffect,
         targets: currentTargets
-          .map((c) => this.getIdentity(c))
-          .filter((c) => !!c)
-          .map((c) => c!),
+          .map((c) => ({ character: c, identity: this.getIdentity(c) }))
+          .filter((c) => !!c.identity)
+          .map((c) => ({ character: c.character, identity: c.identity! }))
+          .map((c) => ({ ...c.character, ...c!.identity })),
       });
     }
   }
@@ -120,7 +129,7 @@ export class CardPlayedLogEntryComponent {
 }
 
 interface CombatLogEffectGroup {
-  readonly targets: readonly CharacterIdentity[];
+  readonly targets: readonly (ICharacterIdentity & ICharacterInCombatView)[];
   readonly effect: Effect;
 }
 

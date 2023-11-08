@@ -11,6 +11,7 @@ import { IconsModule } from '../icons/icons.module';
 import { SharedModule } from '../../shared/shared.module';
 import { TextColorFromCardDirective } from './text-color-from-card.directive';
 import { StickyPopoverDirective } from '../../shared/directives/sticky-popover.directive';
+import { WithCardPopoverComponent } from './with-card-popover/with-card-popover.component';
 
 @NgModule({
   declarations: [
@@ -20,8 +21,9 @@ import { StickyPopoverDirective } from '../../shared/directives/sticky-popover.d
     ActionCardComponent,
     ActionCardTargetLineComponent,
     TextColorFromCardDirective,
+    WithCardPopoverComponent,
   ],
   imports: [CommonModule, IconsModule, EffectModule, NgbPopover, NgbTooltip, SharedModule, StickyPopoverDirective],
-  exports: [ActionCardChipComponent, ActionCardComponent, TextColorFromCardDirective],
+  exports: [ActionCardChipComponent, ActionCardComponent, TextColorFromCardDirective, WithCardPopoverComponent],
 })
 export class CardModule {}

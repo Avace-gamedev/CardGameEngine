@@ -14,6 +14,7 @@ import {
   ShieldEffectOnCharacterLogEntryView,
 } from '../../../api/pockedeck-battler-api-client';
 import { CurrentCombatService } from '../../current-combat.service';
+import { left } from '@popperjs/core';
 
 @Component({
   selector: 'app-card-played-log-entry',
@@ -114,6 +115,8 @@ export class CardPlayedLogEntryComponent {
   private getIdentity(character: CharacterInCombatView) {
     return this.currentCombatService.getCharacter(character.name, character.side)?.character.identity;
   }
+
+  protected readonly left = left;
 }
 
 interface CombatLogEffectGroup {

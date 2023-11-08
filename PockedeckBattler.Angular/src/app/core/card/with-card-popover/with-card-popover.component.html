@@ -1,0 +1,7 @@
+<div [stickyPopover]="cardTpl" [disablePopover]="disabled" [placement]="placement">
+  <ng-content></ng-content>
+</div>
+
+<ng-template #cardTpl>
+  <app-action-card [card]="card" [contentOnly]="true"></app-action-card>
+</ng-template>

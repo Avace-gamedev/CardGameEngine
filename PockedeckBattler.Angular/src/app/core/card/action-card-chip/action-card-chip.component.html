@@ -1,29 +1,25 @@
-<div
-  class="card p-1 hstack gap-1 user-select-none"
-  [class.small]="size === 'sm'"
-  [ngStyle]="{
-    backgroundColor: 'var(' + bgColorCssVariable + ')',
-    color: 'var(' + textColorCssVariable + ')'
-  }"
-  [stickyPopover]="enablePopoverDetails ? cardTpl : null"
-  [placement]="popoverDetailsPlacement"
->
-  <app-action-card-type-icon [card]="card"></app-action-card-type-icon>
+<app-with-card-popover [card]="card" [placement]="popoverDetailsPlacement" [disabled]="!enablePopoverDetails">
+  <div
+    class="card p-1 hstack gap-1 user-select-none"
+    [class.small]="size === 'sm'"
+    [ngStyle]="{
+      backgroundColor: 'var(' + bgColorCssVariable + ')',
+      color: 'var(' + textColorCssVariable + ')'
+    }"
+  >
+    <app-action-card-type-icon [card]="card"></app-action-card-type-icon>
 
-  <span class="text-truncate flex-fill" [title]="card?.name ?? '???'">
-    {{ card?.name ?? '???' }}
-  </span>
+    <span class="text-truncate flex-fill" [title]="card?.name ?? '???'">
+      {{ card?.name ?? '???' }}
+    </span>
 
-  <div class="vr"></div>
+    <div class="vr"></div>
 
-  <span class="hstack gap-1">
-    <app-action-points-icon size="sm"></app-action-points-icon>
-    {{ card?.apCost }}
-  </span>
+    <span class="hstack gap-1">
+      <app-action-points-icon size="sm"></app-action-points-icon>
+      {{ card?.apCost }}
+    </span>
 
-  <i class="bi bi-stopwatch" *ngIf="isTriggered"></i>
-</div>
-
-<ng-template #cardTpl>
-  <app-action-card [card]="card" [contentOnly]="true"></app-action-card>
-</ng-template>
+    <i class="bi bi-stopwatch" *ngIf="isTriggered"></i>
+  </div>
+</app-with-card-popover>

@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    name: Pockedeck Battler - Backend - Build and Test
+    name: Build and Test
     
     runs-on: ubuntu-latest
 

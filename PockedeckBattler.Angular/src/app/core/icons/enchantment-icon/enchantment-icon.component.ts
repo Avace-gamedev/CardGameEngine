@@ -3,7 +3,6 @@ import { EnchantmentView } from '../../../api/pockedeck-battler-api-client';
 import { AssetIcon } from '../asset-icon/asset-icons';
 import { AssetIconSize } from '../asset-icon/asset-icon.component';
 import { EnchantmentIconUtils } from './enchantment-icon-utils';
-import { Color } from '../../../shared/utils/colors';
 
 @Component({
   selector: 'app-enchantment-icon',
@@ -24,13 +23,13 @@ export class EnchantmentIconComponent {
   public size: AssetIconSize = 'md';
 
   @Input()
+  public noColor: boolean = false;
+
+  @Input()
   public pxOffsetX: number = 0;
 
   @Input()
   public pxOffsetY: number = 0;
-
-  @Input()
-  public color: Color | undefined;
 
   protected assetIcon: AssetIcon | undefined;
 

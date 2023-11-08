@@ -14,6 +14,7 @@ import { CharacterStatEffectLineComponent } from './passive-effect-line/characte
 import { AddEnchantmentEffectLineComponent } from './active-effect-line/add-enchantment-effect-line/add-enchantment-effect-line.component';
 import { StickyPopoverDirective } from '../../shared/directives/sticky-popover.directive';
 import { WithEnchantmentPopoverComponent } from './enchantment-popover/with-enchantment-popover.component';
+import { TextColorFromElementDirective } from './text-color-from-element.directive';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { WithEnchantmentPopoverComponent } from './enchantment-popover/with-ench
     CardStatEffectLineComponent,
     TriggeredEffectLineComponent,
     WithEnchantmentPopoverComponent,
+    TextColorFromElementDirective,
   ],
   imports: [SharedModule, IconsModule, NgbTooltip, NgbPopover, StickyPopoverDirective],
   exports: [

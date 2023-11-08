@@ -1,6 +1,6 @@
 <app-asset-icon
   icon="shield"
-  color="--shield-color"
+  [color]="noColor ? undefined : '--shield-color'"
   [size]="size"
   [pxOffsetX]="pxOffsetX"
   [pxOffsetY]="pxOffsetY"

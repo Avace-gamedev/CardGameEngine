@@ -10,6 +10,9 @@ export class ShieldIconComponent {
   public size: AssetIconSize = 'md';
 
   @Input()
+  public noColor: boolean = false;
+
+  @Input()
   public pxOffsetX: number = 0;
 
   @Input()

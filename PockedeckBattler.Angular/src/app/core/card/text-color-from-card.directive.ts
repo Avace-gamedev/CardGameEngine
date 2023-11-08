@@ -1,5 +1,5 @@
 import { Directive, HostBinding, Input } from '@angular/core';
-import { ActionCardView } from '../../api/pockedeck-battler-api-client';
+import { ActionCardView, DamageEffectView, Element } from '../../api/pockedeck-battler-api-client';
 import { ActionCardTypeUtils } from '../../shared/utils/action-card-type-utils';
 import { CardType } from '../../shared/utils/types';
 
@@ -33,7 +33,23 @@ export class TextColorFromCardDirective {
         this.elementClass = undefined;
         break;
       case CardType.Damage:
-        this.elementClass = 'damage-card-color';
+        switch ((this._card.mainEffect as DamageEffectView).element) {
+          case Element.Neutral:
+            this.elementClass = 'neutral-color';
+            break;
+          case Element.Fire:
+            this.elementClass = 'fire-color';
+            break;
+          case Element.Earth:
+            this.elementClass = 'earth-color';
+            break;
+          case Element.Water:
+            this.elementClass = 'water-color';
+            break;
+          case Element.Wind:
+            this.elementClass = 'wind-color';
+            break;
+        }
         break;
       case CardType.Heal:
         this.elementClass = 'heal-card-color';

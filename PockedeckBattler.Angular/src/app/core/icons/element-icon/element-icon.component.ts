@@ -18,8 +18,18 @@ export class ElementIconComponent {
   }
   private _element: Element | undefined;
 
+  @Input()
+  public noColor: boolean = false;
+
+  @Input()
+  public pxOffsetX: number = 0;
+
+  @Input()
+  public pxOffsetY: number = 0;
+
   protected icon: AssetIcon | undefined;
   protected tooltip: string | undefined;
+  protected cssColorClass: string | undefined;
 
   private update() {
     if (!this._element) {
@@ -45,6 +55,24 @@ export class ElementIconComponent {
         break;
       case Element.Wind:
         this.tooltip = 'Wind';
+        break;
+    }
+
+    switch (this._element) {
+      case Element.Neutral:
+        this.cssColorClass = 'neutral-color';
+        break;
+      case Element.Fire:
+        this.cssColorClass = 'fire-color';
+        break;
+      case Element.Earth:
+        this.cssColorClass = 'earth-color';
+        break;
+      case Element.Water:
+        this.cssColorClass = 'water-color';
+        break;
+      case Element.Wind:
+        this.cssColorClass = 'wind-color';
         break;
     }
   }

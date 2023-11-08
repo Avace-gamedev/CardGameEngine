@@ -4,6 +4,8 @@ import { ActiveEffectType } from '../../../shared/utils/types';
 import { AssetIcon } from '../../icons/asset-icon/asset-icons';
 import { ActiveEffectIconsUtils } from '../../icons/utils/active-effect-icons-utils';
 import { ActiveEffectTypeUtils } from '../../../shared/utils/active-effect-type-utils';
+import { Color } from '../../../shared/utils/colors';
+import { ActionCardTypeUtils } from '../../../shared/utils/action-card-type-utils';
 
 @Component({
   selector: 'app-action-card-type-icon',
@@ -20,8 +22,12 @@ export class ActionCardTypeIconComponent {
   }
   private _card: ActionCardView | undefined;
 
+  @Input()
+  public noColor: boolean = false;
+
   protected icon: AssetIcon | undefined;
   protected tooltip: string | undefined;
+  protected color: Color | undefined;
 
   private update() {
     if (!this._card) {
@@ -32,6 +38,7 @@ export class ActionCardTypeIconComponent {
 
     this.icon = ActiveEffectIconsUtils.getIcon(this._card.mainEffect);
     this.tooltip = this.getTooltip(this._card.mainEffect);
+    this.color = ActionCardTypeUtils.computeBgColor(this._card);
   }
 
   private getTooltip(effect: EffectView): string | undefined {

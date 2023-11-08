@@ -3,7 +3,7 @@ export enum CardType {
   Damage = 'damage',
   Heal = 'heal',
   Shield = 'shield',
-  Effect = 'effect',
+  Enchantment = 'enchantment',
 }
 
 export enum ActiveEffectType {

@@ -20,6 +20,7 @@ import { NgbPopover, NgbPopoverConfig } from '@ng-bootstrap/ng-bootstrap';
 @Directive({
   selector: '[stickyPopover]',
   exportAs: 'stickyPopover',
+  standalone: true,
 })
 export class StickyPopoverDirective extends NgbPopover implements OnInit, OnDestroy {
   @Input() stickyPopover: TemplateRef<any> | any;

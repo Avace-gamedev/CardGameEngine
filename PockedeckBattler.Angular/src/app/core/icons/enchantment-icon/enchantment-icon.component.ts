@@ -22,6 +22,15 @@ export class EnchantmentIconComponent {
   @Input()
   public size: AssetIconSize = 'md';
 
+  @Input()
+  public noColor: boolean = false;
+
+  @Input()
+  public pxOffsetX: number = 0;
+
+  @Input()
+  public pxOffsetY: number = 0;
+
   protected assetIcon: AssetIcon | undefined;
 
   private update() {

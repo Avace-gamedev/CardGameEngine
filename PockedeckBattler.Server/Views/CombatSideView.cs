@@ -24,8 +24,8 @@ public class CombatSideView
     public int DeckSize { get; init; }
 
     public CharacterCombatView? FrontCharacter { get; }
-
     public CharacterCombatView? BackCharacter { get; }
+    public CharacterCombatView[] DeadCharacters { get; init; } = Array.Empty<CharacterCombatView>();
 }
 
 public static class CombatSideViewMappingExtensions
@@ -35,7 +35,8 @@ public static class CombatSideViewMappingExtensions
         return new CombatSideView(playerName, side.Side, side.Ap, side.Front?.View(), side.Back?.View())
         {
             HandSize = side.Hand.Count,
-            DeckSize = side.Deck.Count
+            DeckSize = side.Deck.Count,
+            DeadCharacters = side.Dead.Select(c => c.View()).ToArray()
         };
     }
 }

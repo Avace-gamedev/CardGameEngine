@@ -1,0 +1,6 @@
+<div class="hstack gap-2 align-items-center" *ngIf="shieldReceived">
+  <span class="hstack gap-1">
+    <span class="shield-color">{{ shieldReceived.shield | sign }}</span>
+    <app-shield-icon size="sm" [pxOffsetY]="2"></app-shield-icon>
+  </span>
+</div>

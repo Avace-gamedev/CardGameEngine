@@ -1,1 +1,8 @@
-<app-asset-icon [icon]="icon" size="sm" [pxOffsetY]="2" [ngbTooltip]="tooltip"></app-asset-icon>
+<app-asset-icon
+  [class]="noColor ? undefined : cssColorClass"
+  [icon]="icon"
+  size="sm"
+  [pxOffsetX]="pxOffsetX"
+  [pxOffsetY]="pxOffsetY"
+  [ngbTooltip]="tooltip"
+></app-asset-icon>

@@ -1,0 +1,6 @@
+<app-with-enchantment-popover [enchantment]="enchantment" *ngIf="enchantment">
+  <span class="hstack gap-1">
+    <span>{{ enchantment.name }}</span>
+    <app-enchantment-icon [enchantment]="enchantment" size="sm" [noColor]="true" [pxOffsetY]="2"></app-enchantment-icon>
+  </span>
+</app-with-enchantment-popover>

@@ -1,1 +1,8 @@
-<app-asset-icon [icon]="assetIcon" [size]="size" *ngIf="assetIcon"></app-asset-icon>
+<app-asset-icon
+  [icon]="assetIcon"
+  [color]="noColor ? undefined : '--enchantment-color'"
+  [size]="size"
+  [pxOffsetX]="pxOffsetX"
+  [pxOffsetY]="pxOffsetY"
+  *ngIf="assetIcon"
+></app-asset-icon>

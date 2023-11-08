@@ -1,0 +1,6 @@
+<div class="hstack gap-2 align-items-center" *ngIf="healReceived">
+  <span class="hstack gap-1">
+    <span class="health-color">{{ healReceived.health | sign }}</span>
+    <app-health-icon size="sm" [pxOffsetY]="2"></app-health-icon>
+  </span>
+</div>

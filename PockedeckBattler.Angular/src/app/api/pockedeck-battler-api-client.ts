@@ -1940,6 +1940,7 @@ export class CombatSideView implements ICombatSideView {
     deckSize!: number;
     frontCharacter?: CharacterCombatView | undefined;
     backCharacter?: CharacterCombatView | undefined;
+    deadCharacters!: CharacterCombatView[];
 
     constructor(data?: ICombatSideView) {
         if (data) {
@@ -1947,6 +1948,9 @@ export class CombatSideView implements ICombatSideView {
                 if (data.hasOwnProperty(property))
                     (<any>this)[property] = (<any>data)[property];
             }
+        }
+        if (!data) {
+            this.deadCharacters = [];
         }
     }
 
@@ -1959,6 +1963,11 @@ export class CombatSideView implements ICombatSideView {
             this.deckSize = _data["deckSize"];
             this.frontCharacter = _data["frontCharacter"] ? CharacterCombatView.fromJS(_data["frontCharacter"]) : <any>undefined;
             this.backCharacter = _data["backCharacter"] ? CharacterCombatView.fromJS(_data["backCharacter"]) : <any>undefined;
+            if (Array.isArray(_data["deadCharacters"])) {
+                this.deadCharacters = [] as any;
+                for (let item of _data["deadCharacters"])
+                    this.deadCharacters!.push(CharacterCombatView.fromJS(item));
+            }
         }
     }
 
@@ -1978,6 +1987,11 @@ export class CombatSideView implements ICombatSideView {
         data["deckSize"] = this.deckSize;
         data["frontCharacter"] = this.frontCharacter ? this.frontCharacter.toJSON() : <any>undefined;
         data["backCharacter"] = this.backCharacter ? this.backCharacter.toJSON() : <any>undefined;
+        if (Array.isArray(this.deadCharacters)) {
+            data["deadCharacters"] = [];
+            for (let item of this.deadCharacters)
+                data["deadCharacters"].push(item.toJSON());
+        }
         return data;
     }
 }
@@ -1990,6 +2004,7 @@ export interface ICombatSideView {
     deckSize: number;
     frontCharacter?: CharacterCombatView | undefined;
     backCharacter?: CharacterCombatView | undefined;
+    deadCharacters: CharacterCombatView[];
 }
 
 export class PlayerSideView extends CombatSideView implements IPlayerSideView {
@@ -2875,7 +2890,7 @@ export interface IShieldEffectOnCharacterLogEntryView extends IEffectOnCharacter
 }
 
 export class ShieldReceived implements IShieldReceived {
-    health!: number;
+    shield!: number;
 
     constructor(data?: IShieldReceived) {
         if (data) {
@@ -2888,7 +2903,7 @@ export class ShieldReceived implements IShieldReceived {
 
     init(_data?: any) {
         if (_data) {
-            this.health = _data["health"];
+            this.shield = _data["shield"];
         }
     }
 
@@ -2901,13 +2916,13 @@ export class ShieldReceived implements IShieldReceived {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["health"] = this.health;
+        data["shield"] = this.shield;
         return data;
     }
 }
 
 export interface IShieldReceived {
-    health: number;
+    shield: number;
 }
 
 export class AddEnchantmentEffectOnCharacterLogEntryView extends EffectOnCharacterLogEntryView implements IAddEnchantmentEffectOnCharacterLogEntryView {

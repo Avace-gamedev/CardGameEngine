@@ -7,9 +7,9 @@ export class ElementIconsUtils {
       case Element.Neutral:
         return 'yin-yang';
       case Element.Fire:
-        return 'three-leaves';
-      case Element.Earth:
         return 'fire';
+      case Element.Earth:
+        return 'three-leaves';
       case Element.Water:
         return 'water-drop';
       case Element.Wind:

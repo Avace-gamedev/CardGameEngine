@@ -9,6 +9,9 @@ import { ActionCardComponent } from './action-card/action-card.component';
 import { CardDamageComponent } from './card-damage/card-damage.component';
 import { IconsModule } from '../icons/icons.module';
 import { SharedModule } from '../../shared/shared.module';
+import { TextColorFromCardDirective } from './text-color-from-card.directive';
+import { StickyPopoverDirective } from '../../shared/directives/sticky-popover.directive';
+import { WithCardPopoverComponent } from './with-card-popover/with-card-popover.component';
 
 @NgModule({
   declarations: [
@@ -17,8 +20,16 @@ import { SharedModule } from '../../shared/shared.module';
     CardDamageComponent,
     ActionCardComponent,
     ActionCardTargetLineComponent,
+    TextColorFromCardDirective,
+    WithCardPopoverComponent,
   ],
-  imports: [CommonModule, IconsModule, EffectModule, NgbPopover, NgbTooltip, SharedModule],
-  exports: [ActionCardChipComponent, ActionCardComponent],
+  imports: [CommonModule, IconsModule, EffectModule, NgbPopover, NgbTooltip, SharedModule, StickyPopoverDirective],
+  exports: [
+    ActionCardChipComponent,
+    ActionCardComponent,
+    TextColorFromCardDirective,
+    WithCardPopoverComponent,
+    ActionCardTypeIconComponent,
+  ],
 })
 export class CardModule {}

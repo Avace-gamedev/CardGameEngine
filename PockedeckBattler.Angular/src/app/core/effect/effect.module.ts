@@ -12,6 +12,8 @@ import { SharedModule } from '../../shared/shared.module';
 import { CardStatEffectLineComponent } from './passive-effect-line/card-stat-effect-line/card-stat-effect-line.component';
 import { CharacterStatEffectLineComponent } from './passive-effect-line/character-stat-effect-line/character-stat-effect-line.component';
 import { AddEnchantmentEffectLineComponent } from './active-effect-line/add-enchantment-effect-line/add-enchantment-effect-line.component';
+import { StickyPopoverDirective } from '../../shared/directives/sticky-popover.directive';
+import { WithEnchantmentPopoverComponent } from './with-enchantment-popover/with-enchantment-popover.component';
 
 @NgModule({
   declarations: [
@@ -25,13 +27,16 @@ import { AddEnchantmentEffectLineComponent } from './active-effect-line/add-ench
     CharacterStatEffectLineComponent,
     CardStatEffectLineComponent,
     TriggeredEffectLineComponent,
+    WithEnchantmentPopoverComponent,
   ],
-  imports: [SharedModule, IconsModule, NgbTooltip, NgbPopover],
+  imports: [SharedModule, IconsModule, NgbTooltip, NgbPopover, StickyPopoverDirective],
   exports: [
     ActiveEffectLineComponent,
     PassiveEffectLineComponent,
     TriggeredEffectLineComponent,
     AddEnchantmentEffectLineComponent,
+    ShieldEffectLineComponent,
+    WithEnchantmentPopoverComponent,
   ],
 })
 export class EffectModule {}

@@ -1,4 +1,4 @@
-name: Angular - Pockedeck Battler
+name: Frontend - Pockedeck Battler
 
 on:
   pull_request:
@@ -6,6 +6,7 @@ on:
 
 jobs:
   build:
+    name: Pockedeck Battler - Frontend - Build and Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

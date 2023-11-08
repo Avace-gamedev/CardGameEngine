@@ -78,7 +78,7 @@ public class ActionCard : Card
         params PassiveEffect[] effects
     )
     {
-        return new ActionCard(name, description, apCost, target, new AddEnchantmentEffect(Enchantment.CreateInstance(name, effects)));
+        return new ActionCard(name, description, apCost, target, new AddEnchantmentEffect(Enchantment.CreateInstance(enchantmentName, effects)));
     }
 
     public static ActionCard AddTriggered(
@@ -90,7 +90,7 @@ public class ActionCard : Card
         params TriggeredEffect[] effects
     )
     {
-        return new ActionCard(name, description, apCost, target, new AddEnchantmentEffect(Enchantment.CreateInstance(name, effects)));
+        return new ActionCard(name, description, apCost, target, new AddEnchantmentEffect(Enchantment.CreateInstance(enchantmentName, effects)));
     }
 
     public static ActionCard AddEnchantment(string name, string? description, int apCost, ActionCardTarget target, AddEnchantmentEffect enchantmentEffect)

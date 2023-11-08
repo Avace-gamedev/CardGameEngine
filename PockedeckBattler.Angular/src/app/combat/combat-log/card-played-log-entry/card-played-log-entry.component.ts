@@ -67,22 +67,26 @@ export class CardPlayedLogEntryComponent implements OnInit {
         continue;
       }
 
+      if (currentEffect) {
+        if (this.effectEquals(effect, currentEffect)) {
+          currentTargets.push(effectOnCharacter.character);
+        } else {
+          this.effects.push({
+            effect: currentEffect,
+            targets: currentTargets
+              .map((c) => ({ character: c, identity: this.getCharacterState(c) }))
+              .filter((c) => !!c.identity)
+              .map((c) => ({ character: c.character, identity: c.identity! }))
+              .map((c) => ({ ...c.character, ...c!.identity })),
+          });
+          currentEffect = undefined;
+          currentTargets = [];
+        }
+      }
+
       if (!currentEffect) {
         currentEffect = effect;
         currentTargets = [effectOnCharacter.character];
-      } else if (this.effectEquals(effect, currentEffect)) {
-        currentTargets.push(effectOnCharacter.character);
-      } else {
-        this.effects.push({
-          effect: currentEffect,
-          targets: currentTargets
-            .map((c) => ({ character: c, identity: this.getCharacterState(c) }))
-            .filter((c) => !!c.identity)
-            .map((c) => ({ character: c.character, identity: c.identity! }))
-            .map((c) => ({ ...c.character, ...c!.identity })),
-        });
-        currentEffect = undefined;
-        currentTargets = [];
       }
     }
 

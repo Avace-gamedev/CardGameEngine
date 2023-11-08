@@ -13,7 +13,7 @@ import { CardStatEffectLineComponent } from './passive-effect-line/card-stat-eff
 import { CharacterStatEffectLineComponent } from './passive-effect-line/character-stat-effect-line/character-stat-effect-line.component';
 import { AddEnchantmentEffectLineComponent } from './active-effect-line/add-enchantment-effect-line/add-enchantment-effect-line.component';
 import { StickyPopoverDirective } from '../../shared/directives/sticky-popover.directive';
-import { WithEnchantmentPopoverComponent } from './enchantment-popover/with-enchantment-popover.component';
+import { WithEnchantmentPopoverComponent } from './with-enchantment-popover/with-enchantment-popover.component';
 import { TextColorFromElementDirective } from './text-color-from-element.directive';
 
 @NgModule({

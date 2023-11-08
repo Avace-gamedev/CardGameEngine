@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using CardGame.Engine.Combats;
 using CardGame.Engine.Combats.Characters;
 using PockedeckBattler.Server.Views.Effects.Enchantments;
 
@@ -11,6 +10,7 @@ public class CharacterCombatView
     {
         Character = character;
         Health = health;
+        IsDead = Health <= 0;
         Shield = shield;
         Enchantments = enchantments;
     }
@@ -22,6 +22,8 @@ public class CharacterCombatView
 
     public int Shield { get; }
 
+    public bool IsDead { get; init; }
+
     [Required]
     public EnchantmentInstanceView[] Enchantments { get; }
 }
@@ -30,6 +32,9 @@ public static class CharacterCombatViewMappingExtensions
 {
     public static CharacterCombatView View(this CharacterCombatState character)
     {
-        return new CharacterCombatView(character.Character.View(), character.Health, character.Shield, character.Enchantments.Select(e => e.View()).ToArray());
+        return new CharacterCombatView(character.Character.View(), character.Health, character.Shield, character.Enchantments.Select(e => e.View()).ToArray())
+        {
+            IsDead = character.IsDead
+        };
     }
 }

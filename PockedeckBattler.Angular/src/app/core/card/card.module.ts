@@ -24,6 +24,12 @@ import { WithCardPopoverComponent } from './with-card-popover/with-card-popover.
     WithCardPopoverComponent,
   ],
   imports: [CommonModule, IconsModule, EffectModule, NgbPopover, NgbTooltip, SharedModule, StickyPopoverDirective],
-  exports: [ActionCardChipComponent, ActionCardComponent, TextColorFromCardDirective, WithCardPopoverComponent],
+  exports: [
+    ActionCardChipComponent,
+    ActionCardComponent,
+    TextColorFromCardDirective,
+    WithCardPopoverComponent,
+    ActionCardTypeIconComponent,
+  ],
 })
 export class CardModule {}

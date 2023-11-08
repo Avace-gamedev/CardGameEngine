@@ -1,22 +1,23 @@
 <div *ngIf="entry">
   <div class="hstack">
     <div class="hstack gap-1">
-      <span class="fw-bold" (mouseenter)="highlight.emit(entry.source)" (mouseleave)="highlight.emit(undefined)">
-        {{ source?.displayName }}
+      <span class="fw-bold" (mouseenter)="highlight.emit(source)" (mouseleave)="highlight.emit(undefined)">
+        {{ source?.character?.identity?.displayName }}
       </span>
       used
       <app-with-card-popover [card]="entry.card" [placement]="['left', 'right']">
         <span class="fw-bold" [textColorFromCard]="entry.card">{{ entry.card.name }}</span>
       </app-with-card-popover>
+      <app-action-card-type-icon [card]="entry.card"></app-action-card-type-icon>
     </div>
     .
   </div>
   <div class="hstack flex-wrap" *ngFor="let effect of effects">
     <ng-container *ngFor="let target of effect.targets; let i = index">
       <ng-container *ngIf="i > 0">,&nbsp;</ng-container>
-      <span class="fw-bold" (mouseenter)="highlight.emit(target)" (mouseleave)="highlight.emit(undefined)">{{
-        target.displayName
-      }}</span>
+      <span class="fw-bold" (mouseenter)="highlight.emit(target)" (mouseleave)="highlight.emit(undefined)">
+        {{ target.character.identity.displayName }}
+      </span>
     </ng-container>
     <span style="width: 0.5rem"></span>
     <ng-container [ngSwitch]="effect.effect.type">

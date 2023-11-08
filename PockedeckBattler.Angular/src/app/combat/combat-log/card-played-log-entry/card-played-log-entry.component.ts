@@ -1,13 +1,13 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import {
   AddEnchantmentEffectOnCharacterLogEntryView,
   CardPlayedLogEntryView,
-  CharacterIdentity,
   CharacterInCombatView,
+  CombatSide,
   DamageEffectOnCharacterLogEntryView,
   EffectOnCharacterLogEntryView,
   HealEffectOnCharacterLogEntryView,
-  ICharacterIdentity,
+  ICharacterCombatView,
   ICharacterInCombatView,
   IDamageReceived,
   IEnchantmentView,
@@ -22,7 +22,7 @@ import { left } from '@popperjs/core';
   selector: 'app-card-played-log-entry',
   templateUrl: './card-played-log-entry.component.html',
 })
-export class CardPlayedLogEntryComponent {
+export class CardPlayedLogEntryComponent implements OnInit {
   @Input()
   get entry(): CardPlayedLogEntryView | undefined {
     return this._entry;
@@ -40,10 +40,15 @@ export class CardPlayedLogEntryComponent {
     ICharacterInCombatView | undefined
   >();
 
-  protected source: CharacterIdentity | undefined;
+  protected source: (ICharacterCombatView & ICharacterInCombatView) | undefined;
   protected effects: CombatLogEffectGroup[] = [];
+  protected playerSide: CombatSide = CombatSide.None;
 
   constructor(private currentCombatService: CurrentCombatService) {}
+
+  ngOnInit() {
+    this.playerSide = this.currentCombatService.get()?.player.side ?? CombatSide.None;
+  }
 
   private update() {
     this.effects = [];
@@ -52,7 +57,7 @@ export class CardPlayedLogEntryComponent {
       return;
     }
 
-    this.source = this.getIdentity(this._entry.source);
+    this.source = this.getCharacterState(this._entry.source);
 
     let currentEffect: Effect | undefined;
     let currentTargets: CharacterInCombatView[] = [];
@@ -71,7 +76,7 @@ export class CardPlayedLogEntryComponent {
         this.effects.push({
           effect: currentEffect,
           targets: currentTargets
-            .map((c) => ({ character: c, identity: this.getIdentity(c) }))
+            .map((c) => ({ character: c, identity: this.getCharacterState(c) }))
             .filter((c) => !!c.identity)
             .map((c) => ({ character: c.character, identity: c.identity! }))
             .map((c) => ({ ...c.character, ...c!.identity })),
@@ -85,7 +90,7 @@ export class CardPlayedLogEntryComponent {
       this.effects.push({
         effect: currentEffect,
         targets: currentTargets
-          .map((c) => ({ character: c, identity: this.getIdentity(c) }))
+          .map((c) => ({ character: c, identity: this.getCharacterState(c) }))
           .filter((c) => !!c.identity)
           .map((c) => ({ character: c.character, identity: c.identity! }))
           .map((c) => ({ ...c.character, ...c!.identity })),
@@ -121,15 +126,22 @@ export class CardPlayedLogEntryComponent {
     return undefined;
   }
 
-  private getIdentity(character: CharacterInCombatView) {
-    return this.currentCombatService.getCharacter(character.name, character.side)?.character.identity;
+  private getCharacterState(
+    character: CharacterInCombatView
+  ): (ICharacterCombatView & ICharacterInCombatView) | undefined {
+    const state = this.currentCombatService.getCharacter(character.name, character.side);
+    if (!state) {
+      return undefined;
+    }
+
+    return { ...character, ...state };
   }
 
   protected readonly left = left;
 }
 
 interface CombatLogEffectGroup {
-  readonly targets: readonly (ICharacterIdentity & ICharacterInCombatView)[];
+  readonly targets: readonly (ICharacterCombatView & ICharacterInCombatView)[];
   readonly effect: Effect;
 }
 

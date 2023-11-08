@@ -9,6 +9,10 @@ export class CurrentCombatService {
     this.combat = combat;
   }
 
+  get() {
+    return this.combat;
+  }
+
   public getCharacter(name: string, side: CombatSide) {
     if (!this.combat || side === CombatSide.None) {
       return undefined;
@@ -24,6 +28,6 @@ export class CurrentCombatService {
       ? side.frontCharacter
       : side.backCharacter?.character.identity.name === name
       ? side.backCharacter
-      : undefined;
+      : side.deadCharacters.find((c) => c.character.identity.name === name);
   }
 }

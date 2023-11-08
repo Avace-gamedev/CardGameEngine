@@ -9,6 +9,7 @@ namespace CardGame.Engine.Combats;
 
 public class CombatSideState
 {
+    readonly List<CharacterCombatState> _dead = new();
     readonly List<ActionCardInstance> _deck;
     readonly List<ActionCardInstance> _hand;
     readonly Random _random;
@@ -43,6 +44,7 @@ public class CombatSideState
 
     public CharacterCombatState? Front { get; private set; }
     public CharacterCombatState? Back { get; private set; }
+    public IReadOnlyList<CharacterCombatState> Dead => _dead;
 
     public IReadOnlyList<ActionCardInstance> Hand => _hand;
     public IReadOnlyList<ActionCardInstance> Deck => _deck;
@@ -116,7 +118,7 @@ public class CombatSideState
         CharacterPositionChanged?.Invoke(this, EventArgs.Empty);
     }
 
-    internal void RemoveCharacterAndItsCards(CombatPosition position)
+    internal void RemoveDeadCharacterAndItsCards(CombatPosition position)
     {
         switch (position)
         {
@@ -130,6 +132,7 @@ public class CombatSideState
                 Front = null;
 
                 DiscardCardsOfCharacter(front.Character);
+                _dead.Add(front);
                 CharacterRemoved?.Invoke(this, front);
 
                 if (Back != null)
@@ -150,6 +153,7 @@ public class CombatSideState
                 Back = null;
 
                 DiscardCardsOfCharacter(back.Character);
+                _dead.Add(back);
                 CharacterRemoved?.Invoke(this, back);
 
                 break;

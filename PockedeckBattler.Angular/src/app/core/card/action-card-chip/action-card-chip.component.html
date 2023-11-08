@@ -7,7 +7,7 @@
       color: 'var(' + textColorCssVariable + ')'
     }"
   >
-    <app-action-card-type-icon [card]="card"></app-action-card-type-icon>
+    <app-action-card-type-icon [card]="card" [noColor]="true"></app-action-card-type-icon>
 
     <span class="text-truncate flex-fill" [title]="card?.name ?? '???'">
       {{ card?.name ?? '???' }}

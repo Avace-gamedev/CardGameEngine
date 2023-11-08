@@ -29,7 +29,8 @@ public static class PlayerSideViewMappingExtensions
     {
         return new PlayerSideView(playerName, side.Side, side.Ap, side.Hand.Select(c => c.ViewWithModifiers()).ToArray(), side.Front?.View(), side.Back?.View())
         {
-            DeckSize = side.Deck.Count
+            DeckSize = side.Deck.Count,
+            DeadCharacters = side.Dead.Select(c => c.View()).ToArray()
         };
     }
 }

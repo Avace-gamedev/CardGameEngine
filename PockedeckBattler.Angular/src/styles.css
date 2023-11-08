@@ -26,15 +26,15 @@ body {
   --enemy-color: #c6303e;
 
   --neutral-color: black;
-  --fire-color: #eb3b17;
+  --fire-color: #ff6a00;
   --earth-color: #70360a;
-  --water-color: #0d6efd;
+  --water-color: #0dcaf0;
   --wind-color: #75ef2a;
 
   --text-on-neutral-color: white;
   --text-on-fire-color: black;
   --text-on-earth-color: white;
-  --text-on-water-color: white;
+  --text-on-water-color: black;
   --text-on-wind-color: black;
 }
 

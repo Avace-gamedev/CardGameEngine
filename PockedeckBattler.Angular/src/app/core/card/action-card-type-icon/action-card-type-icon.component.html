@@ -1,2 +1,9 @@
-<app-asset-icon [icon]="icon" size="sm" [pxOffsetY]="2" [ngbTooltip]="tooltip" *ngIf="icon"></app-asset-icon>
+<app-asset-icon
+  [icon]="icon"
+  size="sm"
+  [color]="noColor ? undefined : color"
+  [pxOffsetY]="2"
+  [ngbTooltip]="tooltip"
+  *ngIf="icon"
+></app-asset-icon>
 <i class="bi bi-dot" [ngbTooltip]="tooltip" *ngIf="!icon"></i>

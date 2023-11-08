@@ -2,10 +2,10 @@ namespace CardGame.Engine.Combats.Abstractions;
 
 public class ShieldReceived
 {
-    public ShieldReceived(int health)
+    public ShieldReceived(int shield)
     {
-        Health = health;
+        Shield = shield;
     }
 
-    public int Health { get; }
+    public int Shield { get; }
 }

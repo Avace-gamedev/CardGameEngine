@@ -1,0 +1,10 @@
+<div class="hstack gap-2 align-items-center" *ngIf="damageReceived">
+  <span class="hstack gap-1" *ngIf="damageReceived.shield > 0">
+    <span class="shield-color">{{ -damageReceived.shield | sign }}</span>
+    <app-shield-icon size="sm" [pxOffsetY]="2"></app-shield-icon>
+  </span>
+  <span class="hstack gap-1" *ngIf="damageReceived.health > 0">
+    <span class="health-color">{{ -damageReceived.health | sign }}</span>
+    <app-health-icon size="sm" [pxOffsetY]="2"></app-health-icon>
+  </span>
+</div>

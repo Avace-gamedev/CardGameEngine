@@ -8,19 +8,48 @@ body {
   --damage-card-color: #c6303e;
   --heal-card-color: #13795b;
   --shield-card-color: #0d6efd;
-  --effect-card-color: #4c0bce;
+  --enchantment-card-color: #4c0bce;
   --other-card-color: #6c757d;
 
   --text-on-damage-card-color: #fff;
   --text-on-heal-card-color: #fff;
   --text-on-shield-card-color: #fff;
-  --text-on-effect-card-color: #fff;
+  --text-on-enchantment-card-color: #fff;
   --text-on-other-card-color: #fff;
 
   --health-color: #c6303e;
   --shield-color: #0d6efd;
+  --enchantment-color: #4c0bce;
 
   --self-color: #13795b;
   --ally-color: #0d6efd;
   --enemy-color: #c6303e;
+}
+
+.damage-card-color {
+  color: var(--damage-card-color);
+}
+
+.heal-card-color {
+  color: var(--heal-card-color);
+}
+
+.shield-card-color {
+  color: var(--shield-card-color);
+}
+
+.enchantment-card-color {
+  color: var(--enchantment-card-color);
+}
+
+.shield-color {
+  color: var(--shield-color);
+}
+
+.health-color {
+  color: var(--health-color);
+}
+
+.enchantment-color {
+  color: var(--enchantment-color);
 }

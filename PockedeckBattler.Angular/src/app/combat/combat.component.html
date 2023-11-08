@@ -1,38 +1,43 @@
-<div class="h-100 container-lg vstack" *ngIf="combat">
-  <div [ngStyle]="{ 'height.%': 35 }">
-    <app-combat-side-common-elements
-      [combat]="combat"
-      [side]="combat.opponent"
-      [isAi]="combat.opponentIsAi"
-      [highlightEnemies]="enemyTargets"
-      [invert]="true"
-    ></app-combat-side-common-elements>
+<div class="h-100 w-100 hstack" *ngIf="combat">
+  <div class="h-100 flex-fill vstack">
+    <div [ngStyle]="{ 'height.%': 35 }">
+      <app-combat-side-common-elements
+        [combat]="combat"
+        [side]="combat.opponent"
+        [isAi]="combat.opponentIsAi"
+        [highlightEnemies]="enemyTargets"
+        [invert]="true"
+      ></app-combat-side-common-elements>
+    </div>
+
+    <hr />
+
+    <app-combat-common-elements [combat]="combat"></app-combat-common-elements>
+
+    <hr />
+
+    <div [ngStyle]="{ 'height.%': 35 }">
+      <app-combat-side-common-elements
+        [combat]="combat"
+        [side]="combat.player"
+        [isAi]="combat.playerIsAi"
+        [highlightAllies]="allyTargets"
+        [highlightSource]="source"
+      ></app-combat-side-common-elements>
+    </div>
+
+    <div class="flex-fill">
+      <app-player-side-elements
+        [combat]="combat"
+        [disabled]="combat.currentSide !== combat.player.side || combat.over"
+        (play)="play($event)"
+        (endTurn)="endTurn()"
+        (hover)="hoverCard($event)"
+      >
+      </app-player-side-elements>
+    </div>
   </div>
-
-  <hr />
-
-  <app-combat-common-elements [combat]="combat"></app-combat-common-elements>
-
-  <hr />
-
-  <div [ngStyle]="{ 'height.%': 35 }">
-    <app-combat-side-common-elements
-      [combat]="combat"
-      [side]="combat.player"
-      [isAi]="combat.playerIsAi"
-      [highlightAllies]="allyTargets"
-      [highlightSource]="source"
-    ></app-combat-side-common-elements>
-  </div>
-
-  <div class="flex-fill">
-    <app-player-side-elements
-      [combat]="combat"
-      [disabled]="combat.currentSide !== combat.player.side || combat.over"
-      (play)="play($event)"
-      (endTurn)="endTurn()"
-      (hover)="hoverCard($event)"
-    >
-    </app-player-side-elements>
+  <div class="h-100 w-25">
+    <app-combat-log [log]="combat.log"></app-combat-log>
   </div>
 </div>

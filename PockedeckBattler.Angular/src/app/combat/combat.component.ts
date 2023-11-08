@@ -10,10 +10,12 @@ import {
 import { SignalRService } from '../api/signal-r/signal-r.service';
 import { IdentityService } from '../core/authentication/services/identity.service';
 import { ActionCardTargetUtils } from './utils/utils';
+import { CurrentCombatService } from './current-combat.service';
 
 @Component({
   selector: 'app-combat',
   templateUrl: './combat.component.html',
+  providers: [CurrentCombatService],
 })
 export class CombatComponent implements OnInit {
   protected combat: PlayerCombatView | undefined;
@@ -26,7 +28,8 @@ export class CombatComponent implements OnInit {
     private signalrService: SignalRService,
     private combatsService: CombatsService,
     private activatedRoute: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private currentCombatService: CurrentCombatService
   ) {}
 
   ngOnInit() {
@@ -34,11 +37,11 @@ export class CombatComponent implements OnInit {
 
     this.signalrService
       .listen<PlayerCombatView>('combats', 'CombatUpdated', PlayerCombatView.fromJS)
-      .subscribe((combat) => (this.combat = combat));
+      .subscribe((combat) => this.setCombat(combat));
 
     this.signalrService
       .listen<PlayerCombatView>('combats', 'CombatEnded', PlayerCombatView.fromJS)
-      .subscribe((combat) => (this.combat = combat));
+      .subscribe((combat) => this.setCombat(combat));
 
     this.activatedRoute.paramMap
       .pipe(
@@ -56,7 +59,7 @@ export class CombatComponent implements OnInit {
           return from(this.router.to404().then((r) => undefined));
         }),
         filter(Boolean),
-        map((combat) => (this.combat = combat))
+        map((combat) => this.setCombat(combat))
       )
       .subscribe();
   }
@@ -146,6 +149,11 @@ export class CombatComponent implements OnInit {
         }
         break;
     }
+  }
+
+  private setCombat(combat: PlayerCombatView) {
+    this.combat = combat;
+    this.currentCombatService.set(combat);
   }
 
   protected readonly CombatSide = CombatSide;

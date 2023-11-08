@@ -30,10 +30,10 @@ export class ActionCardTypeUtils {
         if (types.length > 0 && types.every((t) => t === types[0])) {
           return types[0];
         } else {
-          return CardType.Effect;
+          return CardType.Enchantment;
         }
       case ActiveEffectType.AddEnchantment:
-        return CardType.Effect;
+        return CardType.Enchantment;
     }
   }
 
@@ -49,8 +49,8 @@ export class ActionCardTypeUtils {
         return '--heal-card-color';
       case CardType.Shield:
         return '--shield-card-color';
-      case CardType.Effect:
-        return '--effect-card-color';
+      case CardType.Enchantment:
+        return '--enchantment-card-color';
     }
   }
 
@@ -66,8 +66,8 @@ export class ActionCardTypeUtils {
         return '--text-on-heal-card-color';
       case CardType.Shield:
         return '--text-on-shield-card-color';
-      case CardType.Effect:
-        return '--text-on-effect-card-color';
+      case CardType.Enchantment:
+        return '--text-on-enchantment-card-color';
     }
   }
 }

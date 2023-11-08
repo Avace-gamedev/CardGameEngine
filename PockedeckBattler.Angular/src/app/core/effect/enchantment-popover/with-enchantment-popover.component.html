@@ -1,0 +1,17 @@
+<div [stickyPopover]="bodyTpl" [popoverTitle]="titleTpl" [disablePopover]="disabled">
+  <ng-content></ng-content>
+</div>
+
+<ng-template #titleTpl>
+  <ng-container *ngIf="enchantment">
+    {{ enchantment.name ?? '???' }}
+  </ng-container>
+</ng-template>
+
+<ng-template #bodyTpl>
+  <ng-container *ngIf="enchantment">
+    <app-passive-effect-line [effect]="passive" *ngFor="let passive of enchantment.passive"> </app-passive-effect-line>
+    <app-triggered-effect-line [effect]="triggered" *ngFor="let triggered of enchantment.triggered">
+    </app-triggered-effect-line>
+  </ng-container>
+</ng-template>

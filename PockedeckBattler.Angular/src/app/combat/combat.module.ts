@@ -22,6 +22,13 @@ import { PassiveEffectInstanceLineComponent } from './combat-character-img/chara
 import { CombatCommonElementsComponent } from './combat-common-elements/combat-common-elements.component';
 import { EnchantmentEffectInstanceComponent } from './combat-character-img/character-combat-effects/enchantment-effect-instance/enchantment-effect-instance.component';
 import { TriggeredEffectInstanceLineComponent } from './combat-character-img/character-combat-effects/triggered-effect-instance-line/triggered-effect-instance-line.component';
+import { CombatLogComponent } from './combat-log/combat-log.component';
+import { CardPlayedLogEntryComponent } from './combat-log/card-played-log-entry/card-played-log-entry.component';
+import { DamageReceivedComponent } from './combat-log/damage-received/damage-received.component';
+import { ShieldReceivedComponent } from './combat-log/shield-received/shield-received.component';
+import { HealReceivedComponent } from './combat-log/heal-received/heal-received.component';
+import { EnchantmentReceivedComponent } from './combat-log/enchantment-received/enchantment-received.component';
+import { StickyPopoverDirective } from '../shared/directives/sticky-popover.directive';
 
 @NgModule({
   declarations: [
@@ -41,6 +48,12 @@ import { TriggeredEffectInstanceLineComponent } from './combat-character-img/cha
     TriggeredEffectInstanceLineComponent,
     CombatCommonElementsComponent,
     EnchantmentEffectInstanceComponent,
+    CombatLogComponent,
+    CardPlayedLogEntryComponent,
+    DamageReceivedComponent,
+    ShieldReceivedComponent,
+    HealReceivedComponent,
+    EnchantmentReceivedComponent,
   ],
   imports: [
     CommonModule,
@@ -52,6 +65,7 @@ import { TriggeredEffectInstanceLineComponent } from './combat-character-img/cha
     NgbPopover,
     NgbAlert,
     GenericUiModule,
+    StickyPopoverDirective,
   ],
 })
 export class CombatModule {}

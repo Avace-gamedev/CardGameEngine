@@ -8,6 +8,9 @@ import { ActionPointsIconComponent } from './action-points-icon/action-points-ic
 import { CharacterStatsEffectIconComponent } from './stat-effect-icon/character-stats-effect-icon.component';
 import { CardStatsEffectIconComponent } from './stat-effect-icon/card-stats-effect-icon.component';
 import { EnchantmentIconComponent } from './enchantment-icon/enchantment-icon.component';
+import { ShieldIconComponent } from './shield-icon/shield-icon.component';
+import { HealthIconComponent } from './health-icon/health-icon.component';
+import { EffectIconComponent } from './effect-icon/effect-icon.component';
 
 @NgModule({
   declarations: [
@@ -18,6 +21,9 @@ import { EnchantmentIconComponent } from './enchantment-icon/enchantment-icon.co
     CharacterStatsEffectIconComponent,
     CardStatsEffectIconComponent,
     EnchantmentIconComponent,
+    ShieldIconComponent,
+    HealthIconComponent,
+    EffectIconComponent,
   ],
   imports: [CommonModule, NgbTooltip, NgOptimizedImage],
   exports: [
@@ -27,6 +33,10 @@ import { EnchantmentIconComponent } from './enchantment-icon/enchantment-icon.co
     AssetIconComponent,
     CharacterStatsEffectIconComponent,
     CardStatsEffectIconComponent,
+    ShieldIconComponent,
+    HealthIconComponent,
+    EffectIconComponent,
+    EnchantmentIconComponent,
   ],
 })
 export class IconsModule {}

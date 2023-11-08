@@ -16,6 +16,7 @@ export const assetIcons = [
   'galaxy',
   'shield',
   'heal',
+  'heart',
   'heart-shield',
   'healing-shield',
   'health-increase',
@@ -34,5 +35,6 @@ export const assetIcons = [
   'duration',
   'vibrating-shield',
   'yin-yang',
+  'round-star',
 ] as const;
 export type AssetIcon = (typeof assetIcons)[number];

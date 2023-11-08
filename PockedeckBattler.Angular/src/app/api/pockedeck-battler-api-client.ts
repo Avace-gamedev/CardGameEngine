@@ -2875,7 +2875,7 @@ export interface IShieldEffectOnCharacterLogEntryView extends IEffectOnCharacter
 }
 
 export class ShieldReceived implements IShieldReceived {
-    health!: number;
+    shield!: number;
 
     constructor(data?: IShieldReceived) {
         if (data) {
@@ -2888,7 +2888,7 @@ export class ShieldReceived implements IShieldReceived {
 
     init(_data?: any) {
         if (_data) {
-            this.health = _data["health"];
+            this.shield = _data["shield"];
         }
     }
 
@@ -2901,13 +2901,13 @@ export class ShieldReceived implements IShieldReceived {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["health"] = this.health;
+        data["shield"] = this.shield;
         return data;
     }
 }
 
 export interface IShieldReceived {
-    health: number;
+    shield: number;
 }
 
 export class AddEnchantmentEffectOnCharacterLogEntryView extends EffectOnCharacterLogEntryView implements IAddEnchantmentEffectOnCharacterLogEntryView {

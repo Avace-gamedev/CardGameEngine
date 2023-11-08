@@ -11,7 +11,7 @@ const isCssVarColor = (color: Color): color is CssVarColor => color.startsWith('
 
 export const getCssColor = (color: Color): string => {
   if (isCssVarColor(color)) {
-    return `var(${color[1]})`;
+    return `var(${color})`;
   } else {
     return color;
   }

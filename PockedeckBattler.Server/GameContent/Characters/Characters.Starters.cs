@@ -44,6 +44,7 @@ public static partial class Characters
                 "Reduces the foe's Attack.",
                 3,
                 ActionCardTarget.AllOpponents,
+                "Intimidated",
                 PassiveEffect.CharacterStatEffect(CharacterStatEffectType.ReduceAllDamages, 10, 3)
             ),
             ActionCard.Damage(
@@ -74,6 +75,7 @@ public static partial class Characters
                 "Wags the tail to lower the foe's Defense.",
                 3,
                 ActionCardTarget.AllOpponents,
+                "Soothed",
                 PassiveEffect.CharacterStatEffect(CharacterStatEffectType.ReduceAllResistances, 10, 3)
             ),
             ActionCard.Shield("Protect", "Use its shell to protect against next attacks.", 3, ActionCardTarget.Self, 44),
@@ -97,13 +99,15 @@ public static partial class Characters
                 "Forces the body to grow and heightens Bulbasaur's attack.",
                 3,
                 ActionCardTarget.AllAllies,
-                PassiveEffect.CharacterStatEffect(CharacterStatEffectType.IncreaseAllResistances, 10, 3)
+                "Strong",
+                PassiveEffect.CharacterStatEffect(CharacterStatEffectType.IncreaseAllDamages, 10, 3)
             ),
             ActionCard.AddTriggered(
                 "Leech Seed",
                 "Plants a seed on the target. It slowly drains the target's HP for the attacker.",
                 3,
                 ActionCardTarget.AllOpponents,
+                "Infected",
                 TriggeredEffect.DamageOverTime(new DamageEffect(6, Element.Earth) { LifeStealRatio = 1 }, 4)
             ),
             ActionCard.AddTriggered(
@@ -111,6 +115,7 @@ public static partial class Characters
                 "Gathers light energy, then blasts a bundled beam on the next turn. ",
                 7,
                 ActionCardTarget.AllOpponents,
+                "Solar Beam",
                 TriggeredEffect.DelayedDamage(new DamageEffect(45, Element.Earth), 1, TurnTrigger.TriggerMoment.StartOfSourceTurn)
             )
         }

@@ -69,12 +69,26 @@ public class ActionCard : Card
         return new ActionCard(name, description, apCost, target, new ShieldEffect(shield));
     }
 
-    public static ActionCard AddPassive(string name, string? description, int apCost, ActionCardTarget target, params PassiveEffect[] effects)
+    public static ActionCard AddPassive(
+        string name,
+        string? description,
+        int apCost,
+        ActionCardTarget target,
+        string enchantmentName,
+        params PassiveEffect[] effects
+    )
     {
         return new ActionCard(name, description, apCost, target, new AddEnchantmentEffect(Enchantment.CreateInstance(name, effects)));
     }
 
-    public static ActionCard AddTriggered(string name, string? description, int apCost, ActionCardTarget target, params TriggeredEffect[] effects)
+    public static ActionCard AddTriggered(
+        string name,
+        string? description,
+        int apCost,
+        ActionCardTarget target,
+        string enchantmentName,
+        params TriggeredEffect[] effects
+    )
     {
         return new ActionCard(name, description, apCost, target, new AddEnchantmentEffect(Enchantment.CreateInstance(name, effects)));
     }

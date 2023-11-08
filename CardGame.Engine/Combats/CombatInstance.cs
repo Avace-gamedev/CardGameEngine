@@ -87,6 +87,7 @@ public class CombatInstance : IDisposable
 
     public void SetAi(CombatSide side, CombatAiOptions options)
     {
+
         CombatAi ai = CombatAiFactory.CreateInstance(this, side, options);
 
         switch (side)
@@ -100,6 +101,8 @@ public class CombatInstance : IDisposable
             default:
                 throw new ArgumentOutOfRangeException(nameof(side), side, null);
         }
+
+        History.RecordSetAi(side, options);
     }
 
     void StartGlobalTurn(int turn)

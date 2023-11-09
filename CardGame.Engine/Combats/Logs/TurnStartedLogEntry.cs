@@ -1,8 +1,8 @@
 ﻿namespace CardGame.Engine.Combats.Logs;
 
-public class CombatTurnStartedLogEntry : CombatLogEntry
+public class TurnStartedLogEntry : CombatLogEntry
 {
-    public CombatTurnStartedLogEntry(int turn)
+    public TurnStartedLogEntry(int turn)
     {
         Turn = turn;
     }

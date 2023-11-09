@@ -71,6 +71,7 @@ class EffectsOnCharacterRecorder : IDisposable
 
     void RegisterCallbacks(CharacterCombatState character)
     {
+        character.Died += OnDied;
         character.DamageReceived += OnDamageReceived;
         character.HealReceived += OnHealReceived;
         character.ShieldReceived += OnShieldReceived;
@@ -79,10 +80,21 @@ class EffectsOnCharacterRecorder : IDisposable
 
     void UnregisterCallbacks(CharacterCombatState character)
     {
+        character.Died -= OnDied;
         character.DamageReceived -= OnDamageReceived;
         character.HealReceived -= OnHealReceived;
         character.ShieldReceived -= OnShieldReceived;
         character.EnchantmentAdded -= OnEnchantmentAdded;
+    }
+
+    void OnDied(object? sender, EventArgs e)
+    {
+        if (sender is not CharacterCombatState target)
+        {
+            return;
+        }
+
+        RecordEffectEntry(new CharacterDiedLogEntry(new CharacterLogEntry(target.Character.Identity.Name, target.Side)));
     }
 
     void OnDamageReceived(object? sender, DamageReceived e)

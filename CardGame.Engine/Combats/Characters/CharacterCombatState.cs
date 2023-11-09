@@ -37,6 +37,7 @@ public class CharacterCombatState
     public event EventHandler<HealReceived>? HealReceived;
     public event EventHandler<ShieldReceived>? ShieldReceived;
     public event EventHandler<Enchantment>? EnchantmentAdded;
+    public event EventHandler? Died;
 
     public CharacterStatsModifier GetStatsModifier()
     {
@@ -104,6 +105,7 @@ public class CharacterCombatState
         if (Health == 0)
         {
             IsDead = true;
+            Died?.Invoke(this, EventArgs.Empty);
         }
     }
 

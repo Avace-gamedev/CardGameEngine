@@ -38,7 +38,7 @@
       </app-player-side-elements>
     </div>
   </div>
-  <div class="h-100 w-25 overflow-auto">
+  <div #combatLog class="h-100 w-25 overflow-auto">
     <app-combat-log [log]="combat.log" (highlight)="hoverCharacter($event)"></app-combat-log>
   </div>
 </div>

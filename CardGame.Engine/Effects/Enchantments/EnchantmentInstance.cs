@@ -24,15 +24,23 @@ public class EnchantmentInstance : IDisposable
         {
             t.Expired += OnEffectExpired;
         }
+
+        Source.Died += OnSourceOrTargetDied;
+        Target.Died += OnSourceOrTargetDied;
     }
 
-
     public Guid Id { get; }
+
     public Enchantment Enchantment { get; }
+
     public CharacterCombatState Source { get; }
+
     public CharacterCombatState Target { get; }
+
     public IReadOnlyList<PassiveEffectInstance> PassiveEffects { get; }
+
     public IReadOnlyList<TriggeredEffectInstance> TriggeredEffects { get; }
+
     public bool HasExpired { get; private set; }
 
     public void Dispose()
@@ -46,9 +54,24 @@ public class EnchantmentInstance : IDisposable
     {
         if (PassiveEffects.All(p => p.HasExpired) && TriggeredEffects.All(t => t.HasExpired))
         {
-            HasExpired = true;
-            Source.Combat.Log.RecordEnchantmentExpired(this);
-            Expired?.Invoke(this, EventArgs.Empty);
+            Expire();
         }
+    }
+
+    void OnSourceOrTargetDied(object? sender, EventArgs e)
+    {
+        Expire();
+    }
+
+    void Expire()
+    {
+        if (HasExpired)
+        {
+            return;
+        }
+
+        HasExpired = true;
+        Source.Combat.Log.RecordEnchantmentExpired(this);
+        Expired?.Invoke(this, EventArgs.Empty);
     }
 }

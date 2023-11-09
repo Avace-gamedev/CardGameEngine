@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import {
   AddEnchantmentEffectOnCharacterLogEntryView,
   CardPlayedLogEntryView,
+  CharacterDiedLogEntryView,
   CharacterInCombatView,
   CombatSide,
   DamageEffectOnCharacterLogEntryView,
@@ -111,6 +112,8 @@ export class CardPlayedLogEntryComponent implements OnInit {
       return { ...effect.shield, type: 'shield' };
     } else if (effect instanceof AddEnchantmentEffectOnCharacterLogEntryView) {
       return { ...effect.enchantment, type: 'enchantment' };
+    } else if (effect instanceof CharacterDiedLogEntryView) {
+      return { type: 'death' };
     }
 
     return undefined;
@@ -125,6 +128,8 @@ export class CardPlayedLogEntryComponent implements OnInit {
       return effect.shield === currentEffect.shield;
     } else if (effect.type === 'enchantment' && currentEffect.type === 'enchantment') {
       return effect.name === currentEffect.name;
+    } else if (effect.type === 'death' && currentEffect.type === 'death') {
+      return true;
     }
 
     return undefined;
@@ -153,5 +158,6 @@ type DamageEffect = IDamageReceived & { type: 'damage' };
 type HealEffect = IHealReceived & { type: 'heal' };
 type ShieldEffect = IShieldReceived & { type: 'shield' };
 type EnchantmentEffect = IEnchantmentView & { type: 'enchantment' };
+type DeathEffect = { type: 'death' };
 
-type Effect = DamageEffect | HealEffect | ShieldEffect | EnchantmentEffect;
+type Effect = DamageEffect | HealEffect | ShieldEffect | EnchantmentEffect | DeathEffect;

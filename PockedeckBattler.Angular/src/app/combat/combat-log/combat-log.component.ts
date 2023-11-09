@@ -5,8 +5,8 @@ import {
   CombatLogEntryView,
   CombatLogView,
   CombatSide,
-  CombatTurnStartedLogEntryView,
   ICharacterInCombatView,
+  TurnStartedLogEntryView,
 } from 'src/app/api/pockedeck-battler-api-client';
 import { CurrentCombatService } from '../current-combat.service';
 
@@ -26,7 +26,7 @@ export class CombatLogComponent {
   constructor(private currentCombatService: CurrentCombatService) {}
 
   protected getType(entry: CombatLogEntryView) {
-    if (entry instanceof CombatTurnStartedLogEntryView) {
+    if (entry instanceof TurnStartedLogEntryView) {
       return EntryType.TurnStarted;
     } else if (entry instanceof CardPlayedLogEntryView) {
       return EntryType.PlayCard;

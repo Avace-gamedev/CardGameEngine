@@ -10,6 +10,7 @@ import { CardStatsEffectIconComponent } from './stat-effect-icon/card-stats-effe
 import { EnchantmentIconComponent } from './enchantment-icon/enchantment-icon.component';
 import { ShieldIconComponent } from './shield-icon/shield-icon.component';
 import { HealthIconComponent } from './health-icon/health-icon.component';
+import { DeathIconComponent } from './death-icon/death-icon.component';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import { HealthIconComponent } from './health-icon/health-icon.component';
     EnchantmentIconComponent,
     ShieldIconComponent,
     HealthIconComponent,
+    DeathIconComponent,
   ],
   imports: [CommonModule, NgbTooltip, NgOptimizedImage],
   exports: [
@@ -34,6 +36,7 @@ import { HealthIconComponent } from './health-icon/health-icon.component';
     ShieldIconComponent,
     HealthIconComponent,
     EnchantmentIconComponent,
+    DeathIconComponent,
   ],
 })
 export class IconsModule {}

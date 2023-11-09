@@ -45,6 +45,16 @@ public class EnchantmentInstance : IDisposable
 
     public void Dispose()
     {
+        foreach (PassiveEffectInstance passive in PassiveEffects)
+        {
+            passive.Dispose();
+        }
+
+        foreach (TriggeredEffectInstance triggered in TriggeredEffects)
+        {
+            triggered.Dispose();
+        }
+
         GC.SuppressFinalize(this);
     }
 

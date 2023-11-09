@@ -32,6 +32,7 @@ public class TriggeredEffectInstance : IDisposable
 
     public void Dispose()
     {
+        TriggerState.Triggered -= OnTriggered;
         TriggerState.Expired -= OnExpired;
         GC.SuppressFinalize(this);
     }

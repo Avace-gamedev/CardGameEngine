@@ -84,7 +84,7 @@ public class CharacterCombatState
     public void AddEnchantment(Enchantment enchantment, CharacterCombatState source)
     {
         EnchantmentInstance enchantmentInstance = new(enchantment, source, this, _random);
-        enchantmentInstance.Expired += OnEffectExpired;
+        enchantmentInstance.Expired += OnEnchantmentExpired;
         _enchantments.Add(enchantmentInstance);
 
         EnchantmentAdded?.Invoke(this, enchantment);
@@ -111,18 +111,18 @@ public class CharacterCombatState
 
         if (Health == 0)
         {
-            IsDead = true;
-            Died?.Invoke(this, EventArgs.Empty);
+            Die();
         }
     }
 
-    void OnEffectExpired(object? sender, EventArgs _)
+    void OnEnchantmentExpired(object? sender, EventArgs _)
     {
         EnchantmentInstance[] toRemove = _enchantments.Where(e => e.HasExpired).ToArray();
 
         foreach (EnchantmentInstance enchantment in toRemove)
         {
             _enchantments.Remove(enchantment);
+            enchantment.Expired -= OnEnchantmentExpired;
             enchantment.Dispose();
         }
     }
@@ -174,5 +174,26 @@ public class CharacterCombatState
         }
 
         return new ShieldReceived(amount);
+    }
+
+    void Die()
+    {
+        if (IsDead)
+        {
+            return;
+        }
+
+        Health = 0;
+        Shield = 0;
+        IsDead = true;
+
+        foreach (EnchantmentInstance enchantment in _enchantments)
+        {
+            enchantment.Expired -= OnEnchantmentExpired;
+            enchantment.Dispose();
+        }
+        _enchantments.Clear();
+
+        Died?.Invoke(this, EventArgs.Empty);
     }
 }

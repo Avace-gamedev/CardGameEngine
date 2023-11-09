@@ -1,8 +1,6 @@
 <div class="hstack gap-2 position-relative px-4" *ngIf="combat">
   <i class="fw-bold fs-4" *ngIf="currentPlayer">{{ currentPlayer }}</i>
 
-  <button class="btn btn-outline-secondary" [routerLink]="['..', 'selection']" *ngIf="combat.over">Leave</button>
-
   <div class="flex-fill"></div>
 
   <div

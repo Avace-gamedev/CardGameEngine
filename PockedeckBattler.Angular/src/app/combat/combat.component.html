@@ -1,45 +1,72 @@
-<div class="h-100 w-100 hstack" *ngIf="combat">
-  <div class="h-100 flex-fill vstack">
-    <div [ngStyle]="{ 'height.%': 35 }">
-      <app-combat-side-common-elements
-        [combat]="combat"
-        [side]="combat.opponent"
-        [isAi]="combat.opponentIsAi"
-        [highlightEnemies]="enemyTargets"
-        [highlightSource]="source && source.side === combat.player.side ? undefined : source?.name"
-        [invert]="true"
-      ></app-combat-side-common-elements>
+<div class="h-100 w-100 vstack">
+  <header class="px-2 py-2 border-bottom hstack gap-2">
+    <button class="btn btn-outline-secondary" [routerLink]="['..', 'selection']">
+      <i class="bi bi-arrow-left"></i> Combats
+    </button>
+
+    <div class="flex-fill"></div>
+
+    <div class="small flex-grow-0 flex-shrink-1 vstack align-items-end" *ngIf="combat">
+      <div>Combat {{ combat.id }}</div>
+      <div>
+        {{ combat.player.playerName }} {{ combat.playerIsAi ? '(AI)' : '' }} v. {{ combat.opponent.playerName }}
+        {{ combat.opponentIsAi ? '(AI)' : '' }} - {{ combat.ongoing ? 'Ongoing' : 'Over' }}
+        <ng-container *ngIf="!combat.ongoing">
+          -
+          {{
+            combat.winner === combat.player.side
+              ? 'Winner: ' + combat.player.playerName
+              : combat.winner === combat.opponent.side
+              ? 'Winner: ' + combat.opponent.playerName
+              : 'DRAW'
+          }}
+        </ng-container>
+      </div>
     </div>
+  </header>
+  <div class="w-100 hstack overflow-auto" *ngIf="combat">
+    <div class="flex-fill vstack">
+      <div [ngStyle]="{ 'height.%': 35 }">
+        <app-combat-side-common-elements
+          [combat]="combat"
+          [side]="combat.opponent"
+          [isAi]="combat.opponentIsAi"
+          [highlightEnemies]="enemyTargets"
+          [highlightSource]="source && source.side === combat.player.side ? undefined : source?.name"
+          [invert]="true"
+        ></app-combat-side-common-elements>
+      </div>
 
-    <hr />
+      <hr />
 
-    <app-combat-common-elements [combat]="combat"></app-combat-common-elements>
+      <app-combat-common-elements [combat]="combat"></app-combat-common-elements>
 
-    <hr />
+      <hr />
 
-    <div [ngStyle]="{ 'height.%': 35 }">
-      <app-combat-side-common-elements
-        [combat]="combat"
-        [side]="combat.player"
-        [isAi]="combat.playerIsAi"
-        [highlightAllies]="allyTargets"
-        [highlightSource]="source && source.side === combat.player.side ? source?.name : undefined"
-      ></app-combat-side-common-elements>
+      <div [ngStyle]="{ 'height.%': 35 }">
+        <app-combat-side-common-elements
+          [combat]="combat"
+          [side]="combat.player"
+          [isAi]="combat.playerIsAi"
+          [highlightAllies]="allyTargets"
+          [highlightSource]="source && source.side === combat.player.side ? source?.name : undefined"
+        ></app-combat-side-common-elements>
+      </div>
+
+      <div class="flex-fill">
+        <app-player-side-elements
+          [combat]="combat"
+          [disabled]="combat.currentSide !== combat.player.side || combat.over"
+          (play)="play($event)"
+          (endTurn)="endTurn()"
+          (hover)="hoverCard($event)"
+        >
+        </app-player-side-elements>
+      </div>
     </div>
-
-    <div class="flex-fill">
-      <app-player-side-elements
-        [combat]="combat"
-        [disabled]="combat.currentSide !== combat.player.side || combat.over"
-        (play)="play($event)"
-        (endTurn)="endTurn()"
-        (hover)="hoverCard($event)"
-      >
-      </app-player-side-elements>
+    <div class="vr"></div>
+    <div #combatLog class="h-100 w-25 overflow-auto">
+      <app-combat-log [log]="combat.log" (highlight)="hoverCharacter($event)"></app-combat-log>
     </div>
-  </div>
-  <div class="vr"></div>
-  <div #combatLog class="h-100 w-25 overflow-auto">
-    <app-combat-log [log]="combat.log" (highlight)="hoverCharacter($event)"></app-combat-log>
   </div>
 </div>

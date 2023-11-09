@@ -1,4 +1,4 @@
-<div class="h-100 w-100 hstack gap-2" *ngIf="combat">
+<div class="h-100 w-100 hstack" *ngIf="combat">
   <div class="h-100 flex-fill vstack">
     <div [ngStyle]="{ 'height.%': 35 }">
       <app-combat-side-common-elements
@@ -38,6 +38,7 @@
       </app-player-side-elements>
     </div>
   </div>
+  <div class="vr"></div>
   <div #combatLog class="h-100 w-25 overflow-auto">
     <app-combat-log [log]="combat.log" (highlight)="hoverCharacter($event)"></app-combat-log>
   </div>

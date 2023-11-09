@@ -1,4 +1,5 @@
 <div class="container-fluid" *ngIf="log">
+  <div class="fw-bold">Combat started</div>
   <ng-container *ngFor="let entry of log.entries">
     <ng-container [ngSwitch]="getType(entry)">
       <app-card-played-log-entry
@@ -6,6 +7,15 @@
         (highlight)="highlight.emit($event)"
         *ngSwitchCase="EntryType.PlayCard"
       ></app-card-played-log-entry>
+      <div class="fw-bold hstack gap-2 align-items-center" *ngSwitchCase="EntryType.TurnStarted">
+        <span> Turn {{ $any(entry).turn }} </span>
+        <hr class="flex-fill" />
+      </div>
+      <div class="fw-bold" *ngSwitchCase="EntryType.CombatEnded">
+        <div class="fw-bold">Combat ended</div>
+        <ng-container *ngIf="$any(entry).winner === CombatSide.None"> DRAW! </ng-container>
+        <ng-container *ngIf="$any(entry).winner !== CombatSide.None"> {{ getWinner($any(entry)) }} WON! </ng-container>
+      </div>
     </ng-container>
   </ng-container>
 </div>

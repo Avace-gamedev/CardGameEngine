@@ -23,6 +23,14 @@ export class CurrentCombatService {
       : this.getCharacterOfSide(this.combat.opponent, name);
   }
 
+  getPlayerName(side: CombatSide) {
+    if (!this.combat || side === CombatSide.None) {
+      return undefined;
+    }
+
+    return this.combat.player.side === side ? this.combat.player.playerName : this.combat.opponent.playerName;
+  }
+
   private getCharacterOfSide(side: CombatSideView, name: string) {
     return side.frontCharacter?.character.identity.name === name
       ? side.frontCharacter

@@ -6,7 +6,9 @@ using NJsonSchema.Converters;
 namespace PockedeckBattler.Server.Views.Combats.Log;
 
 [JsonConverter(typeof(JsonInheritanceConverter), "entryType")]
+[KnownType(typeof(CombatTurnStartedLogEntryView))]
 [KnownType(typeof(CardPlayedLogEntryView))]
+[KnownType(typeof(CombatEndedLogEntryView))]
 public abstract class CombatLogEntryView
 {
 }
@@ -17,7 +19,9 @@ public static class CombatLogEntryViewMappingExtensions
     {
         return entry switch
         {
+            CombatTurnStartedLogEntry combatTurnStartedLogEntry => combatTurnStartedLogEntry.View(),
             CardPlayedLogEntry cardPlayedLogEntry => cardPlayedLogEntry.View(),
+            CombatEndedLogEntry combatEndedLogEntry => combatEndedLogEntry.View(),
             _ => throw new ArgumentOutOfRangeException(nameof(entry))
         };
     }

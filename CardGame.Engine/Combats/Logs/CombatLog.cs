@@ -43,6 +43,7 @@ public class CombatLog
                 TriggeredEffectLogEntry entry = new(
                     new CharacterLogEntry(instance.Source.Character.Identity.Name, instance.Source.Side),
                     new CharacterLogEntry(instance.Target.Character.Identity.Name, instance.Target.Side),
+                    instance.Enchantment.Enchantment,
                     instance.Effect,
                     effects.ToArray()
                 );

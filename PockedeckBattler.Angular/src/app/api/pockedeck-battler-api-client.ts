@@ -2582,6 +2582,16 @@ export abstract class CombatLogEntryView implements ICombatLogEntryView {
             result.init(data);
             return result;
         }
+        if (data["entryType"] === "TriggeredEffectLogEntryView") {
+            let result = new TriggeredEffectLogEntryView();
+            result.init(data);
+            return result;
+        }
+        if (data["entryType"] === "EnchantmentExpiredLogEntryView") {
+            let result = new EnchantmentExpiredLogEntryView();
+            result.init(data);
+            return result;
+        }
         if (data["entryType"] === "CombatEndedLogEntryView") {
             let result = new CombatEndedLogEntryView();
             result.init(data);
@@ -3041,6 +3051,118 @@ export class CharacterDiedLogEntryView extends EffectOnCharacterLogEntryView imp
 }
 
 export interface ICharacterDiedLogEntryView extends IEffectOnCharacterLogEntryView {
+}
+
+export class TriggeredEffectLogEntryView extends CombatLogEntryView implements ITriggeredEffectLogEntryView {
+    source!: CharacterInCombatView;
+    target!: CharacterInCombatView;
+    enchantment!: EnchantmentView;
+    effect!: TriggeredEffectView;
+    effectsOnCharacters!: EffectOnCharacterLogEntryView[];
+
+    constructor(data?: ITriggeredEffectLogEntryView) {
+        super(data);
+        if (!data) {
+            this.source = new CharacterInCombatView();
+            this.target = new CharacterInCombatView();
+            this.enchantment = new EnchantmentView();
+            this.effect = new TriggeredEffectView();
+            this.effectsOnCharacters = [];
+        }
+        this._discriminator = "TriggeredEffectLogEntryView";
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.source = _data["source"] ? CharacterInCombatView.fromJS(_data["source"]) : new CharacterInCombatView();
+            this.target = _data["target"] ? CharacterInCombatView.fromJS(_data["target"]) : new CharacterInCombatView();
+            this.enchantment = _data["enchantment"] ? EnchantmentView.fromJS(_data["enchantment"]) : new EnchantmentView();
+            this.effect = _data["effect"] ? TriggeredEffectView.fromJS(_data["effect"]) : new TriggeredEffectView();
+            if (Array.isArray(_data["effectsOnCharacters"])) {
+                this.effectsOnCharacters = [] as any;
+                for (let item of _data["effectsOnCharacters"])
+                    this.effectsOnCharacters!.push(EffectOnCharacterLogEntryView.fromJS(item));
+            }
+        }
+    }
+
+    static override fromJS(data: any): TriggeredEffectLogEntryView {
+        data = typeof data === 'object' ? data : {};
+        let result = new TriggeredEffectLogEntryView();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["source"] = this.source ? this.source.toJSON() : <any>undefined;
+        data["target"] = this.target ? this.target.toJSON() : <any>undefined;
+        data["enchantment"] = this.enchantment ? this.enchantment.toJSON() : <any>undefined;
+        data["effect"] = this.effect ? this.effect.toJSON() : <any>undefined;
+        if (Array.isArray(this.effectsOnCharacters)) {
+            data["effectsOnCharacters"] = [];
+            for (let item of this.effectsOnCharacters)
+                data["effectsOnCharacters"].push(item.toJSON());
+        }
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface ITriggeredEffectLogEntryView extends ICombatLogEntryView {
+    source: CharacterInCombatView;
+    target: CharacterInCombatView;
+    enchantment: EnchantmentView;
+    effect: TriggeredEffectView;
+    effectsOnCharacters: EffectOnCharacterLogEntryView[];
+}
+
+export class EnchantmentExpiredLogEntryView extends CombatLogEntryView implements IEnchantmentExpiredLogEntryView {
+    source!: CharacterInCombatView;
+    target!: CharacterInCombatView;
+    enchantment!: EnchantmentView;
+
+    constructor(data?: IEnchantmentExpiredLogEntryView) {
+        super(data);
+        if (!data) {
+            this.source = new CharacterInCombatView();
+            this.target = new CharacterInCombatView();
+            this.enchantment = new EnchantmentView();
+        }
+        this._discriminator = "EnchantmentExpiredLogEntryView";
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.source = _data["source"] ? CharacterInCombatView.fromJS(_data["source"]) : new CharacterInCombatView();
+            this.target = _data["target"] ? CharacterInCombatView.fromJS(_data["target"]) : new CharacterInCombatView();
+            this.enchantment = _data["enchantment"] ? EnchantmentView.fromJS(_data["enchantment"]) : new EnchantmentView();
+        }
+    }
+
+    static override fromJS(data: any): EnchantmentExpiredLogEntryView {
+        data = typeof data === 'object' ? data : {};
+        let result = new EnchantmentExpiredLogEntryView();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["source"] = this.source ? this.source.toJSON() : <any>undefined;
+        data["target"] = this.target ? this.target.toJSON() : <any>undefined;
+        data["enchantment"] = this.enchantment ? this.enchantment.toJSON() : <any>undefined;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IEnchantmentExpiredLogEntryView extends ICombatLogEntryView {
+    source: CharacterInCombatView;
+    target: CharacterInCombatView;
+    enchantment: EnchantmentView;
 }
 
 export class CombatEndedLogEntryView extends CombatLogEntryView implements ICombatEndedLogEntryView {

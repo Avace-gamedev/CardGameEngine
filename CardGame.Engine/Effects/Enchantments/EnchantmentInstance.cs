@@ -13,7 +13,7 @@ public class EnchantmentInstance : IDisposable
         Source = source;
         Target = target;
         PassiveEffects = enchantment.Passive.Select(p => new PassiveEffectInstance(p, source, target)).ToArray();
-        TriggeredEffects = enchantment.Triggered.Select(t => new TriggeredEffectInstance(t, source, target, random)).ToArray();
+        TriggeredEffects = enchantment.Triggered.Select(t => new TriggeredEffectInstance(t, this, random)).ToArray();
 
         foreach (PassiveEffectInstance p in PassiveEffects)
         {

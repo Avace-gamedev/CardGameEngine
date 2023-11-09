@@ -30,6 +30,8 @@ import { HealReceivedComponent } from './combat-log/heal-received/heal-received.
 import { EnchantmentReceivedComponent } from './combat-log/enchantment-received/enchantment-received.component';
 import { StickyPopoverDirective } from '../shared/directives/sticky-popover.directive';
 import { CharacterDiedComponent } from './combat-log/character-died/character-died.component';
+import { TriggeredEffectLogEntryComponent } from './combat-log/triggered-effect-log-entry/triggered-effect-log-entry.component';
+import { CombatLogEffectGroupComponent } from './combat-log/combat-log-effect-group/combat-log-effect-group.component';
 
 @NgModule({
   declarations: [
@@ -56,6 +58,8 @@ import { CharacterDiedComponent } from './combat-log/character-died/character-di
     HealReceivedComponent,
     EnchantmentReceivedComponent,
     CharacterDiedComponent,
+    TriggeredEffectLogEntryComponent,
+    CombatLogEffectGroupComponent,
   ],
   imports: [
     CommonModule,

@@ -11,23 +11,5 @@
       <app-action-card-type-icon [card]="entry.card"></app-action-card-type-icon>
     </div>
   </div>
-  <div class="hstack flex-wrap" *ngFor="let effect of effects">
-    <ng-container *ngFor="let target of effect.targets; let i = index">
-      <ng-container *ngIf="i > 0">,&nbsp;</ng-container>
-      <span class="fw-bold" (mouseenter)="highlight.emit(target)" (mouseleave)="highlight.emit(undefined)">
-        {{ target.character.identity.displayName }}
-      </span>
-    </ng-container>
-    <span style="width: 0.5rem"></span>
-    <ng-container [ngSwitch]="effect.effect.type">
-      <app-damage-received [damageReceived]="$any(effect.effect)" *ngSwitchCase="'damage'"></app-damage-received>
-      <app-shield-received [shieldReceived]="$any(effect.effect)" *ngSwitchCase="'shield'"></app-shield-received>
-      <app-heal-received [healReceived]="$any(effect.effect)" *ngSwitchCase="'heal'"></app-heal-received>
-      <app-enchantment-received
-        [enchantment]="$any(effect.effect)"
-        *ngSwitchCase="'enchantment'"
-      ></app-enchantment-received>
-      <app-character-died *ngSwitchCase="'death'"></app-character-died>
-    </ng-container>
-  </div>
+  <app-combat-log-effect-group [effects]="effects" (highlight)="highlight.emit($event)"></app-combat-log-effect-group>
 </div>

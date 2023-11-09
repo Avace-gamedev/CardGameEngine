@@ -7,6 +7,11 @@
         (highlight)="highlight.emit($event)"
         *ngSwitchCase="EntryType.PlayCard"
       ></app-card-played-log-entry>
+      <app-triggered-effect-log-entry
+        [entry]="$any(entry)"
+        (highlight)="highlight.emit($event)"
+        *ngSwitchCase="EntryType.TriggeredEffect"
+      ></app-triggered-effect-log-entry>
       <div class="fw-bold hstack gap-2 align-items-center" *ngSwitchCase="EntryType.TurnStarted">
         <span> Turn {{ $any(entry).turn }} </span>
         <hr class="flex-fill" />

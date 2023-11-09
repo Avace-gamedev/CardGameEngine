@@ -6,6 +6,7 @@ import {
   CombatLogView,
   CombatSide,
   ICharacterInCombatView,
+  TriggeredEffectLogEntryView,
   TurnStartedLogEntryView,
 } from 'src/app/api/pockedeck-battler-api-client';
 import { CurrentCombatService } from '../current-combat.service';
@@ -30,6 +31,8 @@ export class CombatLogComponent {
       return EntryType.TurnStarted;
     } else if (entry instanceof CardPlayedLogEntryView) {
       return EntryType.PlayCard;
+    } else if (entry instanceof TriggeredEffectLogEntryView) {
+      return EntryType.TriggeredEffect;
     } else if (entry instanceof CombatEndedLogEntryView) {
       return EntryType.CombatEnded;
     }
@@ -52,5 +55,6 @@ export class CombatLogComponent {
 enum EntryType {
   TurnStarted = 'turn-started',
   PlayCard = 'play-card',
+  TriggeredEffect = 'triggered-effect',
   CombatEnded = 'combat-ended',
 }

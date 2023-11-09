@@ -47,6 +47,7 @@ public class EnchantmentInstance : IDisposable
         if (PassiveEffects.All(p => p.HasExpired) && TriggeredEffects.All(t => t.HasExpired))
         {
             HasExpired = true;
+            Source.Combat.Log.RecordEnchantmentExpired(this);
             Expired?.Invoke(this, EventArgs.Empty);
         }
     }

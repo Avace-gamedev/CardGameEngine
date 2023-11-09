@@ -4,7 +4,6 @@ using CardGame.Engine.Combats.Ai;
 using CardGame.Engine.Combats.Cards;
 using CardGame.Engine.Combats.Exceptions;
 using CardGame.Engine.Combats.History;
-using CardGame.Engine.Combats.Logs;
 using CardGame.Engine.Combats.Utils;
 
 namespace CardGame.Engine.Combats;
@@ -19,7 +18,6 @@ public class CombatInstance : IDisposable
         options.RandomSeed = State.RandomSeed;
 
         History = new CombatHistory(new InitialCombatState(State.RandomSeed, leftCharacters, rightCharacters, options));
-        Log = new CombatLog();
 
         State.EventHasBeenTriggered += OnAfterEventTriggered;
 
@@ -30,7 +28,6 @@ public class CombatInstance : IDisposable
     public CombatOptions Options { get; }
     public CombatState State { get; }
     public CombatHistory History { get; }
-    public CombatLog Log { get; }
 
     public CombatAi? LeftAi { get; private set; }
 
@@ -54,11 +51,7 @@ public class CombatInstance : IDisposable
         }
 
         sideState.ReturnCardFromHandToDeck(index);
-
-        using (Log.RecordEffectsOfPlayingCard(card))
-        {
-            card.Resolve();
-        }
+        card.Resolve();
 
         History.RecordCardPlay(side, index);
 
@@ -109,7 +102,6 @@ public class CombatInstance : IDisposable
     {
         int turnAp = Math.Min(Options.StartingAp + turn - 1, Options.MaxAp);
         State.StartTurn(turn, turnAp);
-        Log.RecordTurnStart(turn);
     }
 
     void StartSideTurn(CombatSide side)
@@ -221,8 +213,6 @@ public class CombatInstance : IDisposable
         if (CheckWinCondition(out CombatSide winner))
         {
             State.EndCombat(winner);
-            Log.RecordEnd(winner);
-
             return true;
         }
 

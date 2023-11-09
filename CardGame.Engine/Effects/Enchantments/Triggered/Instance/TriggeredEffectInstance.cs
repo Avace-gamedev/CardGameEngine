@@ -40,7 +40,11 @@ public class TriggeredEffectInstance : IDisposable
 
     void OnTriggered(object? _, EventArgs __)
     {
-        Effect.Effect.Resolve(Source, new[] { Target }, _random);
+        CombatState combat = Source.Combat;
+        using (combat.Log.RecordTriggeredEffect(this))
+        {
+            Effect.Effect.Resolve(Source, new[] { Target }, _random);
+        }
     }
 
     void OnExpired(object? _, EventArgs __)

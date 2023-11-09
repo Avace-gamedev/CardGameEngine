@@ -1,5 +1,6 @@
 ﻿using CardGame.Engine.Characters;
 using CardGame.Engine.Combats.Abstractions;
+using CardGame.Engine.Combats.Logs;
 
 namespace CardGame.Engine.Combats;
 
@@ -37,6 +38,8 @@ public class CombatState
     public CombatSideState CurrentSide => GetSide(Side);
     public CombatSideState OtherSide => GetSide(Side.OtherSide());
 
+    public CombatLog Log { get; } = new();
+
     public event EventHandler<TurnEventArgs>? TurnStarted;
     public event EventHandler<TurnEventArgs>? TurnEnded;
     public event EventHandler<PhaseEventArgs>? PhaseStarted;
@@ -72,6 +75,8 @@ public class CombatState
 
         Side = CombatSide.None;
 
+        Log.RecordTurnStart(turn);
+
         InvokeEvent(() => TurnStarted?.Invoke(this, new TurnEventArgs(Turn)));
     }
 
@@ -101,6 +106,8 @@ public class CombatState
         Phase = CombatSideTurnPhase.None;
 
         Winner = winner;
+
+        Log.RecordEnd(winner);
 
         InvokeEvent(() => Ended?.Invoke(this, new CombatEndedEventArgs(Winner)));
     }

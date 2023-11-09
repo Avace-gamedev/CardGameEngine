@@ -5,7 +5,6 @@ import { Color } from '../../../shared/utils/colors';
 @Component({
   selector: 'app-death-icon',
   templateUrl: './death-icon.component.html',
-  styleUrls: ['./death-icon.component.css'],
 })
 export class DeathIconComponent {
   @Input()

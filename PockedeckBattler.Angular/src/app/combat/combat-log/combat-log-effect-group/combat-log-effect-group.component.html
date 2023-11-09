@@ -1,7 +1,7 @@
 <div class="hstack flex-wrap" *ngFor="let effect of effects">
   <ng-container *ngFor="let target of effect.targets; let i = index">
     <ng-container *ngIf="i > 0">,&nbsp;</ng-container>
-    <span class="fw-bold" (mouseenter)="highlight.emit(target)" (mouseleave)="highlight.emit(undefined)">
+    <span class="fw-semibold" (mouseenter)="highlight.emit(target)" (mouseleave)="highlight.emit(undefined)">
       {{ target.character.identity.displayName }}
     </span>
   </ng-container>

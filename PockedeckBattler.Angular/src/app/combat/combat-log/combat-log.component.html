@@ -1,26 +1,46 @@
 <div class="container-fluid" *ngIf="log">
   <div class="fw-bold">Combat started</div>
-  <ng-container *ngFor="let entry of log.entries">
-    <ng-container [ngSwitch]="getType(entry)">
-      <app-card-played-log-entry
-        [entry]="$any(entry)"
-        (highlight)="highlight.emit($event)"
-        *ngSwitchCase="EntryType.PlayCard"
-      ></app-card-played-log-entry>
-      <app-triggered-effect-log-entry
-        [entry]="$any(entry)"
-        (highlight)="highlight.emit($event)"
-        *ngSwitchCase="EntryType.TriggeredEffect"
-      ></app-triggered-effect-log-entry>
-      <div class="fw-bold hstack gap-2 align-items-center" *ngSwitchCase="EntryType.TurnStarted">
-        <span> Turn {{ $any(entry).turn }} </span>
-        <hr class="flex-fill" />
-      </div>
-      <div class="fw-bold" *ngSwitchCase="EntryType.CombatEnded">
-        <div class="fw-bold">Combat ended</div>
-        <ng-container *ngIf="$any(entry).winner === CombatSide.None"> DRAW! </ng-container>
-        <ng-container *ngIf="$any(entry).winner !== CombatSide.None"> {{ getWinner($any(entry)) }} WON! </ng-container>
-      </div>
+  <ng-container *ngFor="let turn of log.turns; let last = last">
+    <div class="hstack gap-2">
+      <span class="fw-bold">Turn {{ turn.turn }}</span>
+      <hr class="flex-fill" />
+    </div>
+
+    <ng-container *ngFor="let phase of turn.phases">
+      <ng-container [ngSwitch]="phase.phase">
+        <div class="fw-bold" *ngSwitchCase="CombatSideTurnPhase.StartOfTurn">
+          <ng-container *ngIf="phase.side === playerSide"> Your turn </ng-container>
+          <ng-container *ngIf="phase.side === opponentSide"> {{ opponentName }}'s turn </ng-container>
+        </div>
+        <div class="fw-bold" *ngSwitchCase="CombatSideTurnPhase.Play">
+          <ng-container *ngIf="phase.side === playerSide"> Waiting for you to play... </ng-container>
+          <ng-container *ngIf="phase.side === opponentSide"> Waiting for {{ opponentName }} to play... </ng-container>
+        </div>
+      </ng-container>
+
+      <ng-container *ngFor="let entry of phase.entries">
+        <ng-container [ngSwitch]="getType(entry)">
+          <app-card-played-log-entry
+            [entry]="$any(entry)"
+            (highlight)="highlight.emit($event)"
+            *ngSwitchCase="EntryType.PlayCard"
+          ></app-card-played-log-entry>
+          <app-triggered-effect-log-entry
+            [entry]="$any(entry)"
+            (highlight)="highlight.emit($event)"
+            *ngSwitchCase="EntryType.TriggeredEffect"
+          ></app-triggered-effect-log-entry>
+          <div class="fw-bold" *ngSwitchCase="EntryType.CombatEnded">
+            <div class="fw-bold">Combat ended</div>
+            <ng-container *ngIf="$any(entry).winner === CombatSide.None"> DRAW!</ng-container>
+            <ng-container *ngIf="$any(entry).winner !== CombatSide.None">
+              {{ getWinner($any(entry)) }} WON!</ng-container
+            >
+          </div>
+        </ng-container>
+      </ng-container>
     </ng-container>
+
+    <div class="fw-bold" *ngIf="!last">End of turn</div>
   </ng-container>
 </div>

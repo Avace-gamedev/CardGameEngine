@@ -2507,7 +2507,7 @@ export enum CombatSideTurnPhase {
 }
 
 export class CombatLogView implements ICombatLogView {
-    entries!: CombatLogEntryView[];
+    turns!: CombatLogTurnView[];
 
     constructor(data?: ICombatLogView) {
         if (data) {
@@ -2517,16 +2517,16 @@ export class CombatLogView implements ICombatLogView {
             }
         }
         if (!data) {
-            this.entries = [];
+            this.turns = [];
         }
     }
 
     init(_data?: any) {
         if (_data) {
-            if (Array.isArray(_data["entries"])) {
-                this.entries = [] as any;
-                for (let item of _data["entries"])
-                    this.entries!.push(CombatLogEntryView.fromJS(item));
+            if (Array.isArray(_data["turns"])) {
+                this.turns = [] as any;
+                for (let item of _data["turns"])
+                    this.turns!.push(CombatLogTurnView.fromJS(item));
             }
         }
     }
@@ -2540,6 +2540,110 @@ export class CombatLogView implements ICombatLogView {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.turns)) {
+            data["turns"] = [];
+            for (let item of this.turns)
+                data["turns"].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface ICombatLogView {
+    turns: CombatLogTurnView[];
+}
+
+export class CombatLogTurnView implements ICombatLogTurnView {
+    turn!: number;
+    phases!: CombatLogPhaseView[];
+
+    constructor(data?: ICombatLogTurnView) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.phases = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.turn = _data["turn"];
+            if (Array.isArray(_data["phases"])) {
+                this.phases = [] as any;
+                for (let item of _data["phases"])
+                    this.phases!.push(CombatLogPhaseView.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): CombatLogTurnView {
+        data = typeof data === 'object' ? data : {};
+        let result = new CombatLogTurnView();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["turn"] = this.turn;
+        if (Array.isArray(this.phases)) {
+            data["phases"] = [];
+            for (let item of this.phases)
+                data["phases"].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface ICombatLogTurnView {
+    turn: number;
+    phases: CombatLogPhaseView[];
+}
+
+export class CombatLogPhaseView implements ICombatLogPhaseView {
+    side!: CombatSide;
+    phase!: CombatSideTurnPhase;
+    entries!: CombatLogEntryView[];
+
+    constructor(data?: ICombatLogPhaseView) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.entries = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.side = _data["side"];
+            this.phase = _data["phase"];
+            if (Array.isArray(_data["entries"])) {
+                this.entries = [] as any;
+                for (let item of _data["entries"])
+                    this.entries!.push(CombatLogEntryView.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): CombatLogPhaseView {
+        data = typeof data === 'object' ? data : {};
+        let result = new CombatLogPhaseView();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["side"] = this.side;
+        data["phase"] = this.phase;
         if (Array.isArray(this.entries)) {
             data["entries"] = [];
             for (let item of this.entries)
@@ -2549,7 +2653,9 @@ export class CombatLogView implements ICombatLogView {
     }
 }
 
-export interface ICombatLogView {
+export interface ICombatLogPhaseView {
+    side: CombatSide;
+    phase: CombatSideTurnPhase;
     entries: CombatLogEntryView[];
 }
 
@@ -2572,11 +2678,6 @@ export abstract class CombatLogEntryView implements ICombatLogEntryView {
 
     static fromJS(data: any): CombatLogEntryView {
         data = typeof data === 'object' ? data : {};
-        if (data["entryType"] === "TurnStartedLogEntryView") {
-            let result = new TurnStartedLogEntryView();
-            result.init(data);
-            return result;
-        }
         if (data["entryType"] === "CardPlayedLogEntryView") {
             let result = new CardPlayedLogEntryView();
             result.init(data);
@@ -2608,40 +2709,6 @@ export abstract class CombatLogEntryView implements ICombatLogEntryView {
 }
 
 export interface ICombatLogEntryView {
-}
-
-export class TurnStartedLogEntryView extends CombatLogEntryView implements ITurnStartedLogEntryView {
-    turn!: number;
-
-    constructor(data?: ITurnStartedLogEntryView) {
-        super(data);
-        this._discriminator = "TurnStartedLogEntryView";
-    }
-
-    override init(_data?: any) {
-        super.init(_data);
-        if (_data) {
-            this.turn = _data["turn"];
-        }
-    }
-
-    static override fromJS(data: any): TurnStartedLogEntryView {
-        data = typeof data === 'object' ? data : {};
-        let result = new TurnStartedLogEntryView();
-        result.init(data);
-        return result;
-    }
-
-    override toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["turn"] = this.turn;
-        super.toJSON(data);
-        return data;
-    }
-}
-
-export interface ITurnStartedLogEntryView extends ICombatLogEntryView {
-    turn: number;
 }
 
 export class CardPlayedLogEntryView extends CombatLogEntryView implements ICardPlayedLogEntryView {

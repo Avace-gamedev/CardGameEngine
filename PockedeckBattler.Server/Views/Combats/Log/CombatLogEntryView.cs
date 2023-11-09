@@ -6,7 +6,6 @@ using NJsonSchema.Converters;
 namespace PockedeckBattler.Server.Views.Combats.Log;
 
 [JsonConverter(typeof(JsonInheritanceConverter), "entryType")]
-[KnownType(typeof(TurnStartedLogEntryView))]
 [KnownType(typeof(CardPlayedLogEntryView))]
 [KnownType(typeof(TriggeredEffectLogEntryView))]
 [KnownType(typeof(EnchantmentExpiredLogEntryView))]
@@ -21,7 +20,6 @@ public static class CombatLogEntryViewMappingExtensions
     {
         return entry switch
         {
-            TurnStartedLogEntry combatTurnStartedLogEntry => combatTurnStartedLogEntry.View(),
             CardPlayedLogEntry cardPlayedLogEntry => cardPlayedLogEntry.View(),
             TriggeredEffectLogEntry triggeredEffectLogEntry => triggeredEffectLogEntry.View(),
             EnchantmentExpiredLogEntry enchantmentExpiredLogEntry => enchantmentExpiredLogEntry.View(),

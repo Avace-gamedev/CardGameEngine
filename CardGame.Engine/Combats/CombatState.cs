@@ -75,8 +75,6 @@ public class CombatState
 
         Side = CombatSide.None;
 
-        Log.RecordTurnStart(turn);
-
         InvokeEvent(() => TurnStarted?.Invoke(this, new TurnEventArgs(Turn)));
     }
 
@@ -87,6 +85,7 @@ public class CombatState
             InvokeEvent(() => PhaseEnded?.Invoke(this, new PhaseEventArgs(Turn, Side, Phase)));
         }
 
+        Log.RecordPhaseChange(Turn, side, phase);
 
         Side = side;
         Phase = phase;

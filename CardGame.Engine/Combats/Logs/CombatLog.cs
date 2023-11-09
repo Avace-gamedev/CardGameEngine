@@ -11,9 +11,9 @@ public class CombatLog
     readonly List<CombatLogEntry> _entries = new();
     public IReadOnlyList<CombatLogEntry> Entries => _entries;
 
-    public void RecordTurnStart(int turn)
+    public void RecordPhaseChange(int turn, CombatSide side, CombatSideTurnPhase phase)
     {
-        _entries.Add(new TurnStartedLogEntry(turn));
+        _entries.Add(new TurnPhaseChangedLogEntry(turn, side, phase));
     }
 
     public IDisposable RecordEffectsOfPlayingCard(ActionCardInstance card)

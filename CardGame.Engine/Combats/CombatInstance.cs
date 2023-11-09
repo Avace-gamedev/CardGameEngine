@@ -109,6 +109,7 @@ public class CombatInstance : IDisposable
     {
         int turnAp = Math.Min(Options.StartingAp + turn - 1, Options.MaxAp);
         State.StartTurn(turn, turnAp);
+        Log.RecordTurnStart(turn);
     }
 
     void StartSideTurn(CombatSide side)
@@ -151,11 +152,6 @@ public class CombatInstance : IDisposable
 
         CombatSide nextSide = GetNextSide(side);
         State.StartPhaseOfSide(nextSide, CombatSideTurnPhase.None);
-    }
-
-    void EndCombat(CombatSide winner)
-    {
-        State.EndCombat(winner);
     }
 
     bool CheckWinCondition(out CombatSide winner)
@@ -224,7 +220,9 @@ public class CombatInstance : IDisposable
         RemoveDeadCharactersIfAny();
         if (CheckWinCondition(out CombatSide winner))
         {
-            EndCombat(winner);
+            State.EndCombat(winner);
+            Log.RecordEnd(winner);
+
             return true;
         }
 

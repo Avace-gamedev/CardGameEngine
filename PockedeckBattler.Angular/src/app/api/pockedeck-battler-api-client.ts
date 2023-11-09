@@ -2140,6 +2140,7 @@ export class CharacterCombatView implements ICharacterCombatView {
     character!: CharacterView;
     health!: number;
     shield!: number;
+    isDead!: boolean;
     enchantments!: EnchantmentInstanceView[];
 
     constructor(data?: ICharacterCombatView) {
@@ -2160,6 +2161,7 @@ export class CharacterCombatView implements ICharacterCombatView {
             this.character = _data["character"] ? CharacterView.fromJS(_data["character"]) : new CharacterView();
             this.health = _data["health"];
             this.shield = _data["shield"];
+            this.isDead = _data["isDead"];
             if (Array.isArray(_data["enchantments"])) {
                 this.enchantments = [] as any;
                 for (let item of _data["enchantments"])
@@ -2180,6 +2182,7 @@ export class CharacterCombatView implements ICharacterCombatView {
         data["character"] = this.character ? this.character.toJSON() : <any>undefined;
         data["health"] = this.health;
         data["shield"] = this.shield;
+        data["isDead"] = this.isDead;
         if (Array.isArray(this.enchantments)) {
             data["enchantments"] = [];
             for (let item of this.enchantments)
@@ -2193,6 +2196,7 @@ export interface ICharacterCombatView {
     character: CharacterView;
     health: number;
     shield: number;
+    isDead: boolean;
     enchantments: EnchantmentInstanceView[];
 }
 
@@ -2568,8 +2572,18 @@ export abstract class CombatLogEntryView implements ICombatLogEntryView {
 
     static fromJS(data: any): CombatLogEntryView {
         data = typeof data === 'object' ? data : {};
+        if (data["entryType"] === "CombatTurnStartedLogEntryView") {
+            let result = new CombatTurnStartedLogEntryView();
+            result.init(data);
+            return result;
+        }
         if (data["entryType"] === "CardPlayedLogEntryView") {
             let result = new CardPlayedLogEntryView();
+            result.init(data);
+            return result;
+        }
+        if (data["entryType"] === "CombatEndedLogEntryView") {
+            let result = new CombatEndedLogEntryView();
             result.init(data);
             return result;
         }
@@ -2584,6 +2598,40 @@ export abstract class CombatLogEntryView implements ICombatLogEntryView {
 }
 
 export interface ICombatLogEntryView {
+}
+
+export class CombatTurnStartedLogEntryView extends CombatLogEntryView implements ICombatTurnStartedLogEntryView {
+    turn!: number;
+
+    constructor(data?: ICombatTurnStartedLogEntryView) {
+        super(data);
+        this._discriminator = "CombatTurnStartedLogEntryView";
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.turn = _data["turn"];
+        }
+    }
+
+    static override fromJS(data: any): CombatTurnStartedLogEntryView {
+        data = typeof data === 'object' ? data : {};
+        let result = new CombatTurnStartedLogEntryView();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["turn"] = this.turn;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface ICombatTurnStartedLogEntryView extends ICombatLogEntryView {
+    turn: number;
 }
 
 export class CardPlayedLogEntryView extends CombatLogEntryView implements ICardPlayedLogEntryView {
@@ -2960,6 +3008,40 @@ export class AddEnchantmentEffectOnCharacterLogEntryView extends EffectOnCharact
 
 export interface IAddEnchantmentEffectOnCharacterLogEntryView extends IEffectOnCharacterLogEntryView {
     enchantment: EnchantmentView;
+}
+
+export class CombatEndedLogEntryView extends CombatLogEntryView implements ICombatEndedLogEntryView {
+    winner!: CombatSide;
+
+    constructor(data?: ICombatEndedLogEntryView) {
+        super(data);
+        this._discriminator = "CombatEndedLogEntryView";
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.winner = _data["winner"];
+        }
+    }
+
+    static override fromJS(data: any): CombatEndedLogEntryView {
+        data = typeof data === 'object' ? data : {};
+        let result = new CombatEndedLogEntryView();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["winner"] = this.winner;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface ICombatEndedLogEntryView extends ICombatLogEntryView {
+    winner: CombatSide;
 }
 
 export interface FileResponse {

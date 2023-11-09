@@ -11,7 +11,7 @@ public class CombatLog
 
     public void RecordTurnStart(int turn)
     {
-        _entries.Add(new CombatTurnStartedLogEntry(turn));
+        _entries.Add(new TurnStartedLogEntry(turn));
     }
 
     public IDisposable RecordEffectsOfPlayingCard(ActionCardInstance card)

@@ -36,5 +36,6 @@ export const assetIcons = [
   'vibrating-shield',
   'yin-yang',
   'round-star',
+  'death-skull',
 ] as const;
 export type AssetIcon = (typeof assetIcons)[number];

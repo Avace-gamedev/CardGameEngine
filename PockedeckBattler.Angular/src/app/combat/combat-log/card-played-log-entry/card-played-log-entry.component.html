@@ -27,6 +27,7 @@
         [enchantment]="$any(effect.effect)"
         *ngSwitchCase="'enchantment'"
       ></app-enchantment-received>
+      <app-character-died *ngSwitchCase="'death'"></app-character-died>
     </ng-container>
   </div>
 </div>

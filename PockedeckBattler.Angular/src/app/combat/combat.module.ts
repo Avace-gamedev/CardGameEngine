@@ -29,6 +29,7 @@ import { ShieldReceivedComponent } from './combat-log/shield-received/shield-rec
 import { HealReceivedComponent } from './combat-log/heal-received/heal-received.component';
 import { EnchantmentReceivedComponent } from './combat-log/enchantment-received/enchantment-received.component';
 import { StickyPopoverDirective } from '../shared/directives/sticky-popover.directive';
+import { CharacterDiedComponent } from './combat-log/character-died/character-died.component';
 
 @NgModule({
   declarations: [
@@ -54,6 +55,7 @@ import { StickyPopoverDirective } from '../shared/directives/sticky-popover.dire
     ShieldReceivedComponent,
     HealReceivedComponent,
     EnchantmentReceivedComponent,
+    CharacterDiedComponent,
   ],
   imports: [
     CommonModule,

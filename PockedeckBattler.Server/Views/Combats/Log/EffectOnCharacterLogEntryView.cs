@@ -10,6 +10,7 @@ namespace PockedeckBattler.Server.Views.Combats.Log;
 [KnownType(typeof(HealEffectOnCharacterLogEntryView))]
 [KnownType(typeof(ShieldEffectOnCharacterLogEntryView))]
 [KnownType(typeof(AddEnchantmentEffectOnCharacterLogEntryView))]
+[KnownType(typeof(CharacterDiedLogEntryView))]
 public abstract class EffectOnCharacterLogEntryView
 {
     protected EffectOnCharacterLogEntryView(CharacterInCombatView character)
@@ -30,6 +31,7 @@ public static class EffectOnCharacterLogEntryViewMappingExtensions
             HealEffectOnCharacterLogEntry healEffectOnCharacterLogEntry => healEffectOnCharacterLogEntry.View(),
             ShieldEffectOnCharacterLogEntry shieldEffectOnCharacterLogEntry => shieldEffectOnCharacterLogEntry.View(),
             AddEnchantmentEffectOnCharacterLogEntry addEnchantmentEffectOnCharacterLogEntry => addEnchantmentEffectOnCharacterLogEntry.View(),
+            CharacterDiedLogEntry characterDiedLogEntry => characterDiedLogEntry.View(),
             _ => throw new ArgumentOutOfRangeException(nameof(entry))
         };
     }

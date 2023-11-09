@@ -2572,8 +2572,8 @@ export abstract class CombatLogEntryView implements ICombatLogEntryView {
 
     static fromJS(data: any): CombatLogEntryView {
         data = typeof data === 'object' ? data : {};
-        if (data["entryType"] === "CombatTurnStartedLogEntryView") {
-            let result = new CombatTurnStartedLogEntryView();
+        if (data["entryType"] === "TurnStartedLogEntryView") {
+            let result = new TurnStartedLogEntryView();
             result.init(data);
             return result;
         }
@@ -2600,12 +2600,12 @@ export abstract class CombatLogEntryView implements ICombatLogEntryView {
 export interface ICombatLogEntryView {
 }
 
-export class CombatTurnStartedLogEntryView extends CombatLogEntryView implements ICombatTurnStartedLogEntryView {
+export class TurnStartedLogEntryView extends CombatLogEntryView implements ITurnStartedLogEntryView {
     turn!: number;
 
-    constructor(data?: ICombatTurnStartedLogEntryView) {
+    constructor(data?: ITurnStartedLogEntryView) {
         super(data);
-        this._discriminator = "CombatTurnStartedLogEntryView";
+        this._discriminator = "TurnStartedLogEntryView";
     }
 
     override init(_data?: any) {
@@ -2615,9 +2615,9 @@ export class CombatTurnStartedLogEntryView extends CombatLogEntryView implements
         }
     }
 
-    static override fromJS(data: any): CombatTurnStartedLogEntryView {
+    static override fromJS(data: any): TurnStartedLogEntryView {
         data = typeof data === 'object' ? data : {};
-        let result = new CombatTurnStartedLogEntryView();
+        let result = new TurnStartedLogEntryView();
         result.init(data);
         return result;
     }
@@ -2630,7 +2630,7 @@ export class CombatTurnStartedLogEntryView extends CombatLogEntryView implements
     }
 }
 
-export interface ICombatTurnStartedLogEntryView extends ICombatLogEntryView {
+export interface ITurnStartedLogEntryView extends ICombatLogEntryView {
     turn: number;
 }
 
@@ -2732,6 +2732,11 @@ export abstract class EffectOnCharacterLogEntryView implements IEffectOnCharacte
         }
         if (data["effectType"] === "AddEnchantmentEffectOnCharacterLogEntryView") {
             let result = new AddEnchantmentEffectOnCharacterLogEntryView();
+            result.init(data);
+            return result;
+        }
+        if (data["effectType"] === "CharacterDiedLogEntryView") {
+            let result = new CharacterDiedLogEntryView();
             result.init(data);
             return result;
         }
@@ -3008,6 +3013,34 @@ export class AddEnchantmentEffectOnCharacterLogEntryView extends EffectOnCharact
 
 export interface IAddEnchantmentEffectOnCharacterLogEntryView extends IEffectOnCharacterLogEntryView {
     enchantment: EnchantmentView;
+}
+
+export class CharacterDiedLogEntryView extends EffectOnCharacterLogEntryView implements ICharacterDiedLogEntryView {
+
+    constructor(data?: ICharacterDiedLogEntryView) {
+        super(data);
+        this._discriminator = "CharacterDiedLogEntryView";
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+    }
+
+    static override fromJS(data: any): CharacterDiedLogEntryView {
+        data = typeof data === 'object' ? data : {};
+        let result = new CharacterDiedLogEntryView();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface ICharacterDiedLogEntryView extends IEffectOnCharacterLogEntryView {
 }
 
 export class CombatEndedLogEntryView extends CombatLogEntryView implements ICombatEndedLogEntryView {

@@ -37,6 +37,7 @@ public class CharacterCombatState
     public event EventHandler<HealReceived>? HealReceived;
     public event EventHandler<ShieldReceived>? ShieldReceived;
     public event EventHandler<Enchantment>? EnchantmentAdded;
+    public event EventHandler? Died;
 
     public CharacterStatsModifier GetStatsModifier()
     {
@@ -52,6 +53,9 @@ public class CharacterCombatState
 
         DamageReceived?.Invoke(this, damageReceived);
 
+        SetShield(Shield - damageReceived.Shield);
+        SetHealth(Health - damageReceived.Health);
+
         return damageReceived;
     }
 
@@ -61,6 +65,8 @@ public class CharacterCombatState
 
         HealReceived?.Invoke(this, healReceived);
 
+        SetHealth(Health + healReceived.Health);
+
         return healReceived;
     }
 
@@ -69,6 +75,8 @@ public class CharacterCombatState
         ShieldReceived shieldReceived = ComputeShieldReceived(amount);
 
         ShieldReceived?.Invoke(this, shieldReceived);
+
+        SetShield(Shield + shieldReceived.Shield);
 
         return shieldReceived;
     }
@@ -104,6 +112,7 @@ public class CharacterCombatState
         if (Health == 0)
         {
             IsDead = true;
+            Died?.Invoke(this, EventArgs.Empty);
         }
     }
 
@@ -132,8 +141,6 @@ public class CharacterCombatState
         {
             int shieldDamage = Shield;
 
-            SetShield(0);
-
             int healthDamage = modifiedAttack.Amount - shieldDamage;
 
             if (healthDamage > Health)
@@ -141,12 +148,8 @@ public class CharacterCombatState
                 healthDamage = Health;
             }
 
-            SetHealth(Health - healthDamage);
-
             return new DamageReceived(healthDamage, shieldDamage);
         }
-
-        SetShield(Shield - modifiedAttack.Amount);
 
         return new DamageReceived(0, modifiedAttack.Amount);
     }
@@ -160,20 +163,15 @@ public class CharacterCombatState
 
         int healthReceived = Math.Min(Stats.MaxHealth - Health, amount);
 
-        SetHealth(Health + healthReceived);
-
         return new HealReceived(healthReceived);
     }
 
     ShieldReceived ComputeShieldReceived(int amount)
     {
-
         if (IsDead)
         {
             return new ShieldReceived(0);
         }
-
-        SetShield(Shield + amount);
 
         return new ShieldReceived(amount);
     }

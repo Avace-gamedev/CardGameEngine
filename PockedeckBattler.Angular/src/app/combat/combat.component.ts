@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewChecked, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, filter, from, map, of, switchMap } from 'rxjs';
 import {
@@ -18,7 +18,12 @@ import { CurrentCombatService } from './current-combat.service';
   templateUrl: './combat.component.html',
   providers: [CurrentCombatService],
 })
-export class CombatComponent implements OnInit {
+export class CombatComponent implements OnInit, AfterViewChecked {
+  @ViewChild('combatLog')
+  private combatLogElementRef: ElementRef | undefined;
+
+  private scrollCombatLogRequested: boolean = false;
+
   protected combat: PlayerCombatView | undefined;
   protected source: ICharacterInCombatView | undefined;
   protected allyTargets: string[] = [];
@@ -156,9 +161,26 @@ export class CombatComponent implements OnInit {
     this.source = character;
   }
 
+  ngAfterViewChecked() {
+    if (this.scrollCombatLogRequested) {
+      if (this.combatLogElementRef) {
+        this.scrollToBottom(this.combatLogElementRef);
+      }
+      this.scrollCombatLogRequested = false;
+    }
+  }
+
   private setCombat(combat: PlayerCombatView) {
     this.combat = combat;
     this.currentCombatService.set(combat);
+
+    this.scrollCombatLogRequested = true;
+  }
+
+  private scrollToBottom(element: ElementRef): void {
+    try {
+      element.nativeElement.scrollTop = element.nativeElement.scrollHeight;
+    } catch (err) {}
   }
 
   protected readonly CombatSide = CombatSide;

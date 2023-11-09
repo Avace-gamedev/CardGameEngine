@@ -40,6 +40,10 @@ public class ActionCardInstance
         side.ConsumeAp(cardWithModifications.ApCost);
 
         IEnumerable<CharacterCombatState> targets = Combat.GetTargets(Character, cardWithModifications.Target);
-        cardWithModifications.Resolve(Character, targets, _random);
+
+        using (Character.Combat.Log.RecordEffectsOfPlayingCard(this))
+        {
+            cardWithModifications.Resolve(Character, targets, _random);
+        }
     }
 }

@@ -77,7 +77,7 @@ public static class PlayerCombatViewMappingExtensions
             Winner = combat.Instance.State.Winner,
             LeftPlayerName = combat.LeftPlayerName,
             RightPlayerName = combat.RightPlayerName,
-            Log = combat.Instance.Log.View()
+            Log = combat.Instance.State.Log.View()
         };
     }
 }

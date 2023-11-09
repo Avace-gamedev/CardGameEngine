@@ -13,7 +13,7 @@ public class EnchantmentInstance : IDisposable
         Source = source;
         Target = target;
         PassiveEffects = enchantment.Passive.Select(p => new PassiveEffectInstance(p, source, target)).ToArray();
-        TriggeredEffects = enchantment.Triggered.Select(t => new TriggeredEffectInstance(t, source, target, random)).ToArray();
+        TriggeredEffects = enchantment.Triggered.Select(t => new TriggeredEffectInstance(t, this, random)).ToArray();
 
         foreach (PassiveEffectInstance p in PassiveEffects)
         {
@@ -24,19 +24,37 @@ public class EnchantmentInstance : IDisposable
         {
             t.Expired += OnEffectExpired;
         }
+
+        Source.Died += OnSourceOrTargetDied;
+        Target.Died += OnSourceOrTargetDied;
     }
 
-
     public Guid Id { get; }
+
     public Enchantment Enchantment { get; }
+
     public CharacterCombatState Source { get; }
+
     public CharacterCombatState Target { get; }
+
     public IReadOnlyList<PassiveEffectInstance> PassiveEffects { get; }
+
     public IReadOnlyList<TriggeredEffectInstance> TriggeredEffects { get; }
+
     public bool HasExpired { get; private set; }
 
     public void Dispose()
     {
+        foreach (PassiveEffectInstance passive in PassiveEffects)
+        {
+            passive.Dispose();
+        }
+
+        foreach (TriggeredEffectInstance triggered in TriggeredEffects)
+        {
+            triggered.Dispose();
+        }
+
         GC.SuppressFinalize(this);
     }
 
@@ -46,8 +64,24 @@ public class EnchantmentInstance : IDisposable
     {
         if (PassiveEffects.All(p => p.HasExpired) && TriggeredEffects.All(t => t.HasExpired))
         {
-            HasExpired = true;
-            Expired?.Invoke(this, EventArgs.Empty);
+            Expire();
         }
+    }
+
+    void OnSourceOrTargetDied(object? sender, EventArgs e)
+    {
+        Expire();
+    }
+
+    void Expire()
+    {
+        if (HasExpired)
+        {
+            return;
+        }
+
+        HasExpired = true;
+        Source.Combat.Log.RecordEnchantmentExpired(this);
+        Expired?.Invoke(this, EventArgs.Empty);
     }
 }

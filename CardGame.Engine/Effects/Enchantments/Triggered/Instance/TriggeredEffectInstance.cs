@@ -7,14 +7,13 @@ public class TriggeredEffectInstance : IDisposable
 {
     readonly Random _random;
 
-    public TriggeredEffectInstance(TriggeredEffect effect, CharacterCombatState source, CharacterCombatState target, Random random)
+    public TriggeredEffectInstance(TriggeredEffect effect, EnchantmentInstance enchantment, Random random)
     {
         _random = random;
         Id = Guid.NewGuid();
         Effect = effect;
-        Source = source;
-        Target = target;
-        TriggerState = effect.Trigger.CreateNewState(source.Combat, Source, Target);
+        Enchantment = enchantment;
+        TriggerState = effect.Trigger.CreateNewState(enchantment.Source.Combat, enchantment.Source, enchantment.Target);
 
         TriggerState.Triggered += OnTriggered;
         TriggerState.Expired += OnExpired;
@@ -24,14 +23,16 @@ public class TriggeredEffectInstance : IDisposable
 
     public TriggeredEffect Effect { get; }
 
-    public CharacterCombatState Source { get; }
-    public CharacterCombatState Target { get; }
+    public EnchantmentInstance Enchantment { get; }
+    public CharacterCombatState Source => Enchantment.Source;
+    public CharacterCombatState Target => Enchantment.Target;
 
     public TriggerState TriggerState { get; }
     public bool HasExpired { get; private set; }
 
     public void Dispose()
     {
+        TriggerState.Triggered -= OnTriggered;
         TriggerState.Expired -= OnExpired;
         GC.SuppressFinalize(this);
     }
@@ -40,7 +41,11 @@ public class TriggeredEffectInstance : IDisposable
 
     void OnTriggered(object? _, EventArgs __)
     {
-        Effect.Effect.Resolve(Source, new[] { Target }, _random);
+        CombatState combat = Enchantment.Source.Combat;
+        using (combat.Log.RecordTriggeredEffect(this))
+        {
+            Effect.Effect.Resolve(Enchantment.Source, new[] { Enchantment.Target }, _random);
+        }
     }
 
     void OnExpired(object? _, EventArgs __)

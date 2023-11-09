@@ -1,0 +1,14 @@
+<div *ngIf="entry">
+  <div class="hstack">
+    <div class="hstack gap-1">
+      <app-with-enchantment-popover [enchantment]="entry.enchantment">
+        <span class="fw-semibold">{{ entry.enchantment.name }}</span>
+      </app-with-enchantment-popover>
+      triggered on
+      <span class="fw-semibold" (mouseenter)="highlight.emit(target)" (mouseleave)="highlight.emit(undefined)">
+        {{ target?.character?.identity?.displayName }}
+      </span>
+    </div>
+  </div>
+  <app-combat-log-effect-group [effects]="effects" (highlight)="highlight.emit($event)"></app-combat-log-effect-group>
+</div>

@@ -34,7 +34,7 @@ export class TriggeredEffectLineComponent {
   private getTurnTriggerLine(turnTrigger: TurnTriggerView) {
     let delay = '';
     if (turnTrigger.initialDelay === 1) {
-      delay = `in ${turnTrigger.initialDelay} turn, `;
+      delay = `next turn, `;
     } else if (turnTrigger.initialDelay > 1) {
       delay = `in ${turnTrigger.initialDelay} turns, `;
     }

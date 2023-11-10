@@ -16,35 +16,8 @@ public class CombatLogTurnView
 
 public static class CombatLogTurnViewMappingExtensions
 {
-    public static CombatLogTurnView View(this IEnumerable<CombatLogEntry> entries, int turn)
+    public static CombatLogTurnView View(this CombatLog.CombatTurn turn)
     {
-        List<CombatLogPhaseView> phases = new();
-
-        TurnPhaseChangedLogEntry? currentPhase = null;
-        List<CombatLogEntry> phaseEntries = new();
-        foreach (CombatLogEntry entry in entries)
-        {
-            if (entry is TurnPhaseChangedLogEntry phaseChange)
-            {
-                if (currentPhase != null)
-                {
-                    phases.Add(phaseEntries.View(currentPhase.Side, currentPhase.Phase));
-                }
-
-                currentPhase = phaseChange;
-                phaseEntries = new List<CombatLogEntry>();
-            }
-            else
-            {
-                phaseEntries.Add(entry);
-            }
-        }
-
-        if (currentPhase != null)
-        {
-            phases.Add(phaseEntries.View(currentPhase.Side, currentPhase.Phase));
-        }
-
-        return new CombatLogTurnView(turn, phases.ToArray());
+        return new CombatLogTurnView(turn.Turn, turn.Phases.Select(p => p.View()).ToArray());
     }
 }

@@ -19,8 +19,8 @@ public class CombatLogPhaseView
 
 public static class CombatLogPhaseViewMappingExtensions
 {
-    public static CombatLogPhaseView View(this IEnumerable<CombatLogEntry> entries, CombatSide side, CombatSideTurnPhase phase)
+    public static CombatLogPhaseView View(this CombatLog.TurnPhase phase)
     {
-        return new CombatLogPhaseView(side, phase, entries.Select(e => e.View()).ToArray());
+        return new CombatLogPhaseView(phase.Side, phase.Phase, phase.Entries.Select(e => e.View()).ToArray());
     }
 }
